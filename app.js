@@ -38,4 +38,33 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
+//////////////////////////////////////// ACTUAL CODE STARTS HERE ////////////////////////////////////////
+/*
+This function validates user login info
+- Input: 
+    username (str)
+    password (str)
+- Output: 
+    1. If username exists and password matches the user data in DB, return success code 1
+    2. If username exists but password does not match the user data in DB, return error code 2
+    3. If username does not exist and username does not meet the username rule, return error code 3
+    4. If username does not exist and password does not meet the password rule, return error code 4
+*/
+app.get('/validateUserInfo', async function (req, res) {
+  // TODO
+});
+
+/*
+This function creates a new user and stores user info into the DB
+- Input: 
+    username (str)
+    password (str)
+- Output: 
+    A HTTP status code
+*/
+app.post('/createNewUser', async (req, res) => {
+    // TODO
+});
+
 module.exports = app;
