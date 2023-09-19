@@ -20,26 +20,26 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', () =>{
-    console.log("IO Connected Successfully")
-})
+  console.log('IO Connected Successfully');
+});
 // Connect to DB
-const DBPassword = "m5FKvoap498MxCVQ";
+const DBPassword = 'm5FKvoap498MxCVQ';
 mongoose.connect(
     `mongodb+srv://gongzizan:${DBPassword}@fse-team-proj.6d7d7lo.mongodb.net/?retryWrites=true&w=majority`,
     {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    }
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    },
 );
 
 const db = mongoose.connection;
-db.on("error", console.error.bind(console, "Error: "));
-db.once("open", function () {
-  console.log("DB Connected successfully!");
+db.on('error', console.error.bind(console, 'Error: '));
+db.once('open', function() {
+  console.log('DB Connected successfully!');
 });
 
 // Register routes
@@ -66,17 +66,17 @@ app.use(function(err, req, res, next) {
 
 /*
 This function validates user login info
-- Input: 
+- Input:
     username (str)
     password (str)
-- Output: 
+- Output:
     1. If username exists and password matches the user data in DB, return success code 1
     2. If username exists but password does not match the user data in DB, return error code 2
     3. If username does not exist and username does not meet the username rule, return error code 3
     4. If username does not exist and password does not meet the password rule, return error code 4
     5. If username does not exist and both username and password meet the rule, return success code 5
 */
-app.get('/validateUserInfo', async function (req, res) {
+app.get('/validateUserInfo', async function(req, res) {
   try {
     // Username is not case sensitive
     const username = req.query.username.toLowerCase();
@@ -86,25 +86,25 @@ app.get('/validateUserInfo', async function (req, res) {
     if (data) {
       // User exists and password is correct
       if (data.password == password) {
-        return res.send({"status": "success", "code": 1});
+        return res.send({'status': 'success', 'code': 1});
       // User exists but password is incorrect
       } else {
-        return res.send({"status": "error", "code": 2});
+        return res.send({'status': 'error', 'code': 2});
       }
     }
     // User does not exist, create a new user
     // Username does not meet username rule
     if (username.length < 3 || bannedUsernamesSet.has(username)) {
-      return res.send({"status": "error", "code": 3});
+      return res.send({'status': 'error', 'code': 3});
     }
     // Password does not meet password rule
     if (password.length < 4) {
-      return res.send({"status": "error", "code": 4});
+      return res.send({'status': 'error', 'code': 4});
     }
     // Both username and password meet rules, return success code
-    return res.send({"status": "success", "code": 5});
+    return res.send({'status': 'success', 'code': 5});
   } catch (error) {
-      console.log(error);
+    console.log(error);
   }
 });
 

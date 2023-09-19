@@ -15,5 +15,16 @@
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11",
     "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.49.0",
+    "eslint-config-google": "^0.14.0",
+    "nodemon": "^3.0.1"
+  },
+  "nodemonConfig" : {
+    "ignore": [
+      "node_modules/**/node_modules",
+      "public/**"
+    ]
   }
 }
