@@ -1,10 +1,11 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
+
 const app = express();
 const mongoose = require('mongoose');
 const parser = require('body-parser');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const PORT = 8000;
 
 app.use(parser.json());
 app.use(parser.urlencoded({extended: false}));
@@ -13,7 +14,6 @@ app.use(express.static(__dirname));
 io.on('connection', () =>{
     console.log("IO Connected Successfully")
 })
-
 // Connect to DB
 const DBPassword = "m5FKvoap498MxCVQ";
 mongoose.connect(
@@ -114,7 +114,9 @@ This function creates a new user and stores user info into the DB
 */
 app.post('/createNewUser', async (req, res) => {
   try{
-    const user = new User(req.body);
+    const {username, password} = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({username: username, password: hashedPassword});
     const newUser = await user.save();
     res.sendStatus(200);
   }
@@ -127,8 +129,4 @@ app.post('/createNewUser', async (req, res) => {
   }
 });
 
-// Start the server
-server.listen(PORT, function (err) {
-  if (err) console.log(err);
-  console.log("Server listening on PORT", PORT);
-});
+module.exports = app;
