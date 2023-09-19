@@ -26,10 +26,10 @@ var bannedUsernamesList = "about access account accounts add address adm admin a
     webmaster workshop xxx xpg you yourname yourusername yoursite yourdomain"
 bannedUsernamesList = bannedUsernamesList.split(" ");
 // A set of all banned usernames
-const bannedUsernames = new Set(bannedUsernamesList);
+const bannedUsernamesSet = new Set(bannedUsernamesList);
 
 
 module.exports = {
     User,
-    bannedUsernames,
+    bannedUsernamesSet,
 }

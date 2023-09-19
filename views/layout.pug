@@ -1,8 +1,13 @@
 doctype html
 html
   head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    block head
+    block title
+      title Emergency Social Network
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    block scripts
+      script(src='javascripts/jquery-3.7.1.js')
+    block stylesheets
+      link(rel='stylesheet', href='/stylesheets/style.css')
   body
     block content

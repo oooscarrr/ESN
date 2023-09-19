@@ -1,0 +1,12 @@
+extends layout
+
+block title
+  title Home
+
+block append scripts
+    script(src='javascripts/Home.js')
+
+block content
+    h1 Emergency Social Network
+    div#joinCommunityButtonContainer
+        a#joinCommunityButton(href='/joinCommunity') Join Community
