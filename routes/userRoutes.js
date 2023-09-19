@@ -22,10 +22,9 @@ router.get('/validateUserInfo', async function (req, res) {
         // TODO: encrypt password
         const password = req.query.password;
         const data = await User.findOne({ username: username });
-        console.log(data);
         if (data) {
             // User exists and password is correct
-            if (data.password == password) {
+            if (await bcrypt.compare(password, data.password)) {
                 return res.send({ 'status': 'success', 'code': 1 });
                 // User exists but password is incorrect
             } else {
