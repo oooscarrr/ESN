@@ -6,15 +6,21 @@ const logger = require('morgan');
 const {User, bannedUsernamesSet} = require('./models/User');
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
 const app = express();
 const mongoose = require('mongoose');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-app.use(parser.json());
-app.use(parser.urlencoded({extended: false}));
-app.use(express.static(__dirname));
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', () =>{
     console.log("IO Connected Successfully")
@@ -37,6 +43,9 @@ db.once("open", function () {
 
 // Register routes
 app.use('/users', userRouter);
+app.use('/', indexRouter);
+app.use('/', authRouter);
+
 
 
 /*
