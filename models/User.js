@@ -24,7 +24,7 @@ var bannedUsernamesList = "about access account accounts add address adm admin a
     stores system tablet tablets tech telnet test test1 test2 test3 teste tests theme themes tmp todo task tasks tools tv talk update upload url \
     user username usuario usage vendas video videos visitor win ww www www1 www2 www3 www4 www5 www6 www7 wwww wws wwws web webmail website websites \
     webmaster workshop xxx xpg you yourname yourusername yoursite yourdomain"
-bannedUsernamesList = bannedUsernamesList.split(" ");
+bannedUsernamesList = bannedUsernamesList.toLowerCase().split(" ");
 // A set of all banned usernames
 const bannedUsernamesSet = new Set(bannedUsernamesList);
 
