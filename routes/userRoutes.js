@@ -15,13 +15,14 @@ This function validates user login info
     4. If username does not exist and password does not meet the password rule, return error code 4
     5. If username does not exist and both username and password meet the rule, return success code 5
 */
-router.post('/validateUserInfo', async function (req, res) {
+router.get('/validateUserInfo', async function (req, res) {
     try {
         // Username is not case sensitive
-        const username = req.body.username.toLowerCase();
+        const username = req.query.username.toLowerCase();
         // TODO: encrypt password
-        const password = req.body.password;
+        const password = req.query.password;
         const data = await User.findOne({ username: username });
+        console.log(data);
         if (data) {
             // User exists and password is correct
             if (data.password == password) {
@@ -57,7 +58,8 @@ This function creates a new user and stores user info into the DB
 */
 router.post('/createNewUser', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const username = req.body.username.toLowerCase();
+        const password = req.body.password;
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ username: username, password: hashedPassword });
         const newUser = await user.save();
