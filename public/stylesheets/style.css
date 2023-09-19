@@ -4,8 +4,6 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #2d2d2d;
-  margin-top: 100px;
 }
 
 a {
@@ -13,33 +11,6 @@ a {
   text-decoration: none;
 }
 
-label {
-  align-self: flex-start;
-  font-size: 1.2rem;
-  margin-bottom: 5px;
-}
-
-#username, #password {
-  margin-bottom: 10px;
-  width: 100%;
-  height: 25px;
-}
-
 #joinForm {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   width: 300px;
-}
-
-#joinButton {
-  width: 48%;
-  margin-top: 5px;
-  height: 35px;
-  border-radius: 5px;
-  background: #91bdf7;
-  font-weight: bold;
-  font-size: 1.2rem;
-  cursor: pointer;
 }

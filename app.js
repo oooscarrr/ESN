@@ -12,37 +12,37 @@ var path = require('path');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set up view engine
 app.set('views', path.join(path.join(__dirname, 'views')));
 app.set('view engine', 'pug');
 
-io.on('connection', () =>{
+io.on('connection', () => {
   console.log('IO Connected Successfully');
 });
 // Connect to DB
 const DBPassword = 'm5FKvoap498MxCVQ';
 mongoose.connect(
-    `mongodb+srv://gongzizan:${DBPassword}@fse-team-proj.6d7d7lo.mongodb.net/?retryWrites=true&w=majority`,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    },
+  `mongodb+srv://gongzizan:${DBPassword}@fse-team-proj.6d7d7lo.mongodb.net/?retryWrites=true&w=majority`,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
 );
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Error: '));
-db.once('open', function() {
+db.once('open', function () {
   console.log('DB Connected successfully!');
 });
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.render('home');
 });
 
-app.get('/joinCommunity', function(req, res) {
+app.get('/joinCommunity', function (req, res) {
   res.render('joinCommunity');
 });
 
@@ -51,12 +51,12 @@ const userRouter = require('./routes/userRoutes');
 app.use('/user', userRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

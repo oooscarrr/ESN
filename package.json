@@ -22,7 +22,7 @@
     "eslint-config-google": "^0.14.0",
     "nodemon": "^3.0.1"
   },
-  "nodemonConfig" : {
+  "nodemonConfig": {
     "ignore": [
       "node_modules/**/node_modules",
       "public/**"
