@@ -7,6 +7,7 @@ const messageList = {
 }
 
 $(document).ready(function () {
+    const data = $(this).serialize();
     $('.ui.error.message').hide();
     $('#confirmJoinModal').modal('attach events', '.cancelButton', 'hide');
     $('#welcomeModal').modal();
@@ -14,6 +15,10 @@ $(document).ready(function () {
         $('.ui.error.message').hide();
         $('#usernameField').removeClass('error');
         $('#passwordField').removeClass('error');
+    });
+    $("#confirmJoinModal .confirmButton").click(function () {
+        $("#confirmJoinModal").modal('hide');
+        confirmJoin(data);
     });
     $("#joinForm").submit(function (e) {
         e.preventDefault();
@@ -31,20 +36,14 @@ $(document).ready(function () {
             $('.ui.error.message').show();
             return;
         }
-        const data = $(this).serialize();
         $.ajax({
             type: 'GET',
             url: `/user/validateUserInfo?`,
             data: data,
         }).done(function (response) {
-            console.log(response.code);
             const message = messageList[response.code];
             if (response.code == 5) {
                 $("#confirmJoinModal").modal('show');
-                $("#confirmJoinModal .confirmButton").click(function () {
-                    $("#confirmJoinModal").modal('hide');
-                    confirmJoin(data);
-                });
             } else {
                 $('#errorHeader').text('Invalid Join');
                 $('#errorMessage').text(message);
