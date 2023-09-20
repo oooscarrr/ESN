@@ -37,11 +37,11 @@ $(document).ready(function () {
             url: `/user/validateUserInfo?`,
             data: data,
         }).done(function (response) {
-            console.log(response.code);
             const message = messageList[response.code];
+            console.log(response.code);
             if (response.code == 5) {
                 $("#confirmJoinModal").modal('show');
-                $("#confirmJoinModal .confirmButton").click(function () {
+                $("#confirmJoinModal .confirmButton").off().click(function () {
                     $("#confirmJoinModal").modal('hide');
                     confirmJoin(data);
                 });
@@ -65,7 +65,7 @@ const confirmJoin = (data) => {
         $('#welcomeModal').modal('show');
         $('#welcomeModal .okButton').click(function () {
             $('#welcomeModal').modal('hide');
-            // window.location.href = "/";
+            window.location.href = "/";
         });
     }).fail(function (response) {
         alert(response.message);
