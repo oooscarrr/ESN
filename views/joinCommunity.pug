@@ -18,18 +18,18 @@ block content
     .ui.error.message
       .header#errorHeader
       p#errorMessage
-    button.ui.button(type='submit') Join!
+    button.ui.button#joinButton(type='submit') Join!
 
   .ui.mini.modal#confirmJoinModal
     .header Confirm Join
     .content Are you sure you want to join?
     .actions
-      .ui.button.cancelButton No
-      .ui.button.confirmButton Yes
+      .ui.button.red.cancelButton No
+      .ui.button.green.confirmButton Yes
 
   .ui.modal#welcomeModal
     .header Welcome!
     .content Welcome to the community!
       img(src='images/statusGuide.jpg' width='100%')
     .actions
-      .ui.button.okButton OK
+      .ui.button.okButton Acknowledge
