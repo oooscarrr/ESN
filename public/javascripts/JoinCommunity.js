@@ -1,6 +1,5 @@
 const messageList = {
-    1: 'Username exists',
-    2: 'Username exists',
+    2: 'Wrong username or password',
     3: 'Username does not meet the rule',
     4: 'Password does not meet the rule',
     5: 'Success'
@@ -38,7 +37,9 @@ $(document).ready(function () {
             data: data,
         }).done(function (response) {
             const message = messageList[response.code];
-            console.log(response.code);
+            if (response.code == 1) {
+                return;
+            }
             if (response.code == 5) {
                 $("#confirmJoinModal").modal('show');
                 $("#confirmJoinModal .confirmButton").off().click(function () {
