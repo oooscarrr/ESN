@@ -14,6 +14,7 @@ This function validates user login info
     3. If username does not exist and username does not meet the username rule, return error code 3
     4. If username does not exist and password does not meet the password rule, return error code 4
     5. If username does not exist and both username and password meet the rule, return success code 5
+    6. If server error, return error code 6
 */
 router.get('/validateUserInfo', async function (req, res) {
     try {
@@ -21,7 +22,7 @@ router.get('/validateUserInfo', async function (req, res) {
         const username = req.query.username.toLowerCase();
         // TODO: encrypt password
         const password = req.query.password;
-        const data = await User.findOne({ username: username });
+        const data = await User.findByUsername(username);
         if (data) {
             // User exists and password is correct
             if (await bcrypt.compare(password, data.password)) {
@@ -44,6 +45,7 @@ router.get('/validateUserInfo', async function (req, res) {
         return res.send({ 'status': 'success', 'code': 5 });
     } catch (error) {
         console.log(error);
+        return res.send({ 'status': 'error', 'code': 6 });
     }
 });
 
@@ -60,9 +62,8 @@ router.post('/createNewUser', async (req, res) => {
         const username = req.body.username.toLowerCase();
         const password = req.body.password;
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ username: username, password: hashedPassword });
-        const newUser = await user.save();
-        res.sendStatus(200);
+        await User.registerNewUser(username, hashedPassword);
+        res.sendStatus(201);
     }
     catch (error) {
         res.sendStatus(500);
