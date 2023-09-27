@@ -50,7 +50,7 @@ app.get('/joinCommunity', function (req, res) {
 });
 
 // Register routes
-app.use('/user', userRouter);
+app.use('/users', userRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -34,9 +34,11 @@ $(document).ready(function () {
         }
         const data = $(this).serialize();
         $.ajax({
-            type: 'GET',
-            url: `/user/validateUserInfo?`,
-            data: data,
+            method: 'PATCH',
+            url: `/users/${username}/online`,
+            data: {
+                "password": password,
+            },
         }).done(function (response) {
             const message = messageList[response.code];
             if (response.code == 1) {
@@ -61,8 +63,8 @@ $(document).ready(function () {
 
 const confirmJoin = (data) => {
     $.ajax({
-        type: 'POST',
-        url: '/user/createNewUser',
+        method: 'POST',
+        url: '/users',
         data: data,
     }).done(function (response) {
         $('#welcomeModal').modal('show');
