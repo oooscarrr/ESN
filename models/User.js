@@ -1,10 +1,22 @@
 const mongoose = require('mongoose');
 
 // DB Schema
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+{
     username: String,
     password: String,
+}, {
+    statics: {
+        findByUsername(username) {
+            return this.findOne({ username: username });
+        },
+        registerNewUser(username, hashedPassword) {
+            const user = new User({ username: username, password: hashedPassword });
+            return user.save();
+        }
+    }
 });
+// Model
 const User = mongoose.model('User', userSchema);
 
 // A list of all banned usernames

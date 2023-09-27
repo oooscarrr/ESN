@@ -1,8 +1,10 @@
 const messageList = {
+    1: 'Log in successfully',
     2: 'Wrong username or password',
     3: 'Username does not meet the rule',
     4: 'Password does not meet the rule',
-    5: 'Success'
+    5: 'Registered successfully',
+    6: 'Internal server error'
 }
 
 $(document).ready(function () {
