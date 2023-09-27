@@ -1,14 +1,17 @@
-const createError = require('http-errors');
-const express = require('express');
-const logger = require('morgan');
-const mongoose = require('mongoose');
+import createError from 'http-errors';
+import express from 'express';
+import logger from 'morgan';
+import mongoose from 'mongoose';
+import { createServer } from 'http';
+import {Server} from 'socket.io';
+import parser from 'body-parser';
+import path from 'path';
+import userRouter from './routes/userRoutes.js';
 
 const app = express();
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
-
-const parser = require('body-parser');
-var path = require('path');
+const server = createServer(app);
+const io = new Server(server);
+const __dirname = path.resolve();
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -16,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set up view engine
-app.set('views', path.join(path.join(__dirname, 'views')));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 io.on('connection', () => {
@@ -47,7 +50,6 @@ app.get('/joinCommunity', function (req, res) {
 });
 
 // Register routes
-const userRouter = require('./routes/userRoutes');
 app.use('/user', userRouter);
 
 // catch 404 and forward to error handler
@@ -66,4 +68,4 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+export default server;

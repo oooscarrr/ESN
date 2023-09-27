@@ -2,9 +2,10 @@
   "name": "github-pat-11bchhvwi0i6sbexfewjbu-3vvcrds5keadnmunh",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "node ./bin/www",
-    "debug": "nodemon ./bin/www"
+    "start": "node ./bin/www.js",
+    "debug": "nodemon ./bin/www.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

@@ -1,7 +1,7 @@
-var express = require('express');
-var router = express.Router();
-const bcrypt = require('bcrypt');
-const { User, bannedUsernamesSet } = require('../models/User');
+import express from 'express';
+const router = express.Router();
+import bcrypt from 'bcrypt';
+import { User, bannedUsernamesSet } from '../models/User.js';
 
 /*
 This function validates user login info
@@ -74,4 +74,4 @@ router.post('/createNewUser', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
