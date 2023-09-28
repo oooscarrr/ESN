@@ -27,9 +27,7 @@ $(document).ready(function () {
             if (password == '') {
                 $('#passwordField').addClass('error');
             }
-            $('#errorHeader').text('Invalid Join');
-            $('#errorMessage').text('Please fill in all fields');
-            $('.ui.error.message').show();
+            showErrorMessage('Please fill in all fields');
             return;
         }
         const data = $(this).serialize();
@@ -40,7 +38,6 @@ $(document).ready(function () {
                 "password": password,
             },
         }).done(function (response) {
-            const message = messageList[response.code];
             if (response.code == 1) {
                 return;
             }
@@ -51,9 +48,7 @@ $(document).ready(function () {
                     confirmJoin(data);
                 });
             } else {
-                $('#errorHeader').text('Invalid Join');
-                $('#errorMessage').text(message);
-                $('.ui.error.message').show();
+                showErrorMessage(messageList[response.code]);
             }
         }).fail(function (response) {
             alert(response.message);
@@ -75,4 +70,10 @@ const confirmJoin = (data) => {
     }).fail(function (response) {
         alert(response.message);
     });
+}
+
+const showErrorMessage = (message) => {
+    $('#errorHeader').text('Invalid Join');
+    $('#errorMessage').text(message);
+    $('.ui.error.message').show();
 }
