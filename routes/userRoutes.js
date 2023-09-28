@@ -4,30 +4,29 @@ import bcrypt from 'bcrypt';
 import { User, bannedUsernamesSet } from '../models/User.js';
 
 /*
-This function validates user login info
+This function validates user login info and returns status code accordingly
 - Url:
-    /users/{username}/online
+    /users/{username}/validation
 - Input:
     username (str)
     password (str)
 - Output:
-    1. If username exists and password matches the user data in DB, return success code 1 and change user status to be online
+    1. If username exists and password matches the user data in DB, return success code 1
     2. If username exists but password does not match the user data in DB, return error code 2
     3. If username does not exist and username does not meet the username rule, return error code 3
     4. If username does not exist and password does not meet the password rule, return error code 4
     5. If username does not exist and both username and password meet the rule, return success code 5
     6. If server error, return error code 6
 */
-router.patch('/:username/online', async (req, res) => {
+router.get('/:username/validation', async (req, res) => {
     try {
         // Username is not case sensitive
         const username = req.params.username.toLowerCase();
-        const password = req.body.password;
-        const data = await User.findByUsername(username);
-        if (data) {
+        const password = req.query.password;
+        const user = await User.findByUsername(username);
+        if (user) {
             // User exists and password is correct
-            if (await bcrypt.compare(password, data.password)) {
-                // TODO: change user status to be online
+            if (await bcrypt.compare(password, user.password)) {
                 return res.send({ 'status': 'success', 'code': 1 });
                 // User exists but password is incorrect
             } else {
@@ -77,5 +76,35 @@ router.post('', async (req, res) => {
         console.log('User Saved')
     }
 });
+
+/*
+This function changes the user's status to be online
+- Url:
+    /users/{username}/online
+- Input:
+    N/A
+- Output: 
+    A HTTP status code
+*/
+router.patch('/:username/online', async (req, res) => {
+    try {
+        const username = req.params.username.toLowerCase();
+        const user = await User.findByUsername(username);
+        if (user) {
+            // TODO: change user's status to be online
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(404);
+        }
+    }
+    catch (error) {
+        res.sendStatus(500);
+        return console.log('Login Error: ', error);
+    }
+    finally {
+        console.log('User Loged In')
+    }
+});
+
 
 export default router;

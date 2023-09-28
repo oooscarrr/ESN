@@ -34,14 +34,21 @@ $(document).ready(function () {
         }
         const data = $(this).serialize();
         $.ajax({
-            method: 'PATCH',
-            url: `/users/${username}/online`,
+            method: 'GET',
+            url: `/users/${username}/validation`,
             data: {
                 "password": password,
             },
         }).done(function (response) {
             const message = messageList[response.code];
             if (response.code == 1) {
+                $.ajax({
+                    method: 'PATCH',
+                    url: `/users/${username}/online`,
+                }).done(function () {
+                    // TODO: Redorect to ESN page
+                    console.log('Loged In');
+                })
                 return;
             }
             if (response.code == 5) {
