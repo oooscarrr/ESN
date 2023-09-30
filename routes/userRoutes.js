@@ -106,5 +106,9 @@ router.patch('/:username/online', async (req, res) => {
     }
 });
 
+router.get('/', async (req, res) => {
+    res.render('users/list');
+});
+
 
 export default router;

@@ -13,6 +13,7 @@ const server = createServer(app);
 const io = new Server(server);
 const __dirname = path.resolve();
 
+app.locals.basedir = __dirname;
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
