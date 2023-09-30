@@ -17,3 +17,39 @@ a {
   justify-content: center;
   width: 300px;
 }
+
+.circle {
+  width: 2em;
+  height: 2em;
+  border-radius: 50%;
+}
+.circle.status.online {
+  background-color: greenyellow;
+}
+.circle.status.offline {
+  background-color: grey;
+}
+.circle.status.emergency {
+  background-color: red;
+}
+
+#DirectoryBox {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  margin-top: 20px;
+  border-top: 1px solid grey;
+  padding: 1em;
+}
+
+#DirectoryBox .user-row{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#DirectoryBox .user-row .username {
+  margin-left: 1em;
+}

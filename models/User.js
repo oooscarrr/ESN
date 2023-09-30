@@ -2,20 +2,28 @@ import mongoose from 'mongoose';
 
 // DB Schema
 const userSchema = new mongoose.Schema(
-{
-    username: String,
-    password: String,
-}, {
-    statics: {
-        findByUsername(username) {
-            return this.findOne({ username: username });
-        },
-        registerNewUser(username, hashedPassword) {
-            const user = new User({ username: username, password: hashedPassword });
-            return user.save();
+    {
+        username: String,
+        password: String,
+        createdAt: { type: Date, default: Date.now },
+        isOnline: { type: Boolean, default: false },
+        lastLoginAt: { type: Date, default: Date.now },
+        lastStatusCode: { type: String, enum: ['Red', 'Yellow', 'Green'], default: 'Green' },
+        isActive: { type: Boolean, default: true },
+    },
+    {
+        statics: {
+            findByUsername(username) {
+                return this.findOne({ username: username });
+            },
+            registerNewUser(username, hashedPassword) {
+                const user = new User({ username: username, password: hashedPassword });
+                return user.save();
+            }
         }
     }
-});
+);
+
 // Model
 const User = mongoose.model('User', userSchema);
 
