@@ -1,14 +1,31 @@
 body {
   font-family: Tahoma, Verdana, sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin: 0;
+  padding: 0;
+  font-size: 12px
 }
 
 a {
   color: #00B7FF;
   text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  /* min-height: 100vh */
+}
+.horizontal.centered.box {
+  align-items: center;
+}
+.vertical.centered.box {
+  justify-content: center;
 }
 
 #joinForm {
@@ -23,10 +40,10 @@ a {
   height: 2em;
   border-radius: 50%;
 }
-.circle.status.online {
+.circle.status.ok {
   background-color: greenyellow;
 }
-.circle.status.offline {
+.circle.status.help {
   background-color: grey;
 }
 .circle.status.emergency {
@@ -38,7 +55,6 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: start;
-  margin-top: 20px;
   border-top: 1px solid grey;
   padding: 1em;
 }
@@ -47,9 +63,15 @@ a {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
 
-#DirectoryBox .user-row .username {
-  margin-left: 1em;
+#DirectoryBox .user-row .content {
+  padding-left: 1em;
+  width:auto;
+  flex-grow: 1;
+}
+
+#DirectoryBox .user-row .content a.offline {
+  color: grey;
 }

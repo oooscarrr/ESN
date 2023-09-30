@@ -2,20 +2,37 @@ extends /views/layout
 
 block title
     title ESN Directory 
-
+block append scripts
+    script(src='javascripts/users/list.js')
 block content
-    h1 ESN Directory
-    .ui.grid.container#DirectoryBox
-        .ui.relaxed.divided.list
-            for user in users
-                .item.user-row
-                    if user.isOnline
-                        .circle.status.online
-                    else
-                        .circle.status.offline
-                    .content
-                        a.username(href='/users/' + user._id) #{user.username}
-                
+    .horizontal.centered.box
+        h1 ESN Directory
+        .ui.container
+            .ui.fluid.accordion#DirectoryBox
+                - online_users = users.filter(user => user.isOnline)
+                - offline_users = users.filter(user => !user.isOnline)
+                .title.active
+                    i.dropdown.icon
+                    span Online Users
+                    span.ui.label #{online_users.length}
+                .content.active
+                    .ui.relaxed.divided.list
+                        for user in online_users
+                            .item.user-row
+                                .circle(class=`status ${user.lastStatus}`)
+                                .content
+                                    a.username(href='/users/' + user._id) #{user.username}
+                .title.active
+                    i.dropdown.icon
+                    span Offline Users
+                    span.ui.label #{offline_users.length}
+                .content.active
+                    .ui.relaxed.divided.list
+                        for user in offline_users
+                            .item.user-row
+                                .circle(class=`status ${user.lastStatus}`)
+                                .content
+                                    a.username.offline(href='/users/' + user._id) #{user.username}
         
 
 

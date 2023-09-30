@@ -7,29 +7,30 @@ block append scripts
   script(src='javascripts/JoinCommunity.js')
 
 block content
-  h1 Join Community
-  form.ui.form.error#joinForm(autoComplete='off')
-    .field#usernameField
-      label Username
-      input#username(type='text' name='username')
-    .field#passwordField
-      label Password
-      input#password(type='password' name='password')
-    .ui.error.message
-      .header#errorHeader
-      p#errorMessage
-    button.ui.button(type='submit') Join!
+  .horizontal.vertical.centered.box
+    h1 Join Community
+    form.ui.form.error#joinForm(autoComplete='off')
+      .field#usernameField
+        label Username
+        input#username(type='text' name='username')
+      .field#passwordField
+        label Password
+        input#password(type='password' name='password')
+      .ui.error.message
+        .header#errorHeader
+        p#errorMessage
+      button.ui.button(type='submit') Join!
 
-  .ui.mini.modal#confirmJoinModal
-    .header Confirm Join
-    .content Are you sure you want to join?
-    .actions
-      .ui.button.red.cancelButton No
-      .ui.button.green.confirmButton Yes
+    .ui.mini.modal#confirmJoinModal
+      .header Confirm Join
+      .content Are you sure you want to join?
+      .actions
+        .ui.button.red.cancelButton No
+        .ui.button.green.confirmButton Yes
 
-  .ui.modal#welcomeModal
-    .header Welcome!
-    .content Welcome to the community!
-      img(src='images/statusGuide.jpg' width='100%')
-    .actions
-      .ui.button.okButton Acknowledge
+    .ui.modal#welcomeModal
+      .header Welcome!
+      .content Welcome to the community!
+        img(src='images/statusGuide.jpg' width='100%')
+      .actions
+        .ui.button.okButton Acknowledge
