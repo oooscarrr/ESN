@@ -1,0 +1,23 @@
+extends /views/layout
+
+block title
+    title ESN Directory 
+
+block content
+    h1 ESN Directory
+    .ui.grid.container#DirectoryBox
+        .ui.relaxed.divided.list
+            for user in users
+                .item.user-row
+                    if user.isOnline
+                        .circle.status.online
+                    else
+                        .circle.status.offline
+                    .content
+                        a.username(href='/users/' + user._id) #{user.username}
+                
+        
+
+
+        
+
