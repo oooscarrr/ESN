@@ -99,5 +99,6 @@ export const log_user_in = async (req, res) => {
 }
 
 export const list_users = async (req, res) => {
-    res.render('users/list');
+    const all_users = await User.find().sort({isOnline: -1, username: 1});
+    res.render('users/list', { users: all_users });
 }

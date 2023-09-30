@@ -7,16 +7,15 @@ block content
     h1 ESN Directory
     .ui.grid.container#DirectoryBox
         .ui.relaxed.divided.list
-            .item.user-row
-                .circle.status.online
-                .content
-                    a.username username1
-                    
-            .item.user-row
-                .circle.status.offline
-                .content
-                    a.username username2
-                    
+            for user in users
+                .item.user-row
+                    if user.isOnline
+                        .circle.status.online
+                    else
+                        .circle.status.offline
+                    .content
+                        a.username(href='/users/' + user._id) #{user.username}
+                
         
 
 
