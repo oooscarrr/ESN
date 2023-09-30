@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
         createdAt: { type: Date, default: Date.now },
         isOnline: { type: Boolean, default: false },
         lastLoginAt: { type: Date, default: Date.now },
-        lastStatusCode: { type: String, enum: ['Red', 'Yellow', 'Green'], default: 'Green' },
+        lastStatus: { type: String, enum: ['ok', 'help', 'emergency'], default: 'ok' },
         isActive: { type: Boolean, default: true },
     },
     {
