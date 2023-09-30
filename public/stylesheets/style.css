@@ -1,14 +1,24 @@
 body {
   font-family: Tahoma, Verdana, sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
 a {
   color: #00B7FF;
   text-decoration: none;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.horizontal.centered.box {
+  align-items: center;
+}
+.vertical.centered.box {
+  justify-content: center;
 }
 
 #joinForm {
