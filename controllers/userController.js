@@ -7,7 +7,7 @@ This function validates user login info and returns status code accordingly
     username (str)
     password (str)
 - Output:
-    1. If username exists and password matches the user data in DB, return success code 1
+    1. If username exists and password matches the user data in DB, return success code 1 and userId
     2. If username exists but password does not match the user data in DB, return error code 2
     3. If username does not exist and username does not meet the username rule, return error code 3
     4. If username does not exist and password does not meet the password rule, return error code 4
@@ -23,7 +23,7 @@ export const validate_login_info = async (req, res) => {
         if (user) {
             // User exists and password is correct
             if (await bcrypt.compare(password, user.password)) {
-                return res.send({ 'status': 'success', 'code': 1 });
+                return res.send({ 'status': 'success', 'code': 1, 'userId': user._id.valueOf() });
                 // User exists but password is incorrect
             } else {
                 return res.send({ 'status': 'error', 'code': 2 });
@@ -60,11 +60,12 @@ export const create_user = async (req, res) => {
         const password = req.body.password;
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.registerNewUser(username, hashedPassword);
-        res.sendStatus(201);
+        const user = await User.findByUsername(username);
+        res.status(201).send({ 'userId': user._id.valueOf() });
     }
     catch (error) {
         res.sendStatus(500);
-        return console.log('createNewUser Error: ', error);
+        return console.log('create_user Error: ', error);
     }
     finally {
         console.log('User Saved')
@@ -72,18 +73,21 @@ export const create_user = async (req, res) => {
 }
 
 /*
-This function changes the user's status to be online
+This function changes the user's online status to be true when
+API url is "online" or false when API url is "offline"
 - Input:
     N/A
 - Output: 
     A HTTP status code
 */
-export const log_user_in = async (req, res) => {
+export const change_user_online_status = async (req, res) => {
+    const onlineStatus = req.url.split('/')[2];
+    const isOnline = onlineStatus === 'online';
     try {
-        const username = req.params.username.toLowerCase();
-        const user = await User.findByUsername(username);
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
         if (user) {
-            // TODO: change user's status to be online
+            await User.changeUserOnlineStatus(user, isOnline);
             res.sendStatus(200);
         } else {
             res.sendStatus(404);
@@ -91,13 +95,17 @@ export const log_user_in = async (req, res) => {
     }
     catch (error) {
         res.sendStatus(500);
-        return console.log('Login Error: ', error);
-    }
-    finally {
-        console.log('User Loged In')
+        return console.log('change_user_online_status Error: ', error);
     }
 }
 
+/*
+This function returns ??
+- Input:
+    N/A
+- Output: 
+    ??
+*/
 export const list_users = async (req, res) => {
     const all_users = await User.find().sort({isOnline: -1, username: 1});
     res.render('users/list', { users: all_users });

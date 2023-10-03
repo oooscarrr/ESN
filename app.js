@@ -7,6 +7,7 @@ import {Server} from 'socket.io';
 import parser from 'body-parser';
 import path from 'path';
 import userRouter from './routes/userRoutes.js';
+import publicMessageRouter from './routes/publicMessageRoutes.js';
 
 const app = express();
 const server = createServer(app);
@@ -52,6 +53,7 @@ app.get('/joinCommunity', function (req, res) {
 
 // Register routes
 app.use('/users', userRouter);
+app.use('/messages/public', publicMessageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -69,4 +71,4 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-export default server;
+export { server, io };
