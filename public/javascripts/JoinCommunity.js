@@ -1,3 +1,5 @@
+let userId;
+
 const messageList = {
     1: 'Log in successfully',
     2: 'Wrong username or password',
@@ -42,9 +44,10 @@ $(document).ready(function () {
         }).done(function (response) {
             const message = messageList[response.code];
             if (response.code == 1) {
+                userId = response.userId;
                 $.ajax({
                     method: 'PATCH',
-                    url: `/users/${username}/online`,
+                    url: `/users/${userId}/online`,
                 }).done(function () {
                     // TODO: Redorect to ESN page
                     console.log('Loged In');
@@ -74,6 +77,7 @@ const confirmJoin = (data) => {
         url: '/users',
         data: data,
     }).done(function (response) {
+        userId = response.userId;
         $('#welcomeModal').modal('show');
         $('#welcomeModal .okButton').click(function () {
             $('#welcomeModal').modal('hide');

@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-import server from '../app.js';
+import { server } from '../app.js';
 import debugModule from 'debug';
 const debug = debugModule('github-pat-11bchhvwi0i6sbexfewjbu-3vvcrds5keadnmunh:server');
 
