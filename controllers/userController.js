@@ -72,18 +72,21 @@ export const create_user = async (req, res) => {
 }
 
 /*
-This function changes the user's status to be online
+This function changes the user's online status to be true when
+API url is "online" or false when API url is "offline"
 - Input:
     N/A
 - Output: 
     A HTTP status code
 */
-export const log_user_in = async (req, res) => {
+export const change_user_online_status = async (req, res) => {
+    const onlineStatus = req.url.split('/')[2];
+    const isOnline = onlineStatus === 'online';
     try {
         const username = req.params.username.toLowerCase();
         const user = await User.findByUsername(username);
         if (user) {
-            // TODO: change user's status to be online
+            await User.changeUserOnlineStatus(user, isOnline);
             res.sendStatus(200);
         } else {
             res.sendStatus(404);
@@ -91,13 +94,17 @@ export const log_user_in = async (req, res) => {
     }
     catch (error) {
         res.sendStatus(500);
-        return console.log('Login Error: ', error);
-    }
-    finally {
-        console.log('User Loged In')
+        return console.log('Login/Logout Error: ', error);
     }
 }
 
+/*
+This function returns ??
+- Input:
+    N/A
+- Output: 
+    ??
+*/
 export const list_users = async (req, res) => {
     const all_users = await User.find().sort({isOnline: -1, username: 1});
     res.render('users/list', { users: all_users });
