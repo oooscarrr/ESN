@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema(
             registerNewUser(username, hashedPassword) {
                 const user = new User({ username: username, password: hashedPassword });
                 return user.save();
+            },
+            changeUserOnlineStatus(user, onlineStatus) {
+                user.isOnline = onlineStatus;
+                return user.save();
             }
         }
     }
