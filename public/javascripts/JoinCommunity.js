@@ -50,7 +50,7 @@ $(document).ready(function () {
                     url: `/users/${userId}/online`,
                 }).done(function () {
                     // TODO: Redorect to ESN page
-                    console.log('Loged In');
+                    console.log('Logged In');
                 })
                 return;
             }
