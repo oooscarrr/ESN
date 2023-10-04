@@ -47,7 +47,7 @@ $(document).ready(function () {
                     method: 'PATCH',
                     url: `/users/${userId}/online`,
                 }).done(function () {
-                    window.location.href = '/esnDirectory';
+                    window.location.href = '/users';
                 })
                 return;
             }
