@@ -46,8 +46,7 @@ $(document).ready(function () {
                     method: 'PATCH',
                     url: `/users/${userId}/online`,
                 }).done(function () {
-                    // TODO: Redorect to ESN page
-                    console.log('Loged In');
+                    window.location.href = '/esnDirectory';
                 })
                 return;
             }
@@ -76,7 +75,7 @@ const confirmJoin = (data) => {
         $('#welcomeModal').modal('show');
         $('#welcomeModal .okButton').click(function () {
             $('#welcomeModal').modal('hide');
-            window.location.href = "/";
+            window.location.href = '/esnDirectory';
         });
     }).fail(function (response) {
         alert(response.message);

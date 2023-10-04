@@ -51,6 +51,10 @@ app.get('/joinCommunity', function (req, res) {
   res.render('joinCommunity');
 });
 
+app.get('/esnDirectory', (req, res) => {
+  res.render('users/list', {users: []});
+})
+
 // Register routes
 app.use('/users', userRouter);
 app.use('/messages/public', publicMessageRouter);
