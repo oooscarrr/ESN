@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
-import { User, bannedUsernamesSet } from '../models/User.js';
+import {User, bannedUsernamesSet} from '../models/User.js';
+import jwt from 'jsonwebtoken';
 
 /*
 This function validates user login info and returns status code accordingly
@@ -20,29 +21,37 @@ export const validate_login_info = async (req, res) => {
         const username = req.params.username.toLowerCase();
         const password = req.query.password;
         const user = await User.findByUsername(username);
+        // Login
         if (user) {
             // User exists and password is correct
             if (await bcrypt.compare(password, user.password)) {
-                return res.send({ 'status': 'success', 'code': 1, 'userId': user._id.valueOf() });
+                // console.log(req.cookie);
+                const token = jwt.sign({
+                    id: user._id.valueOf()
+                }, "SecB3Rocks"); //the secret key to sign the token
+                return res
+                    .cookie("token", token, {maxAge: 1000 * 60 * 60 * 24, httpOnly: true})
+                    .send({'status': 'success', 'code': 1, 'userId': user._id.valueOf()});
                 // User exists but password is incorrect
             } else {
-                return res.send({ 'status': 'error', 'code': 2 });
+                return res.send({'status': 'error', 'code': 2});
             }
         }
+        //Register
         // User does not exist, create a new user
         // Username does not meet username rule
         if (username.length < 3 || bannedUsernamesSet.has(username)) {
-            return res.send({ 'status': 'error', 'code': 3 });
+            return res.send({'status': 'error', 'code': 3});
         }
         // Password does not meet password rule
         if (password.length < 4) {
-            return res.send({ 'status': 'error', 'code': 4 });
+            return res.send({'status': 'error', 'code': 4});
         }
         // Both username and password meet rules, return success code
-        return res.send({ 'status': 'success', 'code': 5 });
+        return res.send({'status': 'success', 'code': 5});
     } catch (error) {
         console.log(error);
-        return res.send({ 'status': 'error', 'code': 6 });
+        return res.send({'status': 'error', 'code': 6});
     }
 }
 
@@ -61,13 +70,11 @@ export const create_user = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.registerNewUser(username, hashedPassword);
         const user = await User.findByUsername(username);
-        res.status(201).send({ 'userId': user._id.valueOf() });
-    }
-    catch (error) {
+        res.status(201).send({'userId': user._id.valueOf()});
+    } catch (error) {
         res.sendStatus(500);
         return console.log('create_user Error: ', error);
-    }
-    finally {
+    } finally {
         console.log('User Saved')
     }
 }
@@ -92,8 +99,7 @@ export const change_user_online_status = async (req, res) => {
         } else {
             res.sendStatus(404);
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.sendStatus(500);
         return console.log('change_user_online_status Error: ', error);
     }
@@ -107,6 +113,7 @@ This function returns ??
     ??
 */
 export const list_users = async (req, res) => {
+    console.log("lsit_ users");
     const all_users = await User.find().sort({isOnline: -1, username: 1});
-    res.render('users/list', { users: all_users });
+    res.render('users/list', {users: all_users});
 }
