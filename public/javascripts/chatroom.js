@@ -52,15 +52,18 @@ $(document).ready(function() {
     retrieveAndDisplayMessages();
 
     $("#sendMessageBtn").click(function() { 
-        const userId = localStorage.getItem('userId');
+        // const userId = localStorage.getItem('userId');
         let messageContent = $("#messageInput").val();
     
         if(messageContent.trim() !== "") {
             $.ajax({
                 method: 'POST',
                 url: '/messages/public', 
+                headers:{
+                    Authorization:'Bearer ' + token
+                },
                 data: {
-                    userId: userId,
+                    // userId: userId,
                     content: messageContent,
                 }
             }).done(function(response) {
