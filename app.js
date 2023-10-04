@@ -51,9 +51,11 @@ app.get('/joinCommunity', function (req, res) {
   res.render('joinCommunity');
 });
 
-app.get('/esnDirectory', (req, res) => {
-  res.render('users/list', {users: []});
-})
+// Add the chatroom route 
+app.get('/chatroom', (req, res) => {
+  res.render('chatroom'); 
+});
+
 
 // Register routes
 app.use('/users', userRouter);

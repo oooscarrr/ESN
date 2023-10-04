@@ -1,5 +1,3 @@
-let userId;
-
 const messageList = {
     1: 'Log in successfully',
     2: 'Wrong username or password',
@@ -33,6 +31,7 @@ $(document).ready(function () {
             return;
         }
         const data = $(this).serialize();
+
         $.ajax({
             method: 'GET',
             url: `/users/${username}/validation`,
@@ -41,7 +40,9 @@ $(document).ready(function () {
             },
         }).done(function (response) {
             if (response.code == 1) {
+                console.log(response);
                 userId = response.userId;
+                localStorage.setItem('userId', userId);
                 $.ajax({
                     method: 'PATCH',
                     url: `/users/${userId}/online`,
@@ -60,7 +61,7 @@ $(document).ready(function () {
                 showErrorMessage(messageList[response.code]);
             }
         }).fail(function (response) {
-            alert(response.message);
+
         });
     });
 });
