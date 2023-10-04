@@ -1,0 +1,129 @@
+.chatroom-container {
+    font-family: 'Arial', sans-serif;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+    border: none;
+    padding: 0;
+    overflow: hidden;
+}
+
+.message-box {
+    padding: 8px;
+    background-color: #e5f2ff;
+    border-radius: 15px;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 15px;
+    max-width: 70%;
+    align-self: flex-start;
+    position: relative;
+}
+
+.sender-info .sender-name {
+    font-weight: bold;
+    color: #007aff; 
+    font-size: 16px;
+}
+
+.message-content {
+    padding: 10px;
+    position: relative;
+    font-size: 15px;
+}
+
+
+.timestamp {
+    font-size: 10px;
+    color: #aaa; 
+    position: absolute;
+    bottom: 5px;
+    right: 15px;
+}
+
+.input-area {
+    position: fixed;     
+    bottom: 0;           
+    width: 100%;        
+    display: flex;
+    padding: 20px 20px;
+    background-color: #fff;
+    border-top: 1px solid #e0e0e0;
+    align-items: center;
+    box-sizing: border-box;  
+    margin: 0;
+}
+
+
+input#messageInput {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+button#sendMessageBtn {
+    background-color: #007aff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button#sendMessageBtn:hover {
+    background-color: #005ad5;
+}
+
+
+header {
+    position: fixed;  
+    top: 0;  
+    width: 100%;  
+    background-color: #007aff; 
+    color: white;
+    display: flex; 
+    justify-content: space-between; 
+    padding: 10px 20px; 
+    z-index: 1000; /* High z-index to ensure it remains on top of other content */
+    align-items: center;
+}
+
+.header-title {
+    margin: 0;
+    text-align: center;
+    flex-grow: 1; /* This makes sure the title occupies all available space */
+}
+
+#backButton {
+    background-color: #fff; 
+    color: #007aff; 
+    padding: 10px 10px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+#backButton:hover {
+    background-color: #f0f0f0; 
+}
+
+
+
+.user-status {
+    font-weight: normal;      
+    color: #b0c7d4;           
+}
+
+
+
+#messageList {
+    padding-top: 70px;  /* Adjust based on the height of your header */
+    padding-bottom: 70px; /* Adjust based on the height of your .input-area */
+    scroll-padding-top: 70px; 
+    scroll-padding-bottom: 70px;
+    overflow-y: auto;  /* Ensure this is here to enable scrolling */
+}

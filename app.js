@@ -51,6 +51,12 @@ app.get('/joinCommunity', function (req, res) {
   res.render('joinCommunity');
 });
 
+// Add the chatroom route 
+app.get('/chatroom', (req, res) => {
+  res.render('chatroom'); 
+});
+
+
 // Register routes
 app.use('/users', userRouter);
 app.use('/messages/public', publicMessageRouter);

@@ -1,5 +1,3 @@
-let userId;
-
 const messageList = {
     1: 'Log in successfully',
     2: 'Wrong username or password',
@@ -35,6 +33,7 @@ $(document).ready(function () {
             return;
         }
         const data = $(this).serialize();
+
         $.ajax({
             method: 'GET',
             url: `/users/${username}/validation`,
@@ -44,13 +43,15 @@ $(document).ready(function () {
         }).done(function (response) {
             const message = messageList[response.code];
             if (response.code == 1) {
+                console.log(response);
                 userId = response.userId;
+                localStorage.setItem('userId', userId);
                 $.ajax({
                     method: 'PATCH',
                     url: `/users/${userId}/online`,
                 }).done(function () {
-                    // TODO: Redorect to ESN page
-                    console.log('Loged In');
+                    //delete later
+                    window.location.href = `/chatroom`;
                 })
                 return;
             }
@@ -66,7 +67,7 @@ $(document).ready(function () {
                 $('.ui.error.message').show();
             }
         }).fail(function (response) {
-            alert(response.message);
+
         });
     });
 });
@@ -87,3 +88,7 @@ const confirmJoin = (data) => {
         alert(response.message);
     });
 }
+
+
+
+
