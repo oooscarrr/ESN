@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import {User, bannedUsernamesSet} from '../models/User.js';
+import { io } from '../app.js';
 import jwt from 'jsonwebtoken';
 
 /*
@@ -30,6 +31,7 @@ export const validate_login_info = async (req, res) => {
                     id: user._id.valueOf()
                 }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
                 await change_user_online_status(user._id, true);
+                io.emit('userOnlineStatusChanged');
                 return res
                     .cookie('token', token)
                     .send({'status': 'success', 'code': 1, 'userId': user._id.valueOf()});
@@ -66,7 +68,8 @@ This function logs the user out and clears the cookie
 export const logout = async (req, res) => {
     try {
         const user = await User.findById(req.userId);
-        await change_user_online_status(user, false);
+        // await change_user_online_status(user, false);
+        io.emit('userOnlineStatusChanged');
         res.clearCookie('token');
         res.redirect('/');
     } catch (error) {
@@ -90,7 +93,8 @@ export const create_user = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.registerNewUser(username, hashedPassword);
         const user = await User.findByUsername(username);
-        change_user_online_status(user._id, true);
+        await change_user_online_status(user._id, true);
+        io.emit('userOnlineStatusChanged');
         res.status(201);
     } catch (error) {
         res.sendStatus(500);

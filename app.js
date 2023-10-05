@@ -5,12 +5,15 @@ import mongoose from 'mongoose';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cookieParser from "cookie-parser";
+import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
 import path from 'path';
 import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
+import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
+import { on } from 'events';
 
 const app = express();
 const server = createServer(app);
@@ -35,11 +38,42 @@ app.use(attachUserInfo);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+const onlineUsers = {};
+// Set up socket.io
 io.on('connection', socket => {
   console.log('IO Connected by', socket.id);
-});
-io.on('disconnect', socket => {
-  console.log('IO Disconnected by', socket.id);
+  const cookies = cookie.parse(socket.handshake.headers.cookie);
+  const token = cookies.token;
+  let userId;
+  if (token) {
+    try {
+      const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      userId = data.id;
+      if (!onlineUsers[userId]) {
+        onlineUsers[userId] = 1;
+        change_user_online_status(userId, true);
+      } else {
+        onlineUsers[userId]++;
+      }
+    } catch {
+      console.log('Invalid token');
+      socket.disconnect();
+    }
+  }
+  socket.on('disconnect', () => {
+    console.log('IO Disconnected by', socket.id);
+    if (userId) {
+      onlineUsers[userId]--;
+      if (onlineUsers[userId] === 0) {
+        setTimeout(() => {
+          if (userId && onlineUsers[userId] === 0) {
+            change_user_online_status(userId, false);
+            delete onlineUsers[userId];
+          }
+        }, 5000);
+      }
+    }
+  });
 });
 
 // Connect to DB
@@ -61,13 +95,13 @@ app.get('/', function (req, res) {
   res.render('home');
 });
 
-
-app.get('/joinCommunity', function (req, res) {
+app.get('/joinCommunity', async function (req, res) {
   const token = req.cookies.token;
   if (token) {
     try {
       const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
       req.userId = data.id;
+      await change_user_online_status(req.userId, true);
       return res.redirect('/users');
     } catch {
       return res.render('joinCommunity');

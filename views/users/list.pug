@@ -4,6 +4,7 @@ include /views/mixins/navbar
 block title
     title ESN Directory 
 block append scripts
+    script(src='/socket.io/socket.io.js')
     script(src='javascripts/users/list.js')
 block content
     +navbar

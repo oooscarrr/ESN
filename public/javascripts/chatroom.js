@@ -9,16 +9,12 @@ $(document).ready(function() {
     scrollToBottom();
 
     $("#sendMessageBtn").click(function() { 
-        // const userId = localStorage.getItem('userId');
         let messageContent = $("#messageInput").val();
     
         if(messageContent.trim() !== "") {
             $.ajax({
                 method: 'POST',
                 url: '/messages/public', 
-                // headers:{
-                //     Authorization: 'Bearer ' + Cookies.get('token')
-                // },
                 data: {
                     content: messageContent,
                 }
