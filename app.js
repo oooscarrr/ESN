@@ -13,6 +13,7 @@ import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
+import { on } from 'events';
 
 const app = express();
 const server = createServer(app);
@@ -37,7 +38,7 @@ app.use(attachUserInfo);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-const userToSocketMap = new Map();
+const onlineUsers = {};
 // Set up socket.io
 io.on('connection', socket => {
   console.log('IO Connected by', socket.id);
@@ -48,19 +49,12 @@ io.on('connection', socket => {
     try {
       const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
       userId = data.id;
-      if (!userToSocketMap.has(userId)) {
-        userToSocketMap.set(userId, { count: 1, lastDisconnect: null });
+      if (!onlineUsers[userId]) {
+        onlineUsers[userId] = 1;
         change_user_online_status(userId, true);
       } else {
-        if (userToSocketMap.get(userId).lastDisconnect) {
-          const timeLapse = Date.now() - userToSocketMap.get(userId).lastDisconnect;
-          if (timeLapse > 5000) {
-            change_user_online_status(userId, true);
-          }
-        }
-        userToSocketMap.get(userId).count++;
+        onlineUsers[userId]++;
       }
-      console.log(userToSocketMap);
     } catch {
       console.log('Invalid token');
       socket.disconnect();
@@ -69,13 +63,12 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     console.log('IO Disconnected by', socket.id);
     if (userId) {
-      userToSocketMap.get(userId).count--;
-      if (userToSocketMap.get(userId).count === 0) {
-        userToSocketMap.get(userId).lastDisconnect = Date.now();
+      onlineUsers[userId]--;
+      if (onlineUsers[userId] === 0) {
         setTimeout(() => {
-          if (userToSocketMap.get(userId).count === 0 && userId) {
+          if (userId && onlineUsers[userId] === 0) {
             change_user_online_status(userId, false);
-            userToSocketMap.delete(userId);
+            delete onlineUsers[userId];
           }
         }, 5000);
       }
