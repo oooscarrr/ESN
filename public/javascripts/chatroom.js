@@ -49,6 +49,7 @@ function appendMessage(message) {
 }
 
 $(document).ready(function() {
+    console.log("TOKEN: ", Cookies.get('token'));
     retrieveAndDisplayMessages();
 
     $("#sendMessageBtn").click(function() { 
@@ -60,10 +61,9 @@ $(document).ready(function() {
                 method: 'POST',
                 url: '/messages/public', 
                 headers:{
-                    Authorization:'Bearer ' + token
+                    Authorization: 'Bearer ' + Cookies.get('token')
                 },
                 data: {
-                    // userId: userId,
                     content: messageContent,
                 }
             }).done(function(response) {

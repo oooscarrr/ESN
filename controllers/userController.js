@@ -28,9 +28,10 @@ export const validate_login_info = async (req, res) => {
                 // console.log(req.cookie);
                 const token = jwt.sign({
                     id: user._id.valueOf()
-                }, "SecB3Rocks"); //the secret key to sign the token
+                }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
+                await change_user_online_status(user._id, true);
                 return res
-                    .cookie("token", token, {maxAge: 1000 * 60 * 60 * 24, httpOnly: true})
+                    .cookie('token', token)
                     .send({'status': 'success', 'code': 1, 'userId': user._id.valueOf()});
                 // User exists but password is incorrect
             } else {
@@ -56,6 +57,25 @@ export const validate_login_info = async (req, res) => {
 }
 
 /*
+This function logs the user out and clears the cookie
+- Input:
+    N/A
+- Output: 
+    Redirect to home page on success or a HTTP status code on error
+*/
+export const logout = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
+        await change_user_online_status(user, false);
+        res.clearCookie('token');
+        res.redirect('/');
+    } catch (error) {
+        res.sendStatus(500);
+        return console.log('Logout Error:', error);
+    }
+};
+
+/*
 This function creates a new user and stores user info into the DB
 - Input: 
     username (str)
@@ -70,7 +90,8 @@ export const create_user = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.registerNewUser(username, hashedPassword);
         const user = await User.findByUsername(username);
-        res.status(201).send({'userId': user._id.valueOf()});
+        change_user_online_status(user._id, true);
+        res.status(201);
     } catch (error) {
         res.sendStatus(500);
         return console.log('create_user Error: ', error);
@@ -87,21 +108,42 @@ API url is "online" or false when API url is "offline"
 - Output: 
     A HTTP status code
 */
-export const change_user_online_status = async (req, res) => {
-    const onlineStatus = req.url.split('/')[2];
-    const isOnline = onlineStatus === 'online';
+// export const change_user_online_status = async (req, res) => {
+//     const onlineStatus = req.url.split('/')[2];
+//     const isOnline = onlineStatus === 'online';
+//     try {
+//         const userId = req.params.userId;
+//         const user = await User.findById(userId);
+//         if (user) {
+//             await User.changeUserOnlineStatus(user, isOnline);
+//             res.sendStatus(200);
+//         } else {
+//             res.sendStatus(404);
+//         }
+//     } catch (error) {
+//         res.sendStatus(500);
+//         return console.log('change_user_online_status Error: ', error);
+//     }
+// }
+
+/*
+This function changes the user's online status
+- Input:
+    userId (str)
+    onlineStatus (bool)
+- Output: 
+    N/A
+*/
+export const change_user_online_status = async (userId, onlineStatus) => {
     try {
-        const userId = req.params.userId;
         const user = await User.findById(userId);
         if (user) {
-            await User.changeUserOnlineStatus(user, isOnline);
-            res.sendStatus(200);
+            await User.changeUserOnlineStatus(user, onlineStatus);
         } else {
-            res.sendStatus(404);
+            console.log('User not found');
         }
     } catch (error) {
-        res.sendStatus(500);
-        return console.log('change_user_online_status Error: ', error);
+        console.log('change_user_online_status Error: ', error);
     }
 }
 
