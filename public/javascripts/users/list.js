@@ -13,9 +13,11 @@ const post_load = () => {
   });
 };
 
+const post_update = () => {
+  $('.ui.accordion').accordion();
+}
 $(document).ready(post_load);
 
-socket.on('onlineStatusUpdate', () => {
-  console.log('onlineStatusUpdate');
-  $("#DirectoryBox").load(location.href + " #DirectoryContent");
+socket.on('onlineStatusUpdate', async () => {
+  $("#DirectoryBox").load(location.href + " #DirectoryContent", post_update);
 });
