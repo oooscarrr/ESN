@@ -131,6 +131,18 @@ API url is "online" or false when API url is "offline"
 // }
 
 /*
+This function returns ??
+- Input:
+    N/A
+- Output: 
+    ??
+*/
+export const list_users = async (req, res) => {
+    const all_users = await User.find().sort({isOnline: -1, username: 1});
+    res.render('users/list', {users: all_users});
+}
+
+/*
 This function changes the user's online status
 - Input:
     userId (str)
@@ -149,16 +161,4 @@ export const change_user_online_status = async (userId, onlineStatus) => {
     } catch (error) {
         console.log('change_user_online_status Error: ', error);
     }
-}
-
-/*
-This function returns ??
-- Input:
-    N/A
-- Output: 
-    ??
-*/
-export const list_users = async (req, res) => {
-    const all_users = await User.find().sort({isOnline: -1, username: 1});
-    res.render('users/list', {users: all_users});
 }
