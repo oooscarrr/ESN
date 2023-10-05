@@ -11,6 +11,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
+import attachUserInfo from './middlewares/attachUserInfo.js';
 
 const app = express();
 const server = createServer(app);
@@ -29,6 +30,7 @@ const cookieOptions = {
   sameSite: 'strict',
 };
 app.use(cookieParser(cookieOptions));
+app.use(attachUserInfo);
 
 // Set up view engine
 app.set('views', path.join(__dirname, 'views'));
