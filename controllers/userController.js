@@ -30,7 +30,7 @@ export const validate_login_info = async (req, res) => {
                 const token = jwt.sign({
                     id: user._id.valueOf()
                 }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
-                // await change_user_online_status(user._id, true);
+                await change_user_online_status(user._id, true);
                 io.emit('userOnlineStatusChanged');
                 return res
                     .cookie('token', token)
@@ -93,7 +93,7 @@ export const create_user = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.registerNewUser(username, hashedPassword);
         const user = await User.findByUsername(username);
-        // change_user_online_status(user._id, true);
+        change_user_online_status(user._id, true);
         io.emit('userOnlineStatusChanged');
         res.status(201);
     } catch (error) {
