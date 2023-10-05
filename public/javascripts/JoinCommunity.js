@@ -49,7 +49,10 @@ $(document).ready(function () {
                     method: 'PATCH',
                     url: `/users/${userId}/online`,
                 }).done(function () {
-                    // TODO: Redorect to ESN page
+                    $.ajax({
+                        method: 'GET',
+                        url: `/users`,
+                    });
                     console.log('Logged In');
                 })
                 return;

@@ -9,6 +9,7 @@ import path from 'path';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 import cookieParser from "cookie-parser";
+import jwt from 'jsonwebtoken'
 
 const app = express();
 const server = createServer(app);
@@ -49,9 +50,6 @@ app.get('/', function (req, res) {
     res.render('home');
 });
 
-
-
-
 app.get('/joinCommunity', function (req, res) {
     const token = req.cookies.token;
     if (token) {
@@ -60,13 +58,11 @@ app.get('/joinCommunity', function (req, res) {
             req.userId = data.id;
             return res.redirect('/users');
         } catch {
-            // TODO: Cookies??????
             return res.render('joinCommunity');
         }
     }else{
         res.render('joinCommunity');
     }
-
 });
 
 // Register routes
@@ -88,5 +84,19 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+export function authorization (req, res, next) {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/joinCommunity');
+    }
+    try {
+        const data = jwt.verify(token, "SecB3Rocks");
+        req.userId = data.id;
+        return next();
+    } catch {
+        return res.redirect('/joinCommunity');
+    }
+};
 
 export {server, io};
