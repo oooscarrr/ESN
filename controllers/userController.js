@@ -97,7 +97,7 @@ export const create_user = async (req, res) => {
         await change_user_online_status(user._id, true);
         return res
             .cookie('token', token)
-            .send({'status': 'success', 'code': 1, 'userId': user._id.valueOf()});
+            .send({'userId': user._id.valueOf()});
     } catch (error) {
         res.sendStatus(500);
         return console.log('create_user Error: ', error);
