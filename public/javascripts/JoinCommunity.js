@@ -47,7 +47,7 @@ $(document).ready(function () {
                     method: 'PATCH',
                     url: `/users/${userId}/online`,
                 }).done(function () {
-                    window.location.href = '/users';
+                    window.location.href = '/chatroom';
                 })
                 return;
             }

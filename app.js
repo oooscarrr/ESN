@@ -2,13 +2,14 @@ import createError from 'http-errors';
 import express from 'express';
 import logger from 'morgan';
 import mongoose from 'mongoose';
-import {createServer} from 'http';
-import {Server} from 'socket.io';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import parser from 'body-parser';
+import cookieParser from "cookie-parser";
+import jwt from 'jsonwebtoken';
 import path from 'path';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
-import cookieParser from "cookie-parser";
 
 const app = express();
 const server = createServer(app);
@@ -18,7 +19,7 @@ const __dirname = path.resolve();
 app.locals.basedir = __dirname;
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 
@@ -27,51 +28,46 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 io.on('connection', () => {
-    console.log('IO Connected Successfully');
+  console.log('IO Connected Successfully');
 });
 // Connect to DB
 const DBPassword = 'm5FKvoap498MxCVQ';
 mongoose.connect(
-    `mongodb+srv://gongzizan:${DBPassword}@fse-team-proj.6d7d7lo.mongodb.net/?retryWrites=true&w=majority`,
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    },
+  `mongodb+srv://gongzizan:${DBPassword}@fse-team-proj.6d7d7lo.mongodb.net/?retryWrites=true&w=majority`,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
 );
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Error: '));
 db.once('open', function () {
-    console.log('DB Connected successfully!');
+  console.log('DB Connected successfully!');
 });
 
 app.get('/', function (req, res) {
-    res.render('home');
+  res.render('home');
 });
 
-
-
-
 app.get('/joinCommunity', function (req, res) {
-    const token = req.cookies.token;
-    if (token) {
-        try {
-            const data = jwt.verify(token, "SecB3Rocks");
-            req.userId = data.id;
-            return res.redirect('/users');
-        } catch {
-            // TODO: Cookies??????
-            return res.render('joinCommunity');
-        }
-    }else{
-        res.render('joinCommunity');
+  const token = req.cookies.token;
+  if (token) {
+    try {
+      const data = jwt.verify(token, "SecB3Rocks");
+      req.userId = data.id;
+      return res.redirect('/users');
+    } catch {
+      return res.render('joinCommunity');
     }
-
+  } else {
+    res.render('joinCommunity');
+  }
 });
 
 // Add the chatroom route 
 app.get('/chatroom', (req, res) => {
-  res.render('chatroom'); 
+  res.render('chatroom');
 });
 
 
@@ -81,18 +77,18 @@ app.use('/messages/public', publicMessageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    next(createError(404));
+  next(createError(404));
 });
 
 // error handler
 app.use(function (err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
 
-export {server, io};
+export { server, io };

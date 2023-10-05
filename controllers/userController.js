@@ -113,7 +113,7 @@ This function returns ??
     ??
 */
 export const list_users = async (req, res) => {
-    console.log("lsit_ users");
+    // console.log("lsit_ users");
     const all_users = await User.find().sort({isOnline: -1, username: 1});
     res.render('users/list', {users: all_users});
 }
