@@ -7,9 +7,11 @@ block append scripts
   //- script.
   //-   var userId = "#{userId}";
   
-  script(src="/javascripts/jquery-3.7.1.js")
+  script(src='/javascripts/jquery-3.7.1.js')
   script(src='/socket.io/socket.io.js')
   script(src='javascripts/chatroom.js')
+  script(src='https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js')
+
   
   block append styles
   link(rel='stylesheet', href='/stylesheets/chatroom.css')

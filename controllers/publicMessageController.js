@@ -1,6 +1,7 @@
 import { PublicMessage } from '../models/publicMessage.js';
 import { User } from '../models/User.js';
-import { io } from '../app.js';
+import { io, tokenKey } from '../app.js';
+import jwt from 'jsonwebtoken'
 
 /*
 This function posts a message on public wall from an user and emits a socket message
@@ -12,7 +13,9 @@ This function posts a message on public wall from an user and emits a socket mes
 */
 export const post_new_public_message = async (req, res) => {
     try {
-        const userId = req.body.userId;
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, tokenKey);
+        const userId = decodedToken.userId;
         const content = req.body.content;
         const user = await User.findById(userId);
         const publicMsg = new PublicMessage({ senderName: user.username, content: content, userStatus: user.lastStatus });
