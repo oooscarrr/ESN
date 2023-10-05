@@ -7,6 +7,7 @@ block append scripts
 block content
     .horizontal.centered.box
         h1 ESN Directory
+        button.ui.button#logoutButton Logout
         .ui.container
             .ui.fluid.accordion#DirectoryBox
                 - online_users = users.filter(user => user.isOnline)

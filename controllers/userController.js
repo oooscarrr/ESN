@@ -56,6 +56,25 @@ export const validate_login_info = async (req, res) => {
 }
 
 /*
+This function logs the user out and clears the cookie
+- Input:
+    N/A
+- Output: 
+    Redirect to home page on success or a HTTP status code on error
+*/
+export const logout = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
+        await User.changeUserOnlineStatus(user, false);
+        res.clearCookie('token');
+        res.redirect('/');
+    } catch (error) {
+        res.sendStatus(500);
+        return console.log('Logout Error:', error);
+    }
+};
+
+/*
 This function creates a new user and stores user info into the DB
 - Input: 
     username (str)

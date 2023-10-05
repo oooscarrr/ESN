@@ -47,10 +47,6 @@ $(document).ready(function () {
                     method: 'PATCH',
                     url: `/users/${userId}/online`,
                 }).done(function () {
-                    $.ajax({
-                        method: 'GET',
-                        url: `/users`,
-                    });
                     console.log('Logged In');
                     window.location.href = '/users';
                 })
@@ -66,7 +62,7 @@ $(document).ready(function () {
                 showErrorMessage(messageList[response.code]);
             }
         }).fail(function (response) {
-
+            // might be something to do
         });
     });
 });
@@ -87,7 +83,6 @@ const confirmJoin = (data) => {
         alert(response.message);
     });
 }
-
 
 const showErrorMessage = (message) => {
     $('#errorHeader').text('Invalid Join');
