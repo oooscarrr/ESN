@@ -3,6 +3,7 @@ extends /views/layout
 block title
     title ESN Directory 
 block append scripts
+    script(src='/socket.io/socket.io.js')
     script(src='javascripts/users/list.js')
 block content
     .horizontal.centered.box

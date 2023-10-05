@@ -6,11 +6,13 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import parser from 'body-parser';
 import cookieParser from "cookie-parser";
+import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
 import path from 'path';
 import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
+import { change_user_online_status } from './controllers/userController.js';
 
 const app = express();
 const server = createServer(app);
@@ -34,11 +36,50 @@ app.use(cookieParser(cookieOptions));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+const userToSocketMap = new Map();
+// Set up socket.io
 io.on('connection', socket => {
   console.log('IO Connected by', socket.id);
-});
-io.on('disconnect', socket => {
-  console.log('IO Disconnected by', socket.id);
+  const cookies = cookie.parse(socket.handshake.headers.cookie);
+  const token = cookies.token;
+  let userId;
+  if (token) {
+    try {
+      const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      userId = data.id;
+      if (!userToSocketMap.has(userId)) {
+        userToSocketMap.set(userId, { count: 1, lastDisconnect: null });
+        change_user_online_status(userId, true);
+      } else {
+        if (userToSocketMap.get(userId).lastDisconnect) {
+          const timeLapse = Date.now() - userToSocketMap.get(userId).lastDisconnect;
+          if (timeLapse > 5000) {
+            change_user_online_status(userId, true);
+          }
+        }
+        userToSocketMap.get(userId).count++;
+      }
+      console.log(userToSocketMap);
+    } catch {
+      console.log('Invalid token');
+      socket.disconnect();
+    }
+  }
+  socket.on('disconnect', () => {
+    console.log('IO Disconnected by', socket.id);
+    if (userId) {
+      userToSocketMap.get(userId).count--;
+      if (userToSocketMap.get(userId).count === 0) {
+        userToSocketMap.get(userId).lastDisconnect = Date.now();
+        setTimeout(() => {
+          if (userToSocketMap.get(userId).count === 0 && userId) {
+            change_user_online_status(userId, false);
+            userToSocketMap.delete(userId);
+          }
+        }, 5000);
+      }
+    }
+  });
 });
 
 // Connect to DB
@@ -60,7 +101,6 @@ app.get('/', function (req, res) {
   res.render('home');
 });
 
-
 app.get('/joinCommunity', function (req, res) {
   const token = req.cookies.token;
   if (token) {
@@ -80,7 +120,6 @@ app.get('/joinCommunity', function (req, res) {
 app.get('/chatroom', authorization, (req, res) => {
   res.render('chatroom');
 });
-
 
 // Register routes
 app.use('/users', userRouter);
