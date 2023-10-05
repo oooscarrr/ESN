@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+// import { io } from '../app.js';
 
 // DB Schema
 const userSchema = new mongoose.Schema(
@@ -22,6 +23,7 @@ const userSchema = new mongoose.Schema(
             },
             changeUserOnlineStatus(user, onlineStatus) {
                 user.isOnline = onlineStatus;
+                // io.emit('onlineStatusUpdate');
                 return user.save();
             }
         }
