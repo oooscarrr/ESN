@@ -91,8 +91,13 @@ export const create_user = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.registerNewUser(username, hashedPassword);
         const user = await User.findByUsername(username);
+        const token = jwt.sign({
+                    id: user._id.valueOf()
+                }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
         await change_user_online_status(user._id, true);
-        res.status(201);
+        return res
+            .cookie('token', token)
+            .send({'status': 'success', 'code': 1, 'userId': user._id.valueOf()});
     } catch (error) {
         res.sendStatus(500);
         return console.log('create_user Error: ', error);
@@ -100,32 +105,6 @@ export const create_user = async (req, res) => {
         console.log('User Saved')
     }
 }
-
-/*
-This function changes the user's online status to be true when
-API url is "online" or false when API url is "offline"
-- Input:
-    N/A
-- Output: 
-    A HTTP status code
-*/
-// export const change_user_online_status = async (req, res) => {
-//     const onlineStatus = req.url.split('/')[2];
-//     const isOnline = onlineStatus === 'online';
-//     try {
-//         const userId = req.params.userId;
-//         const user = await User.findById(userId);
-//         if (user) {
-//             await User.changeUserOnlineStatus(user, isOnline);
-//             res.sendStatus(200);
-//         } else {
-//             res.sendStatus(404);
-//         }
-//     } catch (error) {
-//         res.sendStatus(500);
-//         return console.log('change_user_online_status Error: ', error);
-//     }
-// }
 
 /*
 This function returns ??
