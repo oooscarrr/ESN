@@ -17,5 +17,5 @@ $(document).ready(post_load);
 
 socket.on('onlineStatusUpdate', () => {
   console.log('onlineStatusUpdate');
-  $("#DirectoryBox").load(location.href + " #DirectoryBox");
+  $("#DirectoryBox").load(location.href + " #DirectoryContent");
 });
