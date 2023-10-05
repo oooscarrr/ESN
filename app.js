@@ -4,7 +4,6 @@ import logger from 'morgan';
 import mongoose from 'mongoose';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import parser from 'body-parser';
 import cookieParser from "cookie-parser";
 import jwt from 'jsonwebtoken';
 import path from 'path';
@@ -77,12 +76,6 @@ app.get('/joinCommunity', function (req, res) {
     res.render('joinCommunity');
   }
 });
-
-// Add the chatroom route 
-app.get('/chatroom', authorization, (req, res) => {
-  res.render('chatroom');
-});
-
 
 // Register routes
 app.use('/users', userRouter);
