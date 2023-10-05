@@ -27,9 +27,7 @@ $(document).ready(function () {
             if (password == '') {
                 $('#passwordField').addClass('error');
             }
-            $('#errorHeader').text('Invalid Join');
-            $('#errorMessage').text('Please fill in all fields');
-            $('.ui.error.message').show();
+            showErrorMessage('Please fill in all fields');
             return;
         }
         const data = $(this).serialize();
@@ -41,7 +39,6 @@ $(document).ready(function () {
                 "password": password,
             },
         }).done(function (response) {
-            const message = messageList[response.code];
             if (response.code == 1) {
                 console.log(response);
                 userId = response.userId;
@@ -50,8 +47,12 @@ $(document).ready(function () {
                     method: 'PATCH',
                     url: `/users/${userId}/online`,
                 }).done(function () {
-                    //delete later
-                    window.location.href = `/chatroom`;
+                    $.ajax({
+                        method: 'GET',
+                        url: `/users`,
+                    });
+                    console.log('Logged In');
+                    window.location.href = '/users';
                 })
                 return;
             }
@@ -62,9 +63,7 @@ $(document).ready(function () {
                     confirmJoin(data);
                 });
             } else {
-                $('#errorHeader').text('Invalid Join');
-                $('#errorMessage').text(message);
-                $('.ui.error.message').show();
+                showErrorMessage(messageList[response.code]);
             }
         }).fail(function (response) {
 
@@ -82,7 +81,7 @@ const confirmJoin = (data) => {
         $('#welcomeModal').modal('show');
         $('#welcomeModal .okButton').click(function () {
             $('#welcomeModal').modal('hide');
-            window.location.href = "/";
+            window.location.href = '/esnDirectory';
         });
     }).fail(function (response) {
         alert(response.message);
@@ -90,4 +89,8 @@ const confirmJoin = (data) => {
 }
 
 
-
+const showErrorMessage = (message) => {
+    $('#errorHeader').text('Invalid Join');
+    $('#errorMessage').text(message);
+    $('.ui.error.message').show();
+}
