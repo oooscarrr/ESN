@@ -15,6 +15,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 const __dirname = path.resolve();
+const tokenKey = 'SecB3Rocks';
 
 app.locals.basedir = __dirname;
 app.use(logger('dev'));
@@ -54,7 +55,7 @@ app.get('/joinCommunity', function (req, res) {
     const token = req.cookies.token;
     if (token) {
         try {
-            const data = jwt.verify(token, "SecB3Rocks");
+            const data = jwt.verify(token, tokenKey);
             req.userId = data.id;
             return res.redirect('/users');
         } catch {
@@ -66,7 +67,7 @@ app.get('/joinCommunity', function (req, res) {
 });
 
 // Add the chatroom route 
-app.get('/chatroom', (req, res) => {
+app.get('/chatroom', authorization, (req, res) => {
   res.render('chatroom'); 
 });
 
@@ -91,13 +92,13 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-export function authorization (req, res, next) {
+function authorization (req, res, next) {
     const token = req.cookies.token;
     if (!token) {
         return res.redirect('/joinCommunity');
     }
     try {
-        const data = jwt.verify(token, "SecB3Rocks");
+        const data = jwt.verify(token, tokenKey);
         req.userId = data.id;
         return next();
     } catch {
@@ -105,4 +106,4 @@ export function authorization (req, res, next) {
     }
 };
 
-export {server, io};
+export {server, io, authorization, tokenKey};
