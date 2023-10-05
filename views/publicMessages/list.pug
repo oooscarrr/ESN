@@ -11,8 +11,9 @@ block append stylesheets
   link(rel='stylesheet', href='/stylesheets/chatroom.css')
 
 block content
-  header
-    h1.header-title Public Chat Room
+  +navbar 
+  //- header
+  //-   h1.header-title Public Chat Room
 
   .chatroom-container
     ul#messageList
