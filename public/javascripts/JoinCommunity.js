@@ -40,19 +40,9 @@ $(document).ready(function () {
             },
         }).done(function (response) {
             if (response.code == 1) {
-                console.log(response);
-                userId = response.userId;
-                localStorage.setItem('userId', userId);
-                $.ajax({
-                    method: 'PATCH',
-                    url: `/users/${userId}/online`,
-                }).done(function () {
-                    console.log('Logged In');
-                    window.location.href = '/users';
-                })
-                return;
+                window.location.href = '/users';
             }
-            if (response.code == 5) {
+            else if (response.code == 5) {
                 $("#confirmJoinModal").modal('show');
                 $("#confirmJoinModal .confirmButton").off().click(function () {
                     $("#confirmJoinModal").modal('hide');
@@ -61,9 +51,7 @@ $(document).ready(function () {
             } else {
                 showErrorMessage(messageList[response.code]);
             }
-        }).fail(function (response) {
-            // might be something to do
-        });
+        })
     });
 });
 
@@ -72,15 +60,14 @@ const confirmJoin = (data) => {
         method: 'POST',
         url: '/users',
         data: data,
-    }).done(function (response) {
-        userId = response.userId;
+    }).done(function () {
         $('#welcomeModal').modal('show');
         $('#welcomeModal .okButton').click(function () {
             $('#welcomeModal').modal('hide');
-            window.location.href = '/esnDirectory';
+            window.location.href = '/users';
         });
-    }).fail(function (response) {
-        alert(response.message);
+    }).fail(function () {
+        showErrorMessage(messageList[6]);
     });
 }
 

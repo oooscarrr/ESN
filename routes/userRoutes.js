@@ -12,8 +12,8 @@ const router = express.Router();
 
 router.get('/:username/validation', validate_login_info);
 router.post('', create_user);
-router.patch('/:userId/online', authorization, change_user_online_status);
-router.patch('/:userId/offline', authorization, change_user_online_status);
+// router.patch('/:userId/online', authorization, change_user_online_status);
+// router.patch('/:userId/offline', authorization, change_user_online_status);
 router.post('/logout', authorization, logout);
 router.get('', authorization, list_users);
 

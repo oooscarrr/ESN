@@ -22,15 +22,24 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cookieParser());
+const cookieOptions = {
+  maxAge: 1000 * 60 * 60 * 24,
+  httpOnly: true,
+  sameSite: 'strict',
+};
+app.use(cookieParser(cookieOptions));
 
 // Set up view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-io.on('connection', () => {
-  console.log('IO Connected Successfully');
+io.on('connection', socket => {
+  console.log('IO Connected by', socket.id);
 });
+io.on('disconnect', socket => {
+  console.log('IO Disconnected by', socket.id);
+});
+
 // Connect to DB
 const DBPassword = 'm5FKvoap498MxCVQ';
 mongoose.connect(

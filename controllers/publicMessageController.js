@@ -13,9 +13,7 @@ This function posts a message on public wall from an user and emits a socket mes
 */
 export const post_new_public_message = async (req, res) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, tokenKey);
-        const userId = decodedToken.userId;
+        const userId = req.userId;
         const content = req.body.content;
         const user = await User.findById(userId);
         const publicMsg = new PublicMessage({ senderName: user.username, content: content, userStatus: user.lastStatus });
