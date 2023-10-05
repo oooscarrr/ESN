@@ -101,12 +101,13 @@ app.get('/', function (req, res) {
   res.render('home');
 });
 
-app.get('/joinCommunity', function (req, res) {
+app.get('/joinCommunity', async function (req, res) {
   const token = req.cookies.token;
   if (token) {
     try {
       const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
       req.userId = data.id;
+      await change_user_online_status(req.userId, true);
       return res.redirect('/users');
     } catch {
       return res.render('joinCommunity');
