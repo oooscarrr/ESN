@@ -15,9 +15,6 @@ $(document).ready(function() {
             $.ajax({
                 method: 'POST',
                 url: '/messages/public', 
-                headers:{
-                    Authorization: 'Bearer ' + Cookies.get('token')
-                },
                 data: {
                     content: messageContent,
                 }
