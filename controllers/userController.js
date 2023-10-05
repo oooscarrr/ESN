@@ -31,7 +31,6 @@ export const validate_login_info = async (req, res) => {
                     id: user._id.valueOf()
                 }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
                 await change_user_online_status(user._id, true);
-                io.emit('userOnlineStatusChanged');
                 return res
                     .cookie('token', token)
                     .send({'status': 'success', 'code': 1, 'userId': user._id.valueOf()});
@@ -69,7 +68,6 @@ export const logout = async (req, res) => {
     try {
         const user = await User.findById(req.userId);
         // await change_user_online_status(user, false);
-        io.emit('userOnlineStatusChanged');
         res.clearCookie('token');
         res.redirect('/');
     } catch (error) {
@@ -94,7 +92,6 @@ export const create_user = async (req, res) => {
         await User.registerNewUser(username, hashedPassword);
         const user = await User.findByUsername(username);
         await change_user_online_status(user._id, true);
-        io.emit('userOnlineStatusChanged');
         res.status(201);
     } catch (error) {
         res.sendStatus(500);
@@ -131,6 +128,18 @@ API url is "online" or false when API url is "offline"
 // }
 
 /*
+This function returns ??
+- Input:
+    N/A
+- Output: 
+    ??
+*/
+export const list_users = async (req, res) => {
+    const all_users = await User.find().sort({isOnline: -1, username: 1});
+    res.render('users/list', {users: all_users});
+}
+
+/*
 This function changes the user's online status
 - Input:
     userId (str)
@@ -150,16 +159,4 @@ export const change_user_online_status = async (userId, onlineStatus) => {
     } catch (error) {
         console.log('change_user_online_status Error: ', error);
     }
-}
-
-/*
-This function returns ??
-- Input:
-    N/A
-- Output: 
-    ??
-*/
-export const list_users = async (req, res) => {
-    const all_users = await User.find().sort({isOnline: -1, username: 1});
-    res.render('users/list', {users: all_users});
 }
