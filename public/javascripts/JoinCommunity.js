@@ -88,6 +88,7 @@ const confirmJoin = (data) => {
     });
 }
 
+
 const showErrorMessage = (message) => {
     $('#errorHeader').text('Invalid Join');
     $('#errorMessage').text(message);
