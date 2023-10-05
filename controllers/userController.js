@@ -155,6 +155,7 @@ export const change_user_online_status = async (userId, onlineStatus) => {
         const user = await User.findById(userId);
         if (user) {
             await User.changeUserOnlineStatus(user, onlineStatus);
+            io.emit('onlineStatusUpdate');
         } else {
             console.log('User not found');
         }

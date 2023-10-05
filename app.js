@@ -70,7 +70,7 @@ io.on('connection', socket => {
             change_user_online_status(userId, false);
             delete onlineUsers[userId];
           }
-        }, 5000);
+        }, 1000);
       }
     }
   });
