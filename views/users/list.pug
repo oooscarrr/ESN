@@ -10,8 +10,8 @@ block content
     +navbar
     .horizontal.centered.box
         h1 ESN Directory
-        .ui.container
-            .ui.fluid.accordion#DirectoryBox
+        .ui.container#DirectoryBox
+            .ui.fluid.accordion#DirectoryContent
                 - online_users = users.filter(user => user.isOnline)
                 - offline_users = users.filter(user => !user.isOnline)
                 .title.active
