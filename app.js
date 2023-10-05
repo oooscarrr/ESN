@@ -4,7 +4,6 @@ import logger from 'morgan';
 import mongoose from 'mongoose';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import parser from 'body-parser';
 import cookieParser from "cookie-parser";
 import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
@@ -13,6 +12,7 @@ import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
+import attachUserInfo from './middlewares/attachUserInfo.js';
 
 const app = express();
 const server = createServer(app);
@@ -31,6 +31,7 @@ const cookieOptions = {
   sameSite: 'strict',
 };
 app.use(cookieParser(cookieOptions));
+app.use(attachUserInfo);
 
 // Set up view engine
 app.set('views', path.join(__dirname, 'views'));
@@ -115,11 +116,6 @@ app.get('/joinCommunity', async function (req, res) {
   } else {
     res.render('joinCommunity');
   }
-});
-
-// Add the chatroom route 
-app.get('/chatroom', authorization, (req, res) => {
-  res.render('chatroom');
 });
 
 // Register routes

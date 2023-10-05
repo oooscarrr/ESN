@@ -1,0 +1,32 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title Chatroom
+
+block append scripts
+  script(src='/javascripts/chatroom.js')
+  
+block append stylesheets
+  link(rel='stylesheet', href='/stylesheets/chatroom.css')
+
+block content
+  header
+    h1.header-title Public Chat Room
+
+  .chatroom-container
+    ul#messageList
+        for message in messages
+            .message-box
+                .sender-info
+                    span.sender-name #{message.senderName} 
+                        span.user-status #{message.userStatus}
+                .message-content
+                    p #{message.content}
+                    span.timestamp #{message.createdAt.toLocaleString()}
+
+    .input-area
+      input#messageInput(type='text', placeholder='Type your message...')
+      button#sendMessageBtn Send
+
+

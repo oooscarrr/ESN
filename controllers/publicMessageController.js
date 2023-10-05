@@ -36,11 +36,16 @@ This function retrieves all public messages in ascending order ranked by time po
 */
 export const get_all_public_messages = async (req, res) => {
     try {
-        const msg = await PublicMessage.find().sort({createdAt: 1});
+        const msg = await PublicMessage.find().sort({ createdAt: 1 });
         return res.status(200).send(msg);
     }
     catch (error) {
         res.sendStatus(500);
         return console.log('get_all_public_messages Error: ', error);
     }
+}
+
+export const list_public_messages = async (req, res) => {
+    const all_messages = await PublicMessage.find({}).sort({ createdAt: 1 }).limit(100).exec();
+    res.render('publicMessages/list', { messages: all_messages });
 }

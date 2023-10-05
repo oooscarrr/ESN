@@ -1,4 +1,5 @@
 extends /views/layout
+include /views/mixins/navbar
 
 block title
     title ESN Directory 
@@ -6,9 +7,9 @@ block append scripts
     script(src='/socket.io/socket.io.js')
     script(src='javascripts/users/list.js')
 block content
+    +navbar
     .horizontal.centered.box
         h1 ESN Directory
-        button.ui.button#logoutButton Logout
         .ui.container
             .ui.fluid.accordion#DirectoryBox
                 - online_users = users.filter(user => user.isOnline)
@@ -24,11 +25,11 @@ block content
                                 .circle(class=`status ${user.lastStatus}`)
                                 .content
                                     a.username(href='/users/' + user._id) #{user.username}
-                .title.active
+                .title
                     i.dropdown.icon
                     span Offline Users
                     span.ui.label #{offline_users.length}
-                .content.active
+                .content
                     .ui.relaxed.divided.list
                         for user in offline_users
                             .item.user-row

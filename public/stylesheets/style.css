@@ -28,6 +28,11 @@ a:hover {
   justify-content: center;
 }
 
+#navbar{
+  padding: 10px 20px;
+  background-color: #333;
+}
+
 #joinForm {
   display: flex;
   flex-direction: column;
