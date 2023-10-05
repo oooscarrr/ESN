@@ -47,7 +47,12 @@ $(document).ready(function () {
                     method: 'PATCH',
                     url: `/users/${userId}/online`,
                 }).done(function () {
-                    window.location.href = '/chatroom';
+                    $.ajax({
+                        method: 'GET',
+                        url: `/users`,
+                    });
+                    console.log('Logged In');
+                    window.location.href = '/users';
                 })
                 return;
             }
@@ -82,6 +87,7 @@ const confirmJoin = (data) => {
         alert(response.message);
     });
 }
+
 
 const showErrorMessage = (message) => {
     $('#errorHeader').text('Invalid Join');
