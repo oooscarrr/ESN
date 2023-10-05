@@ -8,6 +8,7 @@ import parser from 'body-parser';
 import cookieParser from "cookie-parser";
 import jwt from 'jsonwebtoken';
 import path from 'path';
+import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 
@@ -15,7 +16,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 const __dirname = path.resolve();
-const tokenKey = 'SecB3Rocks';
+dotenv.config();
 
 app.locals.basedir = __dirname;
 app.use(logger('dev'));
@@ -41,9 +42,8 @@ io.on('disconnect', socket => {
 });
 
 // Connect to DB
-const DBPassword = 'm5FKvoap498MxCVQ';
 mongoose.connect(
-  `mongodb+srv://gongzizan:${DBPassword}@fse-team-proj.6d7d7lo.mongodb.net/?retryWrites=true&w=majority`,
+  `mongodb+srv://${process.env.dbUsername}:${process.env.dbPassword}@fse-team-proj.6d7d7lo.mongodb.net/?retryWrites=true&w=majority`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -62,23 +62,23 @@ app.get('/', function (req, res) {
 
 
 app.get('/joinCommunity', function (req, res) {
-    const token = req.cookies.token;
-    if (token) {
-        try {
-            const data = jwt.verify(token, tokenKey);
-            req.userId = data.id;
-            return res.redirect('/users');
-        } catch {
-            return res.render('joinCommunity');
-        }
-    }else{
-        res.render('joinCommunity');
+  const token = req.cookies.token;
+  if (token) {
+    try {
+      const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      req.userId = data.id;
+      return res.redirect('/users');
+    } catch {
+      return res.render('joinCommunity');
     }
+  } else {
+    res.render('joinCommunity');
+  }
 });
 
 // Add the chatroom route 
 app.get('/chatroom', authorization, (req, res) => {
-  res.render('chatroom'); 
+  res.render('chatroom');
 });
 
 
@@ -102,18 +102,18 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-function authorization (req, res, next) {
-    const token = req.cookies.token;
-    if (!token) {
-        return res.redirect('/joinCommunity');
-    }
-    try {
-        const data = jwt.verify(token, tokenKey);
-        req.userId = data.id;
-        return next();
-    } catch {
-        return res.redirect('/joinCommunity');
-    }
+function authorization(req, res, next) {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.redirect('/joinCommunity');
+  }
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.userId = data.id;
+    return next();
+  } catch {
+    return res.redirect('/joinCommunity');
+  }
 };
 
-export {server, io, authorization, tokenKey};
+export { server, io, authorization };

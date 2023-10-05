@@ -1,6 +1,6 @@
 import { PublicMessage } from '../models/publicMessage.js';
 import { User } from '../models/User.js';
-import { io, tokenKey } from '../app.js';
+import { io } from '../app.js';
 import jwt from 'jsonwebtoken'
 
 /*

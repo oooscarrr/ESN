@@ -28,10 +28,10 @@ export const validate_login_info = async (req, res) => {
                 // console.log(req.cookie);
                 const token = jwt.sign({
                     id: user._id.valueOf()
-                }, "SecB3Rocks"); //the secret key to sign the token
+                }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
                 await change_user_online_status(user._id, true);
                 return res
-                    .cookie("token", token)
+                    .cookie('token', token)
                     .send({'status': 'success', 'code': 1, 'userId': user._id.valueOf()});
                 // User exists but password is incorrect
             } else {
