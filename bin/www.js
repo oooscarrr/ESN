@@ -4,9 +4,18 @@
  * Module dependencies.
  */
 
-import { server } from '../app.js';
+import { server, app } from '../app.js';
+import connectDB from '../db.js';
 import debugModule from 'debug';
 const debug = debugModule('github-pat-11bchhvwi0i6sbexfewjbu-3vvcrds5keadnmunh:server');
+
+/**
+ * Get DB url from command line and store in Express.
+ */
+const dbAddress = process.argv[2];
+const username = process.env.dbUsername;
+const password = process.env.dbPassword;
+await connectDB(username, password, dbAddress);
 
 /**
  * Get port from environment and store in Express.
