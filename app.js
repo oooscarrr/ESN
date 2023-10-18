@@ -76,21 +76,6 @@ io.on('connection', socket => {
   });
 });
 
-// Connect to DB
-mongoose.connect(
-  `mongodb+srv://${process.env.dbUsername}:${process.env.dbPassword}@fse-team-proj.6d7d7lo.mongodb.net/?retryWrites=true&w=majority`,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  },
-);
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Error: '));
-db.once('open', function () {
-  console.log('DB Connected successfully!');
-});
-
 app.get('/', function (req, res) {
   res.render('home');
 });
@@ -145,4 +130,4 @@ function authorization(req, res, next) {
   }
 };
 
-export { server, io, authorization };
+export { server, io, authorization, app };
