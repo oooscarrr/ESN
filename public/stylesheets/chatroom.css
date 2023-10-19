@@ -16,7 +16,7 @@
     border-radius: 15px;
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
     margin-bottom: 15px;
-    max-width: 70%;
+    max-width: 80%;
     align-self: flex-start;
     position: relative;
 }
@@ -121,8 +121,8 @@ header {
 
 
 #messageList {
-    padding-top: 70px;  /* Adjust based on the height of your header */
-    padding-bottom: 70px; /* Adjust based on the height of your .input-area */
+    padding-top: 2%;  /* Adjust based on the height of your header */
+    padding-bottom: 15%; /* Adjust based on the height of your .input-area */
     scroll-padding-top: 70px; 
     scroll-padding-bottom: 70px;
     overflow-y: auto;  /* Ensure this is here to enable scrolling */

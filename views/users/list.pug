@@ -25,7 +25,7 @@ block content
                             .item.user-row
                                 .circle(class=`status ${user.lastStatus}`)
                                 .content
-                                    a.username(href='/users/' + user._id) #{user.username}
+                                    a.username(href='/messages/private/' + user._id + '/' + currentUserId) #{user.username}
                 .title
                     i.dropdown.icon
                     span Offline Users
