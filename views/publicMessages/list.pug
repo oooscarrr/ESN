@@ -22,7 +22,7 @@ block content
             .message-box
                 .sender-info
                     span.sender-name #{message.senderName} 
-                        span.user-status #{message.userStatus}
+                    .circle(class=`user-status ${message.userStatus}`)
                 .message-content
                     p #{message.content}
                     span.timestamp #{message.createdAt.toLocaleString()}
@@ -30,5 +30,3 @@ block content
     .input-area
       input#messageInput(type='text', placeholder='Type your message...')
       button#sendMessageBtn Send
-
-

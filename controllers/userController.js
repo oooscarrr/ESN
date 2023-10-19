@@ -119,6 +119,26 @@ export const list_users = async (req, res) => {
 }
 
 /*
+This function changes the user's emergency status
+- Input:
+    userId (str)
+    statusCode (int) - 0: undefined, 1: ok, 2: help, 3: emergency
+- Output: 
+    N/A
+*/
+export const change_last_status = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const statusCode = req.body.status;
+        await User.changeUserLastStatus(userId, statusCode);
+        res.sendStatus(200);
+    } catch (error) {
+        res.sendStatus(500);
+        return console.log('change_last_status Error:', error);
+    }
+}
+
+/*
 This function changes the user's online status
 - Input:
     userId (str)
@@ -128,14 +148,9 @@ This function changes the user's online status
 */
 export const change_user_online_status = async (userId, onlineStatus) => {
     try {
-        const user = await User.findById(userId);
-        if (user) {
-            await User.changeUserOnlineStatus(user, onlineStatus);
-            io.emit('onlineStatusUpdate');
-        } else {
-            console.log('User not found');
-        }
+        await User.changeUserOnlineStatus(userId, onlineStatus);
+        io.emit('onlineStatusUpdate');
     } catch (error) {
-        console.log('change_user_online_status Error: ', error);
+        console.log('change_user_online_status Error:', error);
     }
 }
