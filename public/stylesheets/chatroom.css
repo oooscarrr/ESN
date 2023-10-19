@@ -39,7 +39,6 @@
     font-size: 15px;
 }
 
-
 .timestamp {
     font-size: 10px;
     color: #aaa; 
@@ -84,7 +83,6 @@ button#sendMessageBtn:hover {
     background-color: #005ad5;
 }
 
-
 header {
     /* position: fixed;   */
     top: 0;  
@@ -115,24 +113,6 @@ header {
 
 #backButton:hover {
     background-color: #f0f0f0; 
-}
-
-.circle {
-    width: 0.8em;
-    height: 0.8em;
-    border-radius: 50%;
-}
-.ok {
-    background-color: rgb(50, 178, 50);
-}
-.help {
-    background-color: rgb(248, 167, 37);
-}
-.emergency {
-    background-color: red;
-}
-.undefined {
-    background-color: grey;
 }
 
 #messageList {

@@ -49,24 +49,6 @@ a:hover {
   width: 300px;
 }
 
-.circle {
-  width: 2em;
-  height: 2em;
-  border-radius: 50%;
-}
-.ok {
-  background-color: rgb(50, 178, 50);
-}
-.help {
-  background-color: rgb(248, 167, 37);
-}
-.emergency {
-  background-color: red;
-}
-.undefined {
-  background-color: grey;
-}
-
 #buttonBox {
   text-align: right;
 }

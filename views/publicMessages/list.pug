@@ -12,6 +12,8 @@ block append stylesheets
   link(rel='stylesheet', href='/stylesheets/chatroom.css')
 
 block content
+  - const statusIconDict = {'undefined': 'question circle', 'ok': 'smile icon', 'help': 'frown icon', 'emergency': 'exclamation triangle'}
+  - const statusColorDict = {'undefined': 'grey', 'ok': 'rgb(50, 178, 50)', 'help': 'rgb(248, 167, 37)', 'emergency': 'red'}
   +navbar 
   //- header
   //-   h1.header-title Public Chat Room
@@ -22,7 +24,7 @@ block content
             .message-box
                 .sender-info
                     span.sender-name #{message.senderName} 
-                    .circle(class=`user-status ${message.userStatus}`)
+                    i.large.icon(class=statusIconDict[message.userStatus] style='color: '+statusColorDict[message.userStatus])
                 .message-content
                     p #{message.content}
                     span.timestamp #{message.createdAt.toLocaleString()}

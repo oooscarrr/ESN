@@ -8,6 +8,8 @@ block append scripts
     script(src='javascripts/users/list.js')
     script(src='/javascripts/navbar.js')
 block content
+    - const statusIconDict = {'undefined': 'question circle', 'ok': 'smile icon', 'help': 'frown icon', 'emergency': 'exclamation triangle'}
+    - const statusColorDict = {'undefined': 'grey', 'ok': 'rgb(50, 178, 50)', 'help': 'rgb(248, 167, 37)', 'emergency': 'red'}
     +navbar
     .horizontal.centered.box#contentBox
         h1 ESN Directory
@@ -23,7 +25,7 @@ block content
                     .ui.relaxed.divided.list
                         for user in online_users
                             .item.user-row
-                                .circle(class=`status ${user.lastStatus}`)
+                                i.big.icon(class=statusIconDict[user.lastStatus] style='color: '+statusColorDict[user.lastStatus])
                                 .content
                                     a.username(href='/users/' + user._id) #{user.username}
                 .title
@@ -34,7 +36,7 @@ block content
                     .ui.relaxed.divided.list
                         for user in offline_users
                             .item.user-row
-                                .circle(class=`status ${user.lastStatus}`)
+                                i.big.icon(class=statusIconDict[user.lastStatus] style='color: '+statusColorDict[user.lastStatus])
                                 .content
                                     a.username.offline(href='/users/' + user._id) #{user.username}
         
