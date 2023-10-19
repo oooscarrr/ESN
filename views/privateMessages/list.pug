@@ -1,0 +1,16 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title Private Chatroom
+
+block append scripts
+  script(src='/javascripts/privateChatroom.js')
+  script(src='/javascripts/navbar.js')
+
+//- We use the SAME css file here as the public chatroom
+block append stylesheets
+  link(rel='stylesheet', href='/stylesheets/chatroom.css')
+
+block content
+  +navbar
