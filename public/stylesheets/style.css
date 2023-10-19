@@ -29,8 +29,17 @@ a:hover {
 }
 
 #navbar{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 40px;
   padding: 10px 20px;
   background-color: #333;
+}
+
+#contentBox {
+  margin-top: 40px;
+  padding: 10px;
 }
 
 #joinForm {
@@ -40,19 +49,8 @@ a:hover {
   width: 300px;
 }
 
-.circle {
-  width: 2em;
-  height: 2em;
-  border-radius: 50%;
-}
-.circle.status.ok {
-  background-color: greenyellow;
-}
-.circle.status.help {
-  background-color: grey;
-}
-.circle.status.emergency {
-  background-color: red;
+#buttonBox {
+  text-align: right;
 }
 
 #DirectoryContent {
