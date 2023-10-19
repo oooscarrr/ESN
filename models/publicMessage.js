@@ -6,7 +6,7 @@ const publicMessageSchema = new mongoose.Schema(
         senderName: String,
         content: String,
         createdAt: { type: Date, default: Date.now },
-        userStatus: { type: String, enum: ['ok', 'help', 'emergency'], default: 'ok' },
+        userStatus: { type: String, enum: ['undefined', 'ok', 'help', 'emergency'], default: 'undefined' },
     },
     {
         statics: {
