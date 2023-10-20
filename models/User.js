@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 // A list of all possible status codes, 0 for undefined, 1 for ok, 2 for help, 3 for emergency
 let statusList = ['undefined', 'ok', 'help', 'emergency'];
@@ -61,5 +61,4 @@ bannedUsernamesList = bannedUsernamesList.toLowerCase().split(" ");
 // A set of all banned usernames
 const bannedUsernamesSet = new Set(bannedUsernamesList);
 
-
-export { User, bannedUsernamesSet };
+module.exports = { User, bannedUsernamesSet };
