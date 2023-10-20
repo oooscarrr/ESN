@@ -1,5 +1,4 @@
-import { validateUsername, validatePassword } from '../utils/validation';
-import { bannedUsernamesSet } from '../models/User';
+import { validateUsername, validatePassword } from '../utils/validation.js';
 
 describe('validateUsername', () => {
     // Positive tests
