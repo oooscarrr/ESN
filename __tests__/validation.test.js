@@ -1,5 +1,5 @@
-const { validateUsername, validatePassword } = require('../utils/validation');
-const { bannedUsernamesSet } = require('../models/User');
+import { validateUsername, validatePassword } from '../utils/validation';
+import { bannedUsernamesSet } from '../models/User';
 
 describe('validateUsername', () => {
     // Positive tests
