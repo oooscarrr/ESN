@@ -9,7 +9,7 @@ function scrollToBottom() {
 
 function senderMsgObj(message) {
     const localTime = new Date(message.createdAt).toLocaleString()
-    return "<div class='message-box'><div class='sender-info'><span class='sender-name-self'>" + message.senderName + "(Me)" + "<span class='user-status'>" + message.senderStatus + "</span></span></div><div class='message-content'><p>" + message.content + "</p><span class='timestamp'>" + localTime + "</span></div></div>"
+    return "<div class='message-box'><div class='sender-info'><span class='sender-name self'>" + message.senderName + "(Me)" + "<span class='user-status'>" + message.senderStatus + "</span></span></div><div class='message-content'><p>" + message.content + "</p><span class='timestamp'>" + localTime + "</span></div></div>"
 }
 
 function receiverMsgObj(message) {
@@ -20,10 +20,25 @@ function receiverMsgObj(message) {
 
 $(document).ready(function() {
     scrollToBottom();
+
+    // Cancel alert first
+    $.ajax({
+        method: 'POST',
+        url: '/messages/private/cancelAlert', 
+        data: {
+            senderId: anotherUserId,
+            receiverId: currentUserId,
+        }
+    }).done(function() {
+        console.log("alert cancelled")
+    }).fail(function() {
+        console.error('Failed to cancel alert:');
+    });
     
     $("#sendMessageBtn").click(function() { 
         let messageContent = $("#messageInput").val();
 
+        // Post new private message
         if(messageContent.trim() !== "") {
             $.ajax({
                 method: 'POST',
@@ -48,6 +63,22 @@ socket.on('newPrivateMessage', function(message) {
         } else {
             $("#messageList").append(receiverMsgObj(message))
         }
+
+        if (currentUserId === message.receiverId) {
+            $.ajax({
+                method: 'POST',
+                url: '/messages/private/cancelAlert', 
+                data: {
+                    senderId: anotherUserId,
+                    receiverId: currentUserId,
+                }
+            }).done(function() {
+                console.log("alert cancelled_2")
+            }).fail(function() {
+                console.error('Failed to cancel alert:');
+            });
+        }
+        
         scrollToBottom();
     }
 });

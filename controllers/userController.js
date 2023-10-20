@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import {User, bannedUsernamesSet} from '../models/User.js';
+import {Alert} from '../models/Alert.js';
 import { io } from '../app.js';
 import jwt from 'jsonwebtoken';
 
@@ -115,7 +116,15 @@ This function returns ??
 */
 export const list_users = async (req, res) => {
     const all_users = await User.find().sort({isOnline: -1, username: 1});
-    res.render('users/list', {users: all_users, currentUserId: req.userId});
+    const all_alert_senders = await Alert.find({receiverId: req.userId, alerted: true}).select({senderId: 1, _id: 0});
+
+    let senderId_array = []
+    for (let i = 0; i < all_alert_senders.length; ++i) {
+        const sender = all_alert_senders[i]
+        senderId_array.push(sender.senderId);
+    }
+
+    res.render('users/list', {users: all_users, alertSenders: senderId_array, currentUserId: req.userId});
 }
 
 /*
