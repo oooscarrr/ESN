@@ -23,7 +23,7 @@ block content
             .message-box
                 .sender-info
                     if message.senderId === currentUserId
-                        span.sender-name-self #{message.senderName} (Me)
+                        span.sender-name.self #{message.senderName} (Me)
                     else
                         span.sender-name #{message.senderName}
                     i.large.icon(class=statusIconDict[message.senderStatus] style='color: '+statusColorDict[message.senderStatus])
