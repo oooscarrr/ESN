@@ -2,8 +2,9 @@ import createError from 'http-errors';
 import express from 'express';
 import logger from 'morgan';
 import mongoose from 'mongoose';
-import { createServer } from 'http';
+import { createServer } from 'https';
 import { Server } from 'socket.io';
+import { readFileSync } from 'fs';
 import cookieParser from "cookie-parser";
 import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
@@ -17,9 +18,12 @@ import attachUserInfo from './middlewares/attachUserInfo.js';
 import { on } from 'events';
 
 const app = express();
-const server = createServer(app);
-const io = new Server(server);
 const __dirname = path.resolve();
+const privateKey = readFileSync(path.resolve(__dirname, 'server.key'), 'utf8');
+const certificate = readFileSync(path.resolve(__dirname, 'server.cert'), 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+const server = createServer(credentials, app);
+const io = new Server(server);
 dotenv.config();
 
 app.locals.basedir = __dirname;
