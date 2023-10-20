@@ -4,5 +4,27 @@ mixin navbar
         a.item(href='/users') Directory
         a.item(href='/messages/public') Public Chat
         if user
-            .right.menu
-                a.item#logoutButton Logout
+            .ui.right.dropdown.item More
+                i.dropdown.icon 
+                .menu
+                    .item#changeStatusButton Change Status
+                    .item#logoutButton Logout
+    
+    .ui.modal#changeStatusModal
+        .header Change Status
+        .content
+            form.ui.form#changeStatusForm(method='POST' action='/users/status')
+                .inline.field
+                    .ui.radio.checkbox
+                    input.statusChoice#ok(type='radio' name='status' value=1)
+                    label(for='ok' style='color: rgb(50, 178, 50);') OK
+                .inline.field
+                    .ui.radio.checkbox
+                    input.statusChoice#help(type='radio' name='status' value=2)
+                    label(for='help' style='color: rgb(248, 167, 37);') Help
+                .inline.field
+                    .ui.radio.checkbox
+                    input.statusChoice#emergency(type='radio' name='status' value=3)
+                    label(for='emergency' style='color: red;') Emergency
+                #buttonBox
+                    button.ui.button#confirmButton(type='submit') Confirm

@@ -31,7 +31,6 @@ export const validate_login_info = async (req, res) => {
                     id: user._id.valueOf()
                 }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
                 await change_user_online_status(user._id, true);
-                io.emit('userOnlineStatusChanged');
                 return res
                     .cookie('token', token)
                     .send({'status': 'success', 'code': 1, 'userId': user._id.valueOf()});
@@ -69,7 +68,6 @@ export const logout = async (req, res) => {
     try {
         const user = await User.findById(req.userId);
         // await change_user_online_status(user, false);
-        io.emit('userOnlineStatusChanged');
         res.clearCookie('token');
         res.redirect('/');
     } catch (error) {
@@ -93,61 +91,18 @@ export const create_user = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.registerNewUser(username, hashedPassword);
         const user = await User.findByUsername(username);
+        const token = jwt.sign({
+                    id: user._id.valueOf()
+                }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
         await change_user_online_status(user._id, true);
-        io.emit('userOnlineStatusChanged');
-        res.status(201);
+        return res
+            .cookie('token', token)
+            .send({'userId': user._id.valueOf()});
     } catch (error) {
         res.sendStatus(500);
         return console.log('create_user Error: ', error);
     } finally {
         console.log('User Saved')
-    }
-}
-
-/*
-This function changes the user's online status to be true when
-API url is "online" or false when API url is "offline"
-- Input:
-    N/A
-- Output: 
-    A HTTP status code
-*/
-// export const change_user_online_status = async (req, res) => {
-//     const onlineStatus = req.url.split('/')[2];
-//     const isOnline = onlineStatus === 'online';
-//     try {
-//         const userId = req.params.userId;
-//         const user = await User.findById(userId);
-//         if (user) {
-//             await User.changeUserOnlineStatus(user, isOnline);
-//             res.sendStatus(200);
-//         } else {
-//             res.sendStatus(404);
-//         }
-//     } catch (error) {
-//         res.sendStatus(500);
-//         return console.log('change_user_online_status Error: ', error);
-//     }
-// }
-
-/*
-This function changes the user's online status
-- Input:
-    userId (str)
-    onlineStatus (bool)
-- Output: 
-    N/A
-*/
-export const change_user_online_status = async (userId, onlineStatus) => {
-    try {
-        const user = await User.findById(userId);
-        if (user) {
-            await User.changeUserOnlineStatus(user, onlineStatus);
-        } else {
-            console.log('User not found');
-        }
-    } catch (error) {
-        console.log('change_user_online_status Error: ', error);
     }
 }
 
@@ -160,5 +115,42 @@ This function returns ??
 */
 export const list_users = async (req, res) => {
     const all_users = await User.find().sort({isOnline: -1, username: 1});
-    res.render('users/list', {users: all_users});
+    res.render('users/list', {users: all_users, currentUserId: req.userId});
+}
+
+/*
+This function changes the user's emergency status
+- Input:
+    userId (str)
+    statusCode (int) - 0: undefined, 1: ok, 2: help, 3: emergency
+- Output: 
+    N/A
+*/
+export const change_last_status = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const statusCode = req.body.status;
+        await User.changeUserLastStatus(userId, statusCode);
+        res.sendStatus(200);
+    } catch (error) {
+        res.sendStatus(500);
+        return console.log('change_last_status Error:', error);
+    }
+}
+
+/*
+This function changes the user's online status
+- Input:
+    userId (str)
+    onlineStatus (bool)
+- Output: 
+    N/A
+*/
+export const change_user_online_status = async (userId, onlineStatus) => {
+    try {
+        await User.changeUserOnlineStatus(userId, onlineStatus);
+        io.emit('onlineStatusUpdate');
+    } catch (error) {
+        console.log('change_user_online_status Error:', error);
+    }
 }

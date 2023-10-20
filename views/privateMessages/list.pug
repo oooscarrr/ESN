@@ -2,29 +2,31 @@ extends /views/layout
 include /views/mixins/navbar
 
 block title
-  title Chatroom
+  title Private Chatroom
 
 block append scripts
-  script(src='/javascripts/chatroom.js')
+  script(src='/javascripts/privateChatroom.js')
   script(src='/javascripts/navbar.js')
-  
+
+//- We use the SAME css file here as the public chatroom
 block append stylesheets
   link(rel='stylesheet', href='/stylesheets/chatroom.css')
 
 block content
   - const statusIconDict = {'undefined': 'question circle', 'ok': 'smile icon', 'help': 'frown icon', 'emergency': 'exclamation triangle'}
   - const statusColorDict = {'undefined': 'grey', 'ok': 'rgb(50, 178, 50)', 'help': 'rgb(248, 167, 37)', 'emergency': 'red'}
-  +navbar 
-  //- header
-  //-   h1.header-title Public Chat Room
+  +navbar
 
   .chatroom-container
     ul#messageList
-        for message in messages
+        for message in privateMessages
             .message-box
                 .sender-info
-                    span.sender-name #{message.senderName} 
-                    i.large.icon(class=statusIconDict[message.userStatus] style='color: '+statusColorDict[message.userStatus])
+                    if message.senderId === currentUserId
+                        span.sender-name-self #{message.senderName} (Me)
+                    else
+                        span.sender-name #{message.senderName}
+                    i.large.icon(class=statusIconDict[message.senderStatus] style='color: '+statusColorDict[message.senderStatus])
                 .message-content
                     p #{message.content}
                     span.timestamp #{message.createdAt.toLocaleString()}

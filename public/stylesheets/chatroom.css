@@ -16,15 +16,28 @@
     border-radius: 15px;
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
     margin-bottom: 15px;
-    max-width: 70%;
+    max-width: 80%;
     align-self: flex-start;
-    position: relative;
+    /* position: relative; */
+}
+
+.sender-info {
+    display: inline-flex;
+    align-items: center;
 }
 
 .sender-info .sender-name {
     font-weight: bold;
     color: #007aff; 
     font-size: 16px;
+    margin-right: 5px;
+}
+
+.sender-info .sender-name-self {
+    font-weight: bold;
+    color: green; 
+    font-size: 16px;
+    margin-right: 5px;
 }
 
 .message-content {
@@ -32,7 +45,6 @@
     position: relative;
     font-size: 15px;
 }
-
 
 .timestamp {
     font-size: 10px;
@@ -78,7 +90,6 @@ button#sendMessageBtn:hover {
     background-color: #005ad5;
 }
 
-
 header {
     /* position: fixed;   */
     top: 0;  
@@ -111,19 +122,11 @@ header {
     background-color: #f0f0f0; 
 }
 
-
-
-.user-status {
-    font-weight: normal;      
-    color: #b0c7d4;           
-}
-
-
-
 #messageList {
-    padding-top: 70px;  /* Adjust based on the height of your header */
-    padding-bottom: 70px; /* Adjust based on the height of your .input-area */
-    scroll-padding-top: 70px; 
-    scroll-padding-bottom: 70px;
+    margin-top: 40px;  /* Adjust based on the height of your header */
+    margin-bottom: 60px; /* Adjust based on the height of your .input-area */
+    padding-top: 10px;
+    padding-bottom: 10px;
     overflow-y: auto;  /* Ensure this is here to enable scrolling */
+    overscroll-behavior: none;
 }

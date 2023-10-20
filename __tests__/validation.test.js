@@ -1,8 +1,5 @@
 import { validateUsername, validatePassword } from '../utils/validation.js';
 
-
-
-
 describe('validateUsername', () => {
     // Positive tests
     test('should return true for a valid username not in the banned list', () => {

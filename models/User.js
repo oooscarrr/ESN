@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
         createdAt: { type: Date, default: Date.now },
         isOnline: { type: Boolean, default: false },
         lastLoginAt: { type: Date, default: Date.now },
-        lastStatus: { type: String, enum: ['ok', 'help', 'emergency'], default: 'ok' },
+        lastStatus: { type: String, enum: ['undefined', 'ok', 'help', 'emergency'], default: 'undefined' },
         isActive: { type: Boolean, default: true },
     },
     {
@@ -23,8 +23,14 @@ const userSchema = new mongoose.Schema(
                 const user = new User({ username: username, password: hashedPassword });
                 return user.save();
             },
-            changeUserOnlineStatus(user, onlineStatus) {
+            async changeUserOnlineStatus(userId, onlineStatus) {
+                const user = await this.findById(userId);
                 user.isOnline = onlineStatus;
+                return user.save();
+            },
+            async changeUserLastStatus(userId, statusCode) {
+                const user = await this.findById(userId);
+                user.lastStatus = statusList[statusCode];
                 return user.save();
             }
         }
@@ -35,7 +41,7 @@ const userSchema = new mongoose.Schema(
 const User = mongoose.model('User', userSchema);
 
 // A list of all banned usernames
-var bannedUsernamesList = "about access account accounts add address adm admin administration adult advertising affiliate \
+let bannedUsernamesList = "about access account accounts add address adm admin administration adult advertising affiliate \
     affiliates ajax analytics android anon anonymous api app apps archive atom auth authentication avatar backup banner banners \
     bin billing blog blogs board bot bots business chat cache cadastro calendar campaign careers cgi client cliente code comercial \
     compare config connect contact contest create code compras css dashboard data db design delete demo design designer dev devel dir \

@@ -11,6 +11,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
+import privateMessageRouter from './routes/privateMessageRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
 import { on } from 'events';
@@ -70,25 +71,10 @@ io.on('connection', socket => {
             change_user_online_status(userId, false);
             delete onlineUsers[userId];
           }
-        }, 5000);
+        }, 1000);
       }
     }
   });
-});
-
-// Connect to DB
-mongoose.connect(
-  `mongodb+srv://${process.env.dbUsername}:${process.env.dbPassword}@fse-team-proj.6d7d7lo.mongodb.net/?retryWrites=true&w=majority`,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  },
-);
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Error: '));
-db.once('open', function () {
-  console.log('DB Connected successfully!');
 });
 
 app.get('/', function (req, res) {
@@ -114,6 +100,7 @@ app.get('/joinCommunity', async function (req, res) {
 // Register routes
 app.use('/users', userRouter);
 app.use('/messages/public', publicMessageRouter);
+app.use('/messages/private', privateMessageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -145,4 +132,4 @@ function authorization(req, res, next) {
   }
 };
 
-export { server, io, authorization };
+export { server, io, authorization, app };

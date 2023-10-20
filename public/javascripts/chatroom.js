@@ -5,6 +5,11 @@ function scrollToBottom() {
     messageList.scrollTop = messageList.scrollHeight;
 }
 
+function msgObj(message) {
+    const localTime = new Date(message.createdAt).toLocaleString()
+    return "<div class='message-box'><div class='sender-info'><span class='sender-name'>" + message.senderName + "<span class='user-status'>" + message.userStatus + "</span></span></div><div class='message-content'><p>" + message.content + "</p><span class='timestamp'>" + localTime + "</span></div></div>"
+}
+
 $(document).ready(function() {
     scrollToBottom();
 
@@ -28,34 +33,6 @@ $(document).ready(function() {
 });
 
 socket.on('newPublicMessage', function(message) {
-    $("#messageList").load(location.href + " #messageList");
+    $("#messageList").append(msgObj(message))
     scrollToBottom();
 });
-
-
-
-// const post_load = () => {
-//     $('#logoutButton').click(function () {
-//       $.ajax({
-//         method: 'POST',
-//         url: '/users/logout',
-//       }).done(function () {
-//         socket.disconnect();
-//         window.location.href = '/';
-//       });
-//     });
-//   };
-
-  $(document).on('click', '#logoutButton', function (event) {
-    event.preventDefault();  // Prevent the anchor tag's default behavior
-
-    $.ajax({
-        method: 'POST',
-        url: '/users/logout',
-    }).done(function () {
-        socket.disconnect();
-        window.location.href = '/';
-    });
-});
-
-  

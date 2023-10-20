@@ -1,9 +1,6 @@
 import bcrypt from 'bcrypt';
 import { bannedUsernamesSet } from '../models/User.js';
 
-
-
-
 function validateUsername(username) {
     // Check if meets the length requirement
     if (username.length < 3) return false;
@@ -41,3 +38,4 @@ export {
     validatePassword,
     validateLogin
   };
+
