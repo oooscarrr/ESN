@@ -32,8 +32,10 @@ async function validateLogin(username, password, user) {
   }
 }
 
+
 export {
-  validateUsername,
-  validatePassword,
-  validateLogin,
-};
+    validateUsername,
+    validatePassword,
+    validateLogin
+  };
+
