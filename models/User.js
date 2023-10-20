@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 // DB Schema
 const userSchema = new mongoose.Schema(
@@ -52,5 +52,4 @@ bannedUsernamesList = bannedUsernamesList.toLowerCase().split(" ");
 // A set of all banned usernames
 const bannedUsernamesSet = new Set(bannedUsernamesList);
 
-
-export { User, bannedUsernamesSet };
+module.exports = { User, bannedUsernamesSet };
