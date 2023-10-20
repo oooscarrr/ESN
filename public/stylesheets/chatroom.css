@@ -33,6 +33,13 @@
     margin-right: 5px;
 }
 
+.sender-info .sender-name-self {
+    font-weight: bold;
+    color: green; 
+    font-size: 16px;
+    margin-right: 5px;
+}
+
 .message-content {
     padding: 10px;
     position: relative;

@@ -61,5 +61,4 @@ bannedUsernamesList = bannedUsernamesList.toLowerCase().split(" ");
 // A set of all banned usernames
 const bannedUsernamesSet = new Set(bannedUsernamesList);
 
-
 export { User, bannedUsernamesSet };
