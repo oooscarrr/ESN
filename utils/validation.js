@@ -1,5 +1,8 @@
-const bcrypt = require('bcrypt');
-const { bannedUsernamesSet } = require('../models/User');
+import bcrypt from 'bcrypt';
+import { bannedUsernamesSet } from '../models/User.js';
+
+
+
 
 function validateUsername(username) {
     // Check if meets the length requirement
@@ -32,8 +35,9 @@ async function validateLogin(username, password, user) {
   }
 }
 
-module.exports = {
-  validateUsername,
-  validatePassword,
-  validateLogin,
-};
+
+export {
+    validateUsername,
+    validatePassword,
+    validateLogin
+  };
