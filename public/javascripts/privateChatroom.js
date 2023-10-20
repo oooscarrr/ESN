@@ -9,7 +9,7 @@ function scrollToBottom() {
 
 function senderMsgObj(message) {
     const localTime = new Date(message.createdAt).toLocaleString()
-    return "<div class='message-box'><div class='sender-info'><span class='sender-name'>" + message.senderName + "(Me)" + "<span class='user-status'>" + message.senderStatus + "</span></span></div><div class='message-content'><p>" + message.content + "</p><span class='timestamp'>" + localTime + "</span></div></div>"
+    return "<div class='message-box'><div class='sender-info'><span class='sender-name-self'>" + message.senderName + "(Me)" + "<span class='user-status'>" + message.senderStatus + "</span></span></div><div class='message-content'><p>" + message.content + "</p><span class='timestamp'>" + localTime + "</span></div></div>"
 }
 
 function receiverMsgObj(message) {
