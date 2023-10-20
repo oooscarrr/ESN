@@ -4,6 +4,7 @@ $(document).ready(() => {
           method: 'POST',
           url: '/users/logout',
         }).done(function () {
+          localStorage.removeItem("currentUserId");
           socket.disconnect();
           window.location.href = '/';
         });

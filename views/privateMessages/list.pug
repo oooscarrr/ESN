@@ -13,4 +13,24 @@ block append stylesheets
   link(rel='stylesheet', href='/stylesheets/chatroom.css')
 
 block content
+  - const statusIconDict = {'undefined': 'question circle', 'ok': 'smile icon', 'help': 'frown icon', 'emergency': 'exclamation triangle'}
+  - const statusColorDict = {'undefined': 'grey', 'ok': 'rgb(50, 178, 50)', 'help': 'rgb(248, 167, 37)', 'emergency': 'red'}
   +navbar
+
+  .chatroom-container
+    ul#messageList
+        for message in privateMessages
+            .message-box
+                .sender-info
+                    if message.senderId === currentUserId
+                        span.sender-name #{message.senderName} (Me)
+                    else
+                        span.sender-name #{message.senderName}
+                    i.large.icon(class=statusIconDict[message.senderStatus] style='color: '+statusColorDict[message.senderStatus])
+                .message-content
+                    p #{message.content}
+                    span.timestamp #{message.createdAt.toLocaleString()}
+
+    .input-area
+      input#messageInput(type='text', placeholder='Type your message...')
+      button#sendMessageBtn Send

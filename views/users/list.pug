@@ -27,7 +27,7 @@ block content
                             .item.user-row
                                 i.big.icon(class=statusIconDict[user.lastStatus] style='color: '+statusColorDict[user.lastStatus])
                                 .content
-                                    a.username(href='/messages/private/' + user._id + '/' + currentUserId) #{user.username}
+                                    a.username(href='/messages/private/' + currentUserId + '/' + user._id) #{user.username}
                 .title
                     i.dropdown.icon
                     span Offline Users

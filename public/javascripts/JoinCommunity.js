@@ -41,6 +41,7 @@ $(document).ready(function () {
         }).done(function (response) {
             if (response.code == 1) {
                 window.location.href = '/users';
+                localStorage.setItem("currentUserId", response.userId);
             }
             else if (response.code == 5) {
                 $("#confirmJoinModal").modal('show');
@@ -60,7 +61,8 @@ const confirmJoin = (data) => {
         method: 'POST',
         url: '/users',
         data: data,
-    }).done(function () {
+    }).done(function (response) {
+        localStorage.setItem("currentUserId", response.userId);
         $('#welcomeModal').modal('show');
         $('#welcomeModal .okButton').click(function () {
             $('#welcomeModal').modal('hide');
