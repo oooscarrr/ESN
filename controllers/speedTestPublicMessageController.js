@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import SpeedTest from "./speedTestController";
+import SpeedTest from "./speedTestController.js";
 // Test Throughput Rule. All POST requests must be completed before the GET requests are issued. Throughput for GET and POST requests are measured separately.
 // Test Payload Rule: Each message POST should be 20 characters long.
 // Test Duration Tolerance Rule: The actual duration of the performance test should be within 5 seconds of the duration specified by the Administrator.
@@ -38,8 +38,8 @@ export const testTeardown = () => {
 
 export const test_get_all_public_messages = async (req, res) => {
     try {
-        const msg = await PublicMessage.find().sort({ createdAt: 1 });
-        res.status(200).send(msg);
+        const all_messages = await PublicMessage.find({}).sort({ createdAt: 1 }).limit(100).exec();
+        res.render('publicMessages/list', { messages: all_messages });
         getCount++;
     }
     catch (error) {
