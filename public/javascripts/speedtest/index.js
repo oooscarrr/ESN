@@ -1,4 +1,4 @@
-socket = io.connect();
+socket = io("/speedtest");
 
 
 const updateNumRequests = () => {
