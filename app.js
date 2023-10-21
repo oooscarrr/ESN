@@ -13,6 +13,7 @@ import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 import privateMessageRouter from './routes/privateMessageRoutes.js';
+import speedTestRoutes from './routes/speedTestRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
 import { on } from 'events';
@@ -105,6 +106,7 @@ app.get('/joinCommunity', async function (req, res) {
 app.use('/users', userRouter);
 app.use('/messages/public', publicMessageRouter);
 app.use('/messages/private', privateMessageRouter);
+app.use('/speedtest', speedTestRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

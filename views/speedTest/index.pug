@@ -1,0 +1,29 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title ESN Speed Test
+
+block append scripts
+  script(src='/javascripts/speedtest/index.js')
+  script(src='/javascripts/navbar.js')
+
+block append stylesheets
+  link(rel='stylesheet', href='/stylesheets/speedtest.css')
+
+block content
+  +navbar
+  .horizontal.centered.box 
+    h1 ESN Speed Test
+    form.ui.fluid.form(autoComplete='off')#speedTestForm
+      .field
+        label Duration (ms)
+        input(type='number' name='duration' value='1000' min='1' step='1')
+      .field
+        label Interval (ms)
+        input(type='number' name='interval' value='10' min='1' step='1')
+      .field
+        label Number of POST Requests
+        input(type='text' name='numPostRequests' readonly)
+      button.ui.green.fluid.button()#startTestButton Start
+
