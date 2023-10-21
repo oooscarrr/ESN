@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import {testSetup, testTeardown, getTestStatistics} from './speedTestPublicMessageController.js';
 import { publicMessageSchema } from '../models/publicMessage.js';
 
+let speedTest = null;
+
 const SpeedTestState = {
     INSTANTIATED: 'INSTANTIATED',
     INITIALIZED: 'INITIALIZED',
@@ -83,14 +85,14 @@ export default class SpeedTest {
         await this.teardown();
     }
     async teardown() {
-        if(this.state !== SpeedTestState.GET_COMPLETED){
-            return;
-        }
         await SpeedTest.resume_normal_operation();
         testTeardown();
-        await this.clearTestDB(this.db_connection);
-        this.db_connection.close();
+        if (this.db_connection) {
+            await this.clearTestDB(this.db_connection);
+            this.db_connection.close();
+        }
         this.state = SpeedTestState.ENDED;
+        speedTest = null;
     }
 
     async clearTestDB(db_connection) {
@@ -141,11 +143,19 @@ export const initialize_speed_test = async (req, res) => {
     console.log('initiator: ', initiator);
     console.log('process.env.speed_test_db_url: ', process.env.speed_test_db_url);
 
-    const speedTest = new SpeedTest(process.env.speed_test_db_url, duration, initiator);
+    speedTest = new SpeedTest(process.env.speed_test_db_url, duration, initiator);
     await speedTest.initialize();
     await speedTest.startTest();
 
     res.sendStatus(200);
+}
+
+export const interrupt_speed_test = async (req, res) => {
+    if(speedTest){
+        await speedTest.teardown();
+        res.sendStatus(200);
+    }
+    res.sendStatus(503);
 }
 
 export const render_index_page = (req, res) => {
