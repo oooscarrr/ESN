@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node ./bin/www.js fse-team-proj.6d7d7lo.mongodb.net",
-    "debug": "nodemon ./bin/www.js fse-team-proj.6d7d7lo.mongodb.net"
+    "debug": "nodemon ./bin/www.js fse-team-proj.6d7d7lo.mongodb.net",
+    "test": "jest"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
