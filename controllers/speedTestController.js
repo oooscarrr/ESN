@@ -85,6 +85,9 @@ export default class SpeedTest {
         await this.teardown();
     }
     async teardown() {
+        if(this.state !== SpeedTestState.GET_COMPLETED){
+            return;
+        }
         await SpeedTest.resume_normal_operation();
         testTeardown();
         if (this.db_connection) {
