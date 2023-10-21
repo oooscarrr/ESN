@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-unused-vars
+import SpeedTest from "./speedTestController";
 // Test Throughput Rule. All POST requests must be completed before the GET requests are issued. Throughput for GET and POST requests are measured separately.
 // Test Payload Rule: Each message POST should be 20 characters long.
 // Test Duration Tolerance Rule: The actual duration of the performance test should be within 5 seconds of the duration specified by the Administrator.
@@ -9,20 +11,29 @@ let postCount = 0;
 let getCount = 0;
 
 const MAX_NUM_POST = 1000;
-let dbConnection;
 let PublicMessage;
-export const testSetup = (connection) => {
+let postCompletionHook = null;
+let getCompletionHook = null;
+
+/**
+ * 
+ * @param {SpeedTest} speedtest 
+ */
+export const testSetup = (speedtest) => {
     postCount = 0;
     getCount = 0;
-    dbConnection = connection;
+    const dbConnection = speedtest.db_connection;
     PublicMessage = dbConnection.model('PublicMessage');
+    postCompletionHook = speedtest.handle_post_completion
+    getCompletionHook = speedtest.handle_get_completion
 }
 
 export const testTeardown = () => {
     postCount = 0;
     getCount = 0;
-    dbConnection = null;
     PublicMessage = null;
+    postCompletionHook = null;
+    getCompletionHook = null;
 }
 
 export const test_get_all_public_messages = async (req, res) => {
@@ -49,6 +60,9 @@ export const test_post_new_public_message = async (req, res) => {
         await newPubMsg.save();
         res.status(201).send({ 'newPublicMessage': newPubMsg });
         postCount++;
+        if(postCount === MAX_NUM_POST){
+            postCompletionHook(true);
+        }
     }
     catch (error) {
         res.sendStatus(500);

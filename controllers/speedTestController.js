@@ -3,8 +3,16 @@ import mongoose from 'mongoose';
 import {testSetup, testTeardown, getTestStatistics} from './speedTestPublicMessageController.js';
 import { publicMessageSchema } from '../models/publicMessage.js';
 
+const SpeedTestState = {
+    INSTANTIATED: 'INSTANTIATED',
+    INITIALIZED: 'INITIALIZED',
+    STARTED: 'STARTED',
+    POST_COMPLETED: 'POST_COMPLETED',
+    GET_COMPLETED: 'GET_COMPLETED',
+    ENDED: 'ENDED',
+}
 // TODO: add state tracking to allow interruption of speed test
-class SpeedTest {
+export default class SpeedTest {
     db_url = null;
     db_connection = null;
     initiator = null;
@@ -13,6 +21,7 @@ class SpeedTest {
     post_throughput = null;
     get_throughput = null;
     speedtest_socket = null;
+    state = null;
 
     /**
      * 
@@ -28,6 +37,7 @@ class SpeedTest {
         this.initiator = initiator;
         this.post_duration = post_duration;
         this.get_duration = get_duration;
+        this.state = SpeedTestState.INSTANTIATED;
     }
 
     /**
@@ -38,6 +48,7 @@ class SpeedTest {
         this.db_connection = await this.get_speedtest_db_connection(this.db_url);
         this.speedtest_socket = io.of('/speedtest');
         // console.log('speedtest_socket: ', this.speedtest_socket);
+        this.state = SpeedTestState.INITIALIZED;
     }
 
     /**
@@ -45,27 +56,46 @@ class SpeedTest {
      */
     async startTest() {
         await SpeedTest.suspend_normal_operation(this.initiator);
-        testSetup(this.db_connection);
+        testSetup(this);
         this.speedtest_socket.emit('start', this.duration);
+        this.state = SpeedTestState.STARTED;
         setTimeout(this.handle_post_completion.bind(this), this.post_duration);
     }
 
-    async handle_post_completion() {
+    async handle_post_completion(request_limit_exceeded = false) {
+        if(this.state !== SpeedTestState.STARTED){
+            return;
+        }
         const { postCount } = getTestStatistics();
         this.post_throughput = postCount / this.post_duration;
-        this.speedtest_socket.emit('completion:post', this.post_throughput);
+        this.speedtest_socket.emit('completion:post', this.post_throughput, request_limit_exceeded);
+        this.state = SpeedTestState.POST_COMPLETED;
         setTimeout(this.handle_get_completion.bind(this), this.get_duration);
     }
     async handle_get_completion() {
+        if(this.state !== SpeedTestState.POST_COMPLETED){
+            return;
+        }
         const { getCount } = getTestStatistics();
         this.get_throughput = getCount / this.get_duration;
         this.speedtest_socket.emit('completion:get', this.get_throughput);
+        this.state = SpeedTestState.GET_COMPLETED;
         await this.teardown();
     }
     async teardown() {
+        if(this.state !== SpeedTestState.GET_COMPLETED){
+            return;
+        }
         await SpeedTest.resume_normal_operation();
         testTeardown();
+        await this.clearTestDB(this.db_connection);
         this.db_connection.close();
+        this.state = SpeedTestState.ENDED;
+    }
+
+    async clearTestDB(db_connection) {
+        const PublicMessage = db_connection.model('PublicMessage');
+        await PublicMessage.deleteMany({});
     }
 
     /**
