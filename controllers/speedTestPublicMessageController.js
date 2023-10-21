@@ -12,11 +12,10 @@ let numGet = 0;
 
 const MAX_NUM_POST = 1000;
 let dbConnection;
-export const testSetup = (speedTest) => {
+export const testSetup = (connection) => {
     numPost = 0;
     numGet = 0;
-    handleTestCompletion = speedTest.handleTestCompletion;
-    dbConnection = speedTest.connection;
+    dbConnection = connection;
 }
 
 export const test_get_all_public_messages = async (req, res) => {
