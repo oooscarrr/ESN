@@ -46,6 +46,9 @@ export const get_all_public_messages = async (req, res) => {
 }
 
 export const list_public_messages = async (req, res) => {
-    const all_messages = await PublicMessage.find({}).sort({ createdAt: 1 }).limit(100).exec();
+    const all_messages = await PublicMessage.find({}).sort({ createdAt: -1 }).limit(100).exec();
+    all_messages.sort(function(a, b){
+        return a.createdAt - b.createdAt;
+    });
     res.render('publicMessages/list', { messages: all_messages });
 }
