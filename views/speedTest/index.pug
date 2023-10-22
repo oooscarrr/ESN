@@ -17,13 +17,24 @@ block content
     h1 ESN Speed Test
     form.ui.fluid.form(autoComplete='off')#speedTestForm
       .field
-        label Duration (ms)
-        input(type='number' name='duration' value='1000' min='1' step='1')
+        label Duration (s)
+        input(type='number' name='duration' value='5' min='1' step='1')
       .field
         label Interval (ms)
-        input(type='number' name='interval' value='10' min='1' step='1')
+        input(type='number' name='interval' value='100' min='1' step='1')
       .field
         label Number of POST Requests
         input(type='text' name='numPostRequests' readonly)
-      button.ui.green.fluid.button()#startTestButton Start
+      button.ui.green.fluid.button()#toggleButton Start
+    br
+    div(id='testing')
+      .ui.active.inverted.centered.inline.loader
+      p Test in Progress...
+    br
+    i.large.icon(class='circle' style='color: grey' id='post_done') Post
+    span(id='post_throughput' style='color:grey') 0.0
+    i.large.icon(class='circle' style='color: grey' id='get_done') Get
+    span(id='get_throughput' style='color:grey') 0.0
+
+
 

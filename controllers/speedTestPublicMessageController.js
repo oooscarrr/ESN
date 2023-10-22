@@ -24,8 +24,8 @@ export const testSetup = (speedtest) => {
     getCount = 0;
     const dbConnection = speedtest.db_connection;
     PublicMessage = dbConnection.model('PublicMessage');
-    postCompletionHook = speedtest.handle_post_completion
-    getCompletionHook = speedtest.handle_get_completion
+    postCompletionHook = speedtest.handle_post_completion;
+    getCompletionHook = speedtest.handle_get_completion;
 }
 
 export const testTeardown = () => {
@@ -52,7 +52,7 @@ export const test_post_new_public_message = async (req, res) => {
     // POST Request Limit Rule: The total number of POST requests sent to the system should not exceed a limit of 1000.
     // If the duration of the test is too long, the memory can become full or dangerously low.
     if(postCount > MAX_NUM_POST){
-        return; //TODO: Do we need to give front end a notice?
+        return; //TODO: NOTIFY
     }
     try {
         const content = req.body.content;

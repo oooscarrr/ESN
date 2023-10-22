@@ -1,3 +1,7 @@
 #speedTestForm {
     width: 300px;
 }
+
+#testing{
+    visibility: hidden;
+}

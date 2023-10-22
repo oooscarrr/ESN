@@ -26,7 +26,7 @@ export default class SpeedTest {
     state = null;
 
     /**
-     * 
+     *
      * @param {*} db_url The URL of the speed test database
      * @param {*} duration The entire duration of the speed test
      * @param {*} initiator The user ID of the user who initiated the speed test
@@ -69,7 +69,7 @@ export default class SpeedTest {
             return;
         }
         const { postCount } = getTestStatistics();
-        this.post_throughput = postCount / this.post_duration;
+        this.post_throughput = 1000 * postCount / this.post_duration;
         this.speedtest_socket.emit('completion:post', this.post_throughput, request_limit_exceeded);
         this.state = SpeedTestState.POST_COMPLETED;
         setTimeout(this.handle_get_completion.bind(this), this.get_duration);
@@ -79,7 +79,7 @@ export default class SpeedTest {
             return;
         }
         const { getCount } = getTestStatistics();
-        this.get_throughput = getCount / this.get_duration;
+        this.get_throughput = 1000 * getCount / this.get_duration;
         this.speedtest_socket.emit('completion:get', this.get_throughput);
         this.state = SpeedTestState.GET_COMPLETED;
         await this.teardown();
