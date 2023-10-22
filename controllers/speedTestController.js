@@ -153,7 +153,7 @@ export const initialize_speed_test = async (req, res) => {
 export const interrupt_speed_test = async (req, res) => {
     if(speedTest){
         await speedTest.teardown();
-        res.sendStatus(200);
+        return res.sendStatus(200);
     }
     res.sendStatus(503);
 }
