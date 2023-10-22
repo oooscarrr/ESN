@@ -1,5 +1,7 @@
 socket = io("/speedtest");
-
+let intervalIdPost = null;
+let intervalIdGet = null;
+let test = true;
 
 const updateNumRequests = () => {
     const duration = 1000 * parseInt($('#speedTestForm .field input[name="duration"]').val())
@@ -28,7 +30,8 @@ socket.on('completion:get', (throughput) => {
 
 
 const show_exceeded = () => {
-    //TODO:
+    $('#post_throughput').text('error: max number of post requests exceeded');
+    //TODO: better way to do this
 }
 
 const add_components_actions = () => {
@@ -67,6 +70,7 @@ const send_test_get_req = () => {
 }
 
 const start_test = () => {
+    test = true;
     $('#post_done').css('color', 'grey');
     $('#get_done').css('color', 'grey');
     $('#testing').css('visibility', 'visible');
@@ -83,14 +87,18 @@ const start_test = () => {
             interval: interval,
         },
         success: () => {
-            const intervalIdPost = setInterval(send_test_post_req, interval);
-            setTimeout(() => {
-                clearInterval(intervalIdPost);
-                const intervalIdGet = setInterval(send_test_get_req, interval);
+            if (test) {
+                intervalIdPost = setInterval(send_test_post_req, interval);
                 setTimeout(() => {
-                    clearInterval(intervalIdGet);
+                    clearInterval(intervalIdPost);
+                    if (test) {
+                        intervalIdGet = setInterval(send_test_get_req, interval);
+                        setTimeout(() => {
+                            clearInterval(intervalIdGet);
+                        }, duration / 2);
+                    }
                 }, duration / 2);
-            }, duration / 2);
+            }
         },
         error: () => {
             console.error("error setting up speed test");
@@ -98,6 +106,10 @@ const start_test = () => {
     });
 }
 const stop_test = () => {
+    test = false;
+    clearInterval(intervalIdPost);
+    clearInterval(intervalIdGet);
+
     $.ajax({
         method: 'PATCH',
         url: '/speedtest/stop',
