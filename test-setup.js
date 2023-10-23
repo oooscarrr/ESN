@@ -8,10 +8,6 @@ async function setupTestDatabase() {
   // Use the TEST_DB_URI from the .env file
   const testDbUri = process.env.TEST_DB_URI;
   console.log('testDbUri:', testDbUri);
-  await mongoose.connect(testDbUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-  });
   
   // Connect to the test db
   await mongoose.connect(testDbUri, {
