@@ -1,13 +1,17 @@
 import request from 'supertest';
 import { app } from '../app';
 import { User } from '../models/User';
-import { setupTestDatabase } from '../test-setup';
+import { setupTestDatabase, closeTestDatabase } from '../test-setup';
 import jwt from 'jsonwebtoken';
 
 describe('User Status functionality', () => {
     beforeAll(async () => {
         // Set up the test database
         await setupTestDatabase();
+    });
+
+    afterAll(async () => {
+        await closeTestDatabase();
     });
 
     let user, token;
