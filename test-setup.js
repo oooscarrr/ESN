@@ -6,8 +6,7 @@ dotenv.config(); // Load environment variables from .env
 
 async function setupTestDatabase() {
   // Use the TEST_DB_URI from the .env file
-  // const testDbUri = process.env.TEST_DB_URI;
-  const testDbUri = "mongodb+srv://gongzizan:m5FKvoap498MxCVQ@fse-team-proj.6d7d7lo.mongodb.net/fse_test?retryWrites=true&w=majority";
+  const testDbUri = process.env.TEST_DB_URI;
   console.log('testDbUri:', testDbUri);
   await mongoose.connect(testDbUri, {
       useNewUrlParser: true,
