@@ -17,6 +17,8 @@ socket.on('onlineStatusUpdate', async () => {
 socket.on('newPrivateMessage', function(message) {
   if (currentUserId === message.receiverId) {
     const senderId = message.senderId;
-    $("#"+senderId).append("<div class='newMsg'>New Message</div>");
+    if ($("#"+senderId).html().length == 0) {
+      $("#"+senderId).append("<div class='newMsg'>New Message</div>");
+    }
   }
 });
