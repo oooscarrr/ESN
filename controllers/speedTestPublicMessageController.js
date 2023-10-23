@@ -10,7 +10,7 @@ import SpeedTest from "./speedTestController.js";
 let postCount = 0;
 let getCount = 0;
 
-const MAX_NUM_POST = 1000;
+const MAX_NUM_POST = 100;
 let PublicMessage;
 let postCompletionHook = null;
 let getCompletionHook = null;
@@ -24,8 +24,8 @@ export const testSetup = (speedtest) => {
     getCount = 0;
     const dbConnection = speedtest.db_connection;
     PublicMessage = dbConnection.model('PublicMessage');
-    postCompletionHook = speedtest.handle_post_completion;
-    getCompletionHook = speedtest.handle_get_completion;
+    postCompletionHook = speedtest.handle_post_completion.bind(speedtest);
+    getCompletionHook = speedtest.handle_get_completion.bind(speedtest);
 }
 
 export const testTeardown = () => {
@@ -51,18 +51,15 @@ export const test_get_all_public_messages = async (req, res) => {
 export const test_post_new_public_message = async (req, res) => {
     // POST Request Limit Rule: The total number of POST requests sent to the system should not exceed a limit of 1000.
     // If the duration of the test is too long, the memory can become full or dangerously low.
+    postCount++;
     if(postCount > MAX_NUM_POST){
-        return; //TODO: NOTIFY
+        return postCompletionHook(true);
     }
     try {
         const content = req.body.content;
         const newPubMsg = PublicMessage({ senderName: "speedTestUser", content: content });
         await newPubMsg.save();
         res.status(201).send({ 'newPublicMessage': newPubMsg });
-        postCount++;
-        if(postCount === MAX_NUM_POST){
-            postCompletionHook(true);
-        }
     }
     catch (error) {
         res.sendStatus(500);

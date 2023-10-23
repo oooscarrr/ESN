@@ -1,4 +1,4 @@
-socket = io("/speedtest");
+const socket = io();
 let intervalIdPost = null;
 let intervalIdGet = null;
 let test = true;
@@ -10,7 +10,7 @@ const updateNumRequests = () => {
     $('#speedTestForm .field input[name="numPostRequests"]').val(numPostRequests);
 }
 
-socket.on('completion:post', (throughput, exceeded) => {
+socket.on('/speedtest/completion:post', (throughput, exceeded) => {
     $('#post_done').css('color', 'green');
     if (exceeded) {
         show_exceeded();
@@ -18,8 +18,7 @@ socket.on('completion:post', (throughput, exceeded) => {
     $('#post_throughput').text(throughput);
 });
 
-socket.on('completion:get', (throughput) => {
-    getThroughput = throughput;
+socket.on('/speedtest/completion:get', (throughput) => {
     $('#get_done').css('color', 'green');
     $('#testing').css('visibility', 'hidden');
     if ($('#toggleButton').hasClass("red")) {

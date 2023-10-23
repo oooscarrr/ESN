@@ -48,8 +48,7 @@ export default class SpeedTest {
      */
     async initialize() {
         this.db_connection = await this.get_speedtest_db_connection(this.db_url);
-        this.speedtest_socket = io.of('/speedtest');
-        // console.log('speedtest_socket: ', this.speedtest_socket);
+        this.speedtest_socket = io;
         this.state = SpeedTestState.INITIALIZED;
     }
 
@@ -70,7 +69,7 @@ export default class SpeedTest {
         }
         const { postCount } = getTestStatistics();
         this.post_throughput = 1000 * postCount / this.post_duration;
-        this.speedtest_socket.emit('completion:post', this.post_throughput, request_limit_exceeded);
+        this.speedtest_socket.emit('/speedtest/completion:post', this.post_throughput, request_limit_exceeded);
         this.state = SpeedTestState.POST_COMPLETED;
         setTimeout(this.handle_get_completion.bind(this), this.get_duration);
     }
@@ -80,7 +79,7 @@ export default class SpeedTest {
         }
         const { getCount } = getTestStatistics();
         this.get_throughput = 1000 * getCount / this.get_duration;
-        this.speedtest_socket.emit('completion:get', this.get_throughput);
+        this.speedtest_socket.emit('/speedtest/completion:get', this.get_throughput);
         this.state = SpeedTestState.GET_COMPLETED;
         await this.teardown();
     }
