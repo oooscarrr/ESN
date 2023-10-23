@@ -10,7 +10,7 @@ import SpeedTest from "./speedTestController.js";
 let postCount = 0;
 let getCount = 0;
 
-const MAX_NUM_POST = 100;
+const MAX_NUM_POST = 1000;
 let PublicMessage;
 let postCompletionHook = null;
 let getCompletionHook = null;
