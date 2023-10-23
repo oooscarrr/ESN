@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { connectDB } from './db'; 
 import { User } from './models/User'; 
 import dotenv from 'dotenv';
 
@@ -8,7 +7,12 @@ dotenv.config(); // Load environment variables from .env
 async function setupTestDatabase() {
   // Use the TEST_DB_URI from the .env file
   const testDbUri = process.env.TEST_DB_URI;
-
+  console.log('testDbUri:', testDbUri);
+  await mongoose.connect(testDbUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+  });
+  
   // Connect to the test db
   await mongoose.connect(testDbUri, {
     useNewUrlParser: true,
