@@ -35,6 +35,10 @@ describe('Private Chat Room functionality', () => {
         });
     });
 
+    afterAll(async () => {
+        mongoose.connection.close()
+    });
+
     it('Should fetch private messages between two users', async () => {
         const userOne = await User.registerNewUser('userOne', 'testPassword1');
         const userTwo = await User.registerNewUser('userTwo', 'testPassword2');
