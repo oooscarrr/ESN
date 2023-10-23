@@ -2,7 +2,7 @@ import request from 'supertest';
 import { app } from '../app';
 import { User } from '../models/User';
 import { PrivateMessage } from '../models/privateMessage';
-import { setupTestDatabase } from '../test-setup';
+import { setupTestDatabase, closeTestDatabase } from '../test-setup';
 import jwt from 'jsonwebtoken';
 import { Alert } from '../models/Alert';
 
@@ -36,7 +36,7 @@ describe('Private Chat Room functionality', () => {
     });
 
     afterAll(async () => {
-        mongoose.connection.close()
+        await closeTestDatabase();
     });
 
     it('Should fetch private messages between two users', async () => {
