@@ -13,7 +13,7 @@ function scrollToBottom() {
 function senderMsgObj(message) {
     const localTime = new Date(message.createdAt).toLocaleString()
     return "<div class='message-box'><div class='sender-info'><span class='sender-name self'>" + message.senderName +
-        "(Me)</span>" + " <i class='large icon " + statusIconDict[message.senderStatus] +
+        " (Me)</span>" + " <i class='large icon " + statusIconDict[message.senderStatus] +
         "' style='color:" + statusColorDict[message.senderStatus] + "'>" + "</i></div><div class='message-content'><p>" + message.content
         + "</p><span class='timestamp'>" + localTime + "</span></div></div>"
 }
