@@ -1,0 +1,50 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title ESN Speed Test
+
+block append scripts
+  script(src='/javascripts/speedtest/index.js')
+  script(src='/javascripts/navbar.js')
+
+block append stylesheets
+  link(rel='stylesheet', href='/stylesheets/speedtest.css')
+
+block content
+  +navbar
+  .horizontal.centered.box 
+    h1 ESN Speed Test
+    form.ui.fluid.form(autoComplete='off')#speedTestForm
+      .field
+        label Duration (s)
+        input(type='number' name='duration' value='5' min='1' step='1')
+      .field
+        label Interval (ms)
+        input(type='number' name='interval' value='100' min='1' step='1')
+      .field
+        label Number of POST Requests
+        input(type='text' name='numPostRequests' readonly)
+      button.ui.green.fluid.button()#toggleButton Start
+    br
+    div(id='testing')
+      .ui.active.inverted.centered.inline.loader
+      p Test in Progress...
+    span .
+    span .
+    span .
+    i.large.icon(class='circle' style='color: grey' id='post_done') Post
+    span .
+    span .
+    span .
+    i.large.icon(class='circle' style='color: grey' id='get_done') Get
+    br
+    div(id='speed_result')
+      h3 Results:
+      p(id='post_throughput' style='color:grey') POST throughput: 0.0 requests/s
+      p(id='get_throughput' style='color:grey') GET throughput: 0.0 requests/s
+    div(id='speed_error')
+      p(style='color:red') Test Aborted: Maximum number of POST requests(1000) exceeded
+      p(style='color:red') Please try again with different parameters
+
+

@@ -1,5 +1,4 @@
 body {
-  font-family: Tahoma, Verdana, sans-serif;
   margin: 0;
   padding: 0;
   font-size: 12px
@@ -19,7 +18,8 @@ a:hover {
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
-  min-height: 100vh
+  min-height: 100vh;
+  padding-top: 50px;
 }
 .horizontal.centered.box {
   align-items: center;
