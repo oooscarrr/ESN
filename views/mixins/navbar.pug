@@ -4,12 +4,11 @@ mixin navbar
         a.item(href='/users') Directory
         a.item(href='/messages/public') Public Chat
         if user
-            a.item(href='/speedtest') Speed Test
-        if user
             .ui.right.dropdown.item More
                 i.dropdown.icon 
                 .menu
                     .item#changeStatusButton Change Status
+                    a.item(href='/speedtest') Speed Test
                     .item#logoutButton Logout
     
     .ui.modal#changeStatusModal
@@ -19,14 +18,14 @@ mixin navbar
                 .inline.field
                     .ui.radio.checkbox
                     input.statusChoice#ok(type='radio' name='status' value=1)
-                    label(for='ok' style='color: rgb(50, 178, 50);') OK
+                    label(for='ok' style='color: rgb(50, 178, 50);') I'm OK.
                 .inline.field
                     .ui.radio.checkbox
                     input.statusChoice#help(type='radio' name='status' value=2)
-                    label(for='help' style='color: rgb(248, 167, 37);') Help
+                    label(for='help' style='color: rgb(248, 167, 37);') I need help.
                 .inline.field
                     .ui.radio.checkbox
                     input.statusChoice#emergency(type='radio' name='status' value=3)
-                    label(for='emergency' style='color: red;') Emergency
+                    label(for='emergency' style='color: red;') Life threatening emergency!
                 #buttonBox
                     button.ui.button#confirmButton(type='submit') Confirm
