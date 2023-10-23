@@ -10,6 +10,7 @@ describe('validateUsername', () => {
     test('should return false for a username that is a banned word', () => {
         expect(validateUsername('admin')).toBe(false);
     });
+
     test('should return false for a username that is a banned word (case insensitive)', () => {
         expect(validateUsername('Admin')).toBe(false);
         expect(validateUsername('RoOt')).toBe(false);
@@ -19,8 +20,14 @@ describe('validateUsername', () => {
     test('should return false for a username that is too short', () => {
         expect(validateUsername('ab')).toBe(false);
     });
+
     test('should return true for a username that meets the length requirement', () => {
         expect(validateUsername('abc')).toBe(true);
+    });
+
+    // Case sensitivity test (outside of banned words)
+    test('should treat usernames as case-sensitive', () => {
+        expect(validateUsername('John_Doe')).toBe(validateUsername('john_doe'));
     });
 });
 
@@ -34,12 +41,16 @@ describe('validatePassword', () => {
     test('should return false for a password that is too short', () => {
         expect(validatePassword('abc')).toBe(false);
     });
+
     test('should return true for a password that meets the length requirement', () => {
         expect(validatePassword('abcd')).toBe(true);
     });
 
+    // Case sensitivity test
+    test('should treat passwords as case-sensitive', () => {
+        expect(validatePassword('Pass1234')).toBe(validatePassword('pass1234'));
+    });
 });
-
 
 
 
