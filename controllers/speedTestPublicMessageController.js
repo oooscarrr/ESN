@@ -53,6 +53,7 @@ export const test_post_new_public_message = async (req, res) => {
     // If the duration of the test is too long, the memory can become full or dangerously low.
     postCount++;
     if(postCount > MAX_NUM_POST){
+        res.sendStatus(500);
         return postCompletionHook(true);
     }
     try {
