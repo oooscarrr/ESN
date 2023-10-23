@@ -25,7 +25,11 @@ async function setupTestDatabase() {
   await User.insertMany(userData);
 }
 
-export { setupTestDatabase };
+async function closeTestDatabase() {
+  mongoose.connection.close();
+}
+
+export { setupTestDatabase, closeTestDatabase };
 
 
 
