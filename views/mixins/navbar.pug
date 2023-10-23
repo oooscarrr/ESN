@@ -4,12 +4,11 @@ mixin navbar
         a.item(href='/users') Directory
         a.item(href='/messages/public') Public Chat
         if user
-            a.item(href='/speedtest') Speed Test
-        if user
             .ui.right.dropdown.item More
                 i.dropdown.icon 
                 .menu
                     .item#changeStatusButton Change Status
+                    a.item(href='/speedtest') Speed Test
                     .item#logoutButton Logout
     
     .ui.modal#changeStatusModal
