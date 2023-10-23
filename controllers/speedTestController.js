@@ -158,5 +158,5 @@ export const interrupt_speed_test = async (req, res) => {
 }
 
 export const render_index_page = (req, res) => {
-    res.render('speedtest/index');
+    res.render('speedTest/index');
 }
