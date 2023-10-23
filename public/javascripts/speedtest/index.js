@@ -3,6 +3,8 @@ let intervalIdPost = null;
 let intervalIdGet = null;
 let test = true;
 
+let postSent = 0;
+
 const updateNumRequests = () => {
     const duration = 1000 * parseInt($('#speedTestForm .field input[name="duration"]').val())
     const interval = parseInt($('#speedTestForm .field input[name="interval"]').val())
@@ -11,21 +13,16 @@ const updateNumRequests = () => {
 }
 
 socket.on('/speedtest/completion:post', (throughput, exceeded) => {
+    if (!test) {
+        return;
+    }
     $('#post_done').css('color', 'green');
     $('#post_throughput').css('color', 'green');
-    // console.log(exceeded);
-    if (exceeded) {
-        // console.log("exceeded");
-        stop_test();
-        show_exceeded();
-        test = false;
-    } else {
-        $('#post_throughput').text("POST throughput: " + throughput + " requests/s");
-    }
+    $('#post_throughput').text("POST throughput: " + throughput + " requests/s");
 });
 
 socket.on('/speedtest/completion:get', (throughput) => {
-    if(!test){
+    if (!test) {
         return;
     }
     $('#get_done').css('color', 'green');
@@ -37,11 +34,6 @@ socket.on('/speedtest/completion:get', (throughput) => {
     $('#get_throughput').text("GET throughput: " + throughput + " requests/s");
 });
 
-
-const show_exceeded = () => {
-    $('#speed_error').show();
-    $('#speed_result').hide();
-}
 
 const add_components_actions = () => {
     $('#speedTestForm .field input[name="duration"], #speedTestForm .field input[name="interval"]').on('input', function () {
@@ -61,6 +53,11 @@ const add_components_actions = () => {
 }
 
 const send_test_post_req = () => {
+    if (++postSent > 1000) {
+        show_exceeded();
+        stop_test();
+        return;
+    }
     const messageContent = '20CharacterStringMsg';
     $.ajax({
         method: 'POST',
@@ -71,6 +68,13 @@ const send_test_post_req = () => {
     })
 }
 
+
+const show_exceeded = () => {
+    $('#speed_error').show();
+    $('#speed_result').hide();
+}
+
+
 const send_test_get_req = () => {
     $.ajax({
         method: 'GET',
@@ -79,6 +83,7 @@ const send_test_get_req = () => {
 }
 
 const start_test = () => {
+    postSent = 0;
     test = true;
     $('#post_done').css('color', 'grey');
     $('#get_done').css('color', 'grey');
@@ -148,5 +153,3 @@ $(document).ready(function () {
         }
     });
 });
-
-
