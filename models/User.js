@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
         isOnline: { type: Boolean, default: false },
         lastLoginAt: { type: Date, default: Date.now },
         lastStatus: { type: String, enum: ['undefined', 'ok', 'help', 'emergency'], default: 'undefined' },
+        lastStatusAt: { type: Date, default: Date.now },
         isActive: { type: Boolean, default: true },
     },
     {
@@ -31,6 +32,7 @@ const userSchema = new mongoose.Schema(
             async changeUserLastStatus(userId, statusCode) {
                 const user = await this.findById(userId);
                 user.lastStatus = statusList[statusCode];
+                user.lastStatusAt = Date.now();
                 return user.save();
             }
         }
