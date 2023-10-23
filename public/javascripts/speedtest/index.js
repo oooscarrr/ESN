@@ -12,25 +12,35 @@ const updateNumRequests = () => {
 
 socket.on('/speedtest/completion:post', (throughput, exceeded) => {
     $('#post_done').css('color', 'green');
+    $('#post_throughput').css('color', 'green');
+    // console.log(exceeded);
     if (exceeded) {
+        // console.log("exceeded");
+        stop_test();
         show_exceeded();
+        test = false;
+    } else {
+        $('#post_throughput').text("POST throughput: " + throughput + " requests/s");
     }
-    $('#post_throughput').text(throughput);
 });
 
 socket.on('/speedtest/completion:get', (throughput) => {
+    if(!test){
+        return;
+    }
     $('#get_done').css('color', 'green');
+    $('#get_throughput').css('color', 'green');
     $('#testing').css('visibility', 'hidden');
     if ($('#toggleButton').hasClass("red")) {
         $('#toggleButton').removeClass("red").addClass("green").text("Start");
     }
-    $('#get_throughput').text(throughput);
+    $('#get_throughput').text("GET throughput: " + throughput + " requests/s");
 });
 
 
 const show_exceeded = () => {
-    $('#post_throughput').text('error: max number of post requests exceeded');
-    //TODO: better way to do this
+    $('#speed_error').show();
+    $('#speed_result').hide();
 }
 
 const add_components_actions = () => {
@@ -73,6 +83,10 @@ const start_test = () => {
     $('#post_done').css('color', 'grey');
     $('#get_done').css('color', 'grey');
     $('#testing').css('visibility', 'visible');
+    $('#get_throughput').css('color', 'grey').text('GET throughput: 0.0 requests/s');
+    $('#post_throughput').css('color', 'grey').text('POST throughput: 0.0 requests/s');
+    $('#speed_error').hide();
+    $('#speed_result').show();
     const duration = 1000 * parseInt($('#speedTestForm .field input[name="duration"]').val());
     const interval = parseInt($('#speedTestForm .field input[name="interval"]').val());
 
@@ -108,7 +122,6 @@ const stop_test = () => {
     test = false;
     clearInterval(intervalIdPost);
     clearInterval(intervalIdGet);
-
     $.ajax({
         method: 'PATCH',
         url: '/speedtest/stop',
@@ -116,6 +129,11 @@ const stop_test = () => {
     $('#post_done').css('color', 'grey');
     $('#get_done').css('color', 'grey');
     $('#testing').css('visibility', 'hidden');
+    $('#get_throughput').css('color', 'grey');
+    $('#post_throughput').css('color', 'grey');
+    if ($('#toggleButton').hasClass("red")) {
+        $('#toggleButton').removeClass("red").addClass("green").text("Start");
+    }
 }
 $(document).ready(function () {
     updateNumRequests();

@@ -30,11 +30,21 @@ block content
     div(id='testing')
       .ui.active.inverted.centered.inline.loader
       p Test in Progress...
-    br
+    span .
+    span .
+    span .
     i.large.icon(class='circle' style='color: grey' id='post_done') Post
-    span(id='post_throughput' style='color:grey') 0.0
+    span .
+    span .
+    span .
     i.large.icon(class='circle' style='color: grey' id='get_done') Get
-    span(id='get_throughput' style='color:grey') 0.0
-
+    br
+    div(id='speed_result')
+      h3 Results:
+      p(id='post_throughput' style='color:grey') POST throughput: 0.0 requests/s
+      p(id='get_throughput' style='color:grey') GET throughput: 0.0 requests/s
+    div(id='speed_error')
+      p(style='color:red') Test Aborted: Maximum number of POST requests(1000) exceeded
+      p(style='color:red') Please try again with different parameters
 
 

@@ -5,3 +5,7 @@
 #testing{
     visibility: hidden;
 }
+
+#speed_error{
+    display: none;
+}
