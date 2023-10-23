@@ -1,5 +1,5 @@
 import express from 'express';
-import {post_new_public_message, get_all_public_messages, list_public_messages} from '../controllers/publicMessageController.js';
+import {post_new_public_message, list_public_messages} from '../controllers/publicMessageRoutingController.js';
 import {authorization} from '../app.js';
 
 const router = express.Router();

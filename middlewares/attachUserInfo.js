@@ -12,6 +12,7 @@ export default async (req, res, next) => {
         const data = jwt.verify(token, "SecB3Rocks");
         const user = await User.findById(data.id);
         res.locals.user = user;
+        req.user_id = data.id;
         return next();
     } catch {
         return next();

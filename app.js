@@ -1,10 +1,8 @@
 import createError from 'http-errors';
 import express from 'express';
 import logger from 'morgan';
-import mongoose from 'mongoose';
-import { createServer } from 'https';
+import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { readFileSync } from 'fs';
 import cookieParser from "cookie-parser";
 import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
@@ -13,16 +11,14 @@ import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 import privateMessageRouter from './routes/privateMessageRoutes.js';
+import speedTestRoutes from './routes/speedTestRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
-import { on } from 'events';
+import checkSuspended from './middlewares/checkSuspended.js';
 
 const app = express();
 const __dirname = path.resolve();
-const privateKey = readFileSync(path.resolve(__dirname, 'server.key'), 'utf8');
-const certificate = readFileSync(path.resolve(__dirname, 'server.cert'), 'utf8');
-const credentials = { key: privateKey, cert: certificate };
-const server = createServer(credentials, app);
+const server = createServer(app);
 const io = new Server(server);
 dotenv.config();
 
@@ -38,6 +34,7 @@ const cookieOptions = {
 };
 app.use(cookieParser(cookieOptions));
 app.use(attachUserInfo);
+app.use(checkSuspended);
 
 // Set up view engine
 app.set('views', path.join(__dirname, 'views'));
@@ -105,6 +102,7 @@ app.get('/joinCommunity', async function (req, res) {
 app.use('/users', userRouter);
 app.use('/messages/public', publicMessageRouter);
 app.use('/messages/private', privateMessageRouter);
+app.use('/speedtest', speedTestRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

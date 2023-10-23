@@ -40,6 +40,7 @@
 .message-content {
     padding: 10px;
     position: relative;
+    word-wrap: break-word;
     font-size: 15px;
 }
 
