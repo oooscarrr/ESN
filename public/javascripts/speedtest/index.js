@@ -64,6 +64,7 @@ const send_test_post_req = () => {
         url: '/messages/public',
         data: {
             content: messageContent,
+            isTest: true,
         }
     })
 }
@@ -79,6 +80,7 @@ const send_test_get_req = () => {
     $.ajax({
         method: 'GET',
         url: '/messages/public',
+        body: {isTest: true},
     })
 }
 

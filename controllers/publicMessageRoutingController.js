@@ -7,6 +7,9 @@ export const post_new_public_message = async (req, res) => {
         await SpeedTestPMC.test_post_new_public_message(req, res);
     }
     else {
+        if(req.body.isTest){
+            return res.sendStatus(500);
+        }
         await RegularPMC.post_new_public_message(req, res);
     }
 }
@@ -16,6 +19,9 @@ export const list_public_messages = async (req, res) => {
         await SpeedTestPMC.test_get_all_public_messages(req, res);
     }
     else {
+        if(req.body.isTest){
+            return res.sendStatus(500);
+        }
         await RegularPMC.list_public_messages(req, res);
     }
 }
