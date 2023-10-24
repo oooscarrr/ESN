@@ -20,24 +20,35 @@ function msgObj(message) {
         + "</i></div><div class='message-content'><p>" + message.content + "</p><span class='timestamp'>" + localTime + "</span></div></div>"
 }
 
+function sendMessage() {
+    let messageContent = $("#messageInput").val();
+
+    if (messageContent.trim() !== "") {
+        $.ajax({
+            method: 'POST',
+            url: '/messages/public',
+            data: {
+                content: messageContent,
+            }
+        }).done(function (response) {
+            $("#messageInput").val("");
+        }).fail(function (response) {
+            console.error('Failed to send message:', response);
+        });
+    }
+}
+
 $(document).ready(function () {
     scrollToBottom();
 
     $("#sendMessageBtn").click(function () {
-        let messageContent = $("#messageInput").val();
+        sendMessage();
+    });
 
-        if (messageContent.trim() !== "") {
-            $.ajax({
-                method: 'POST',
-                url: '/messages/public',
-                data: {
-                    content: messageContent,
-                }
-            }).done(function (response) {
-                $("#messageInput").val("");
-            }).fail(function (response) {
-                console.error('Failed to send message:', response);
-            });
+    $('#messageInput').on("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
         }
     });
 });
