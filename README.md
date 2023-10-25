@@ -1,5 +1,5 @@
 # Emergency Social Network
-delete this later
+
 
 ## Tech stack
 **Frontend**: HTML (Semantic UI) + CSS + Javascript (Vanilla + Jqeury)
