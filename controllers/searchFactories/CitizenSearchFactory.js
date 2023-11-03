@@ -1,5 +1,7 @@
 import AbstractSearchFactory from './AbstractSearchFactory.js';
+import { filterStopWords } from './AbstractSearchFactory.js';
 import { app } from '../../app.js';
+import { User } from '../../models/User.js';
 
 export default class CitizenSearchFactory extends AbstractSearchFactory {
     static getSearchFunction() {
@@ -28,11 +30,18 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
     }
 
     static searchCitizenByUsername = async (usernameFragment) => {
-        // TODO: implement me
+        let queryWordsArray = filterStopWords(usernameFragment);
+        // Number of VALID words in username query must be one
+        if (queryWordsArray.length != 1) {
+            return [];
+        }
+        let username = queryWordsArray[0];
+        return await User.find({username: {$regex: username, $options: 'i'}}).sort({isOnline: -1, username: 1});
     }
 
     static searchCitizenByStatus = async (status) => {
-        // TODO: implement me
+        let userStatus = status.toLowerCase();
+        return await User.find({lastStatus: userStatus}).sort({isOnline: -1, username: 1});
     }
 
     /**
@@ -40,8 +49,7 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
      * @returns {string} The HTML string of the rendered users
      */
     static renderUsers = (users) => {
-        // TODO: implement me. I'm thinking something like:
-        // return app.render('search/results/users', {users: users});
-        // which will be res.send()ed by the controller
+        return app.render('searchResults/users', {users: users});
+        // TODO: implement searchResults/users.pug
     }
 }
