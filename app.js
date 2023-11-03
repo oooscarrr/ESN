@@ -132,6 +132,6 @@ function authorization(req, res, next) {
   } catch {
     return res.redirect('/joinCommunity');
   }
-};
+}
 
 export { server, io, authorization, app };

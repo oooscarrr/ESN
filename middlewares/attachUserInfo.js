@@ -9,7 +9,7 @@ export default async (req, res, next) => {
         return next();
     }
     try {
-        const data = jwt.verify(token, "SecB3Rocks");
+        const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const user = await User.findById(data.id);
         res.locals.user = user;
         req.user_id = data.id;

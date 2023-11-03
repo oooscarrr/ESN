@@ -67,8 +67,6 @@ This function logs the user out and clears the cookie
 */
 export const logout = async (req, res) => {
     try {
-        const user = await User.findById(req.userId);
-        // await change_user_online_status(user, false);
         res.clearCookie('token');
         res.redirect('/');
     } catch (error) {
