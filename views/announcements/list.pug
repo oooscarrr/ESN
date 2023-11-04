@@ -1,0 +1,31 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title Announcements
+
+block append scripts
+  script(src='/javascripts/announcement.js')
+  script(src='/javascripts/navbar.js')
+
+block append stylesheets
+  link(rel='stylesheet', href='/stylesheets/announcement.css')
+
+block content
+  +navbar
+  
+  .announcements-container
+    h1.header-title Announcements
+    
+    .input-area
+      input#announcementInput(type='text', placeholder='Share an announcement...')
+      button#postAnnouncementBtn Post Announcement
+    
+    ul#announcementsList
+      each announcement in announcements
+        li.announcement-item
+          .announcement-content
+            strong #{announcement.posterName}: 
+            span #{announcement.content}
+          .announcement-timestamp
+            span #{announcement.createdAt.toLocaleString()}
