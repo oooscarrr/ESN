@@ -3,7 +3,7 @@ export default (req, res, next) => {
     if (!app.locals.suspended) {
         return next();
     }
-    else if (req.user_id === app.locals.suspension_initiator) {
+    else if (req.userId === app.locals.suspension_initiator) {
         return next();
     }
     else {

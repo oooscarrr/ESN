@@ -136,7 +136,7 @@ export default class SpeedTest {
 export const initialize_speed_test = async (req, res) => {
     console.log('Initializing Speed Test...');
     const { duration } = req.body;
-    const initiator = req.user_id;
+    const initiator = req.userId;
 
     console.log('duration: ', duration);
     console.log('initiator: ', initiator);

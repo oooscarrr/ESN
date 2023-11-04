@@ -1,12 +1,14 @@
 mixin navbar
     .ui.inverted.secondary.menu#navbar
-        a.item(href='/') Home
-        a.item(href='/users') Directory
-        a.item(href='/messages/public') Public Chat
+        a.item(href='/users')
+            i.home.icon
+        a.item(href='/messages/public')
+            i.users.icon
         if user
-            .ui.right.dropdown.item More
-                i.dropdown.icon 
+            .ui.right.dropdown.item
+                i.hamburger.icon
                 .menu
+                    a.item(href='/announcements') Announcements
                     .item#changeStatusButton Change Status
                     a.item(href='/speedtest') Speed Test
                     .item#logoutButton Logout
