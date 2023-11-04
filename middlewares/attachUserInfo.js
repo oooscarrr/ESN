@@ -12,7 +12,7 @@ export default async (req, res, next) => {
         const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const user = await User.findById(data.id);
         res.locals.user = user;
-        req.user_id = data.id;
+        req.userId = data.id;
         return next();
     } catch {
         return next();
