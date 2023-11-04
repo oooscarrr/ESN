@@ -11,6 +11,7 @@ import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 import privateMessageRouter from './routes/privateMessageRoutes.js';
+import announcementRouter from './routes/announcementRoutes.js';
 import speedTestRoutes from './routes/speedTestRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
@@ -102,6 +103,7 @@ app.get('/joinCommunity', async function (req, res) {
 app.use('/users', userRouter);
 app.use('/messages/public', publicMessageRouter);
 app.use('/messages/private', privateMessageRouter);
+app.use('/announcements', announcementRouter);
 app.use('/speedtest', speedTestRoutes);
 
 // catch 404 and forward to error handler
@@ -120,18 +122,4 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-function authorization(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.redirect('/joinCommunity');
-  }
-  try {
-    const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.userId = data.id;
-    return next();
-  } catch {
-    return res.redirect('/joinCommunity');
-  }
-}
-
-export { server, io, authorization, app };
+export { server, io, app };

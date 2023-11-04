@@ -6,7 +6,7 @@ import {
     logout,
     change_last_status
 } from '../controllers/userController.js';
-import {authorization} from '../app.js';
+import authorization from '../middlewares/authorization.js';
 
 const router = express.Router();
 

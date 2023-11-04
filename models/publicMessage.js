@@ -18,4 +18,4 @@ const publicMessageSchema = new mongoose.Schema(
 // Model
 const PublicMessage = mongoose.model('PublicMessage', publicMessageSchema);
 
-export { PublicMessage, publicMessageSchema};
+export { PublicMessage, publicMessageSchema };

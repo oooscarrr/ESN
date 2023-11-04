@@ -1,7 +1,6 @@
 import { PublicMessage } from '../models/publicMessage.js';
 import { User } from '../models/User.js';
 import { io } from '../app.js';
-import jwt from 'jsonwebtoken'
 
 /*
 This function posts a message on public wall from an user and emits a socket message
