@@ -115,8 +115,7 @@ function sendSearchRequest(inputContext, inputCriteria){
             criteria: inputCriteria,
         },
         success: function(response) {
-            //FIXME: This is not working
-            $('#dropdownMenu').append(response.renderedResults);
+        //     TODO:
         },
         error: function(xhr, status, error) {
             console.error('AJAX error:', status, error);
