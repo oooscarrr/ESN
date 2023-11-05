@@ -39,7 +39,7 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
             return [];
         }
         let username = queryWordsArray[0];
-        return await User.find({username: {$regex: username, $options: 'i'}}).sort({isOnline: -1, username: 1});
+        return await User.find({username: {$regex: new RegExp(username, 'i')}}).sort({isOnline: -1, username: 1});
     }
 
     static searchCitizenByStatus = async (status) => {

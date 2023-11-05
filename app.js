@@ -53,7 +53,7 @@ io.on('connection', socket => {
   let userId;
   if (token) {
     try {
-      const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const data = jwt.verify(token, JWT_SECRET_KEY);
       userId = data.id;
       if (!onlineUsers[userId]) {
         onlineUsers[userId] = 1;
