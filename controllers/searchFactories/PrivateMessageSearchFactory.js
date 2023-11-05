@@ -11,6 +11,8 @@ export default class PrivateMessageSearchFactory extends AbstractSearchFactory {
         return PrivateMessageSearchFactory.renderMessages;
     }
 
+    // TODO: restore search by status functionality
+
     /**
      * @param {Object} criteria Search criteria for private messages
      * @param {string} criteria.userIdOne UserId of private message sender or receiver
