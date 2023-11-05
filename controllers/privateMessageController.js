@@ -13,22 +13,10 @@ export const list_private_messages = async (req, res) => {
 export const post_private_messages = async (req, res) => {
     try {
         const senderId = req.userId;
-        const receiverId = req.body.receiverId;
-        const content = req.body.content;
-        const sender = await User.findById(senderId);
-        const receiver = await User.findById(receiverId);
-        // Alert
-        const alert = await Alert.findOne({ senderId: senderId, receiverId: receiverId });
-        if (alert) {
-            alert.alerted = true;
-            await alert.save();
-        } else {
-            const alert = new Alert({ senderId: senderId, receiverId: receiverId, alerted: true });
-            await alert.save();
-        }
-        // PrivateMessage
-        const privateMsg = new PrivateMessage({ senderId: senderId, senderName: sender.username, receiverId: receiverId, receiverName: receiver.username, content: content, senderStatus: sender.lastStatus });
-        await privateMsg.save();
+        const { receiverId, content } = req.body;
+        const { sender, receiver } = await findSenderAndReceiver(senderId, receiverId);
+        await addAlert(senderId, receiverId);
+        const privateMsg = await createNewPrivateMessage(sender, receiver, content);
         io.emit('newPrivateMessage', privateMsg);
         res.status(201).send({ 'newPrivateMessage': privateMsg });
     }
@@ -52,5 +40,29 @@ export const cancel_alert = async (req, res) => {
     catch (error) {
         res.sendStatus(500);
         return console.log('cancel_alert Error: ', error);
+    }
+}
+
+async function createNewPrivateMessage(sender, receiver, content) {
+    const privateMsg = new PrivateMessage({ senderId: sender._id, senderName: sender.username, receiverId: receiver._id, receiverName: receiver.username, content: content, senderStatus: sender.lastStatus });
+    await privateMsg.save();
+    return privateMsg;
+}
+
+async function findSenderAndReceiver(senderId, receiverId) {
+    const sender = await User.findById(senderId);
+    const receiver = await User.findById(receiverId);
+    
+    return { sender, receiver };
+}
+
+async function addAlert(senderId, receiverId) {
+    const alert = await Alert.findOne({ senderId: senderId, receiverId: receiverId });
+    if (alert) {
+        alert.alerted = true;
+        await alert.save();
+    } else {
+        const alert = new Alert({ senderId: senderId, receiverId: receiverId, alerted: true });
+        await alert.save();
     }
 }
