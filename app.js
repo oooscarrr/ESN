@@ -8,6 +8,7 @@ import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
 import path from 'path';
 import dotenv from 'dotenv';
+import homeRouter from './routes/homeRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 import privateMessageRouter from './routes/privateMessageRoutes.js';
@@ -79,27 +80,8 @@ io.on('connection', socket => {
   });
 });
 
-app.get('/', function (req, res) {
-  res.render('home');
-});
-
-app.get('/joinCommunity', async function (req, res) {
-  const token = req.cookies.token;
-  if (token) {
-    try {
-      const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      req.userId = data.id;
-      await change_user_online_status(req.userId, true);
-      return res.redirect('/users');
-    } catch {
-      return res.render('joinCommunity');
-    }
-  } else {
-    res.render('joinCommunity');
-  }
-});
-
 // Register routes
+app.use('/', homeRouter);
 app.use('/users', userRouter);
 app.use('/messages/public', publicMessageRouter);
 app.use('/messages/private', privateMessageRouter);
