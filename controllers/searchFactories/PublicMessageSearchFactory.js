@@ -1,4 +1,4 @@
-import AbstractSearchFactory from './AbstractSearchFactory.js';
+import { AbstractSearchFactory } from './AbstractSearchFactory.js';
 import { filterStopWords } from './AbstractSearchFactory.js';
 import { app } from '../../app.js';
 import { PublicMessage } from '../../models/publicMessage.js';

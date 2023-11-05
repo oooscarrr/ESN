@@ -4,6 +4,16 @@ mixin navbar
             i.home.icon
         a.item(href='/messages/public')
             i.users.icon
+        a.ui.right.dropdown.item
+            i.search.icon
+            .menu#dropdownMenu
+                .item
+                    .ui.action.input
+                        select#categorySelect
+                            option(value="username") Username
+                            option(value="status") Status
+                        input(type="text", placeholder="Search...")
+                        button.ui.button Search
         if user
             .ui.right.dropdown.item
                 i.hamburger.icon
@@ -12,7 +22,6 @@ mixin navbar
                     .item#changeStatusButton Change Status
                     a.item(href='/speedtest') Speed Test
                     .item#logoutButton Logout
-    
     .ui.modal#changeStatusModal
         .header Change Status
         .content

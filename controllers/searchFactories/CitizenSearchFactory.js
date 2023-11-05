@@ -1,4 +1,4 @@
-import AbstractSearchFactory from './AbstractSearchFactory.js';
+import { AbstractSearchFactory } from './AbstractSearchFactory.js';
 import { app } from '../../app.js';
 import { User } from '../../models/User.js';
 
@@ -52,7 +52,7 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
      * @returns {string} The HTML string of the rendered users
      */
     static renderUsers = (users) => {
-        return app.render('searchResults/users', {users: users});
+        return app.render('../../views/searchResults/users', {users: users});
         // TODO: implement views/searchResults/users.pug
     }
 }
