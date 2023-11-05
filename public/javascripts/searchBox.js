@@ -1,41 +1,9 @@
-import {showLoaded} from './searchBox.js';
-
-$(document).ready(() => {
-    showLoaded();
-    $('#logoutButton').click(function () {
-        $.ajax({
-            method: 'POST',
-            url: '/users/logout',
-        }).done(function () {
-            localStorage.removeItem("currentUserId");
-            socket.disconnect();
-            window.location.href = '/';
-        });
-    });
-
-    $('.ui.dropdown').dropdown();
-
-    // searchDropdown();
-
-    $('#changeStatusModal').modal('attach events', '#changeStatusButton', 'show');
-    $('#changeStatusForm').submit(function (e) {
-        e.preventDefault();
-        const data = $(this).serialize();
-        $.ajax({
-            method: 'POST',
-            url: '/users/status',
-            data: data
-        }).done(function () {
-            $('#changeStatusModal').modal('hide');
-            if (location.pathname === '/users') {
-                location.reload();
-            }
-        });
-    });
-
-    $('.ui.radio.checkbox').checkbox();
-});
-
+// const contextDict = {
+//     '/users': 'citizens',
+//     '/announcements': 'announcements',
+//     '/messages/public': 'publicMessages',
+//     '/messages/private': 'privateMessages'
+// }
 // function searchDropdown() {
 //     if (isUserSearch()) {
 //         $('#categorySelect').show();
@@ -129,3 +97,7 @@ $(document).ready(() => {
 //     }
 //     return 'unknownContext';
 // }
+export const showLoaded = () => {
+    console.log('searchBox.js loaded');
+}
+// console.log('searchBox.js loaded');
