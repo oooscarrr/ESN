@@ -27,6 +27,7 @@ const displayAndHideSearchElements = (context) => {
 
 const addSearchElementBehavior = (context) => {
     addSearchButtonBehavior(context);
+    addEnterToSearchBehavior(context);
     switch (context) {
         case CONTEXT.CITIZENS:
             addCitizensSearchElementsBehavior();
@@ -47,6 +48,13 @@ const addSearchButtonBehavior = (context) => {
     $('#searchButton').click(getContextSpecificSearchButtonClickHandler(context));
 }
 
+const addEnterToSearchBehavior = (context) => {
+    $('.ui.action.input .ui.input').on('keydown', function (e) {
+        if (e.which === 13) {
+            $('#searchButton').click();
+        }
+    });
+}
 const getContextSpecificSearchButtonClickHandler = (context) => {
     return () => {
         if (!makeSureTextInputIsNotEmpty()) {
@@ -68,7 +76,6 @@ const getContextSpecificSearchButtonClickHandler = (context) => {
             default:
                 break;
         }
-
     }
 }
 
