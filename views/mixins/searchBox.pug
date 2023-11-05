@@ -6,7 +6,7 @@ mixin searchBox
                     case context
                         when contextModule.CONTEXT.CITIZENS
                             #citizenSearchBox
-                                .searchTitleBox 
+                                .searchTitleBox
                                     span Search Citizens
                                 .ui.action.input
                                     select.ui.compact.selection.dropdown#citizenSearchCategorySelect
@@ -21,15 +21,15 @@ mixin searchBox
                                     button.ui.button#searchButton Search
                         when contextModule.CONTEXT.ANNOUNCEMENTS
                             #announcementSearchBox
-                                .searchTitleBox 
+                                .searchTitleBox
                                     span Search Announcements
                                 .ui.action.input
                                     .ui.input
                                         input(type="text", placeholder="Type Announcement...")
                                     button.ui.button#searchButton Search
                         when contextModule.CONTEXT.PUBLIC_MESSAGES
-                            #publicMessageSearchBox 
-                                .searchTitleBox 
+                            #publicMessageSearchBox
+                                .searchTitleBox
                                     span Search Public Messages
                                 .ui.action.input
                                     .ui.input
@@ -37,7 +37,7 @@ mixin searchBox
                                     button.ui.button#searchButton Search
                         when contextModule.CONTEXT.PRIVATE_MESSAGES
                             #privateMessageSearchBox
-                                .searchTitleBox 
+                                .searchTitleBox
                                     span Search Private Messages
                                 .ui.action.input
                                     select.ui.compact.selection.dropdown#privateMessageSearchCategorySelect
@@ -52,13 +52,13 @@ mixin searchBox
                             button.ui.icon.button
                                 i.left.chevron.icon#leftArrow
                         .twelve.wide.column
-                            div 
+                            div
                                 span hello
-                            div 
+                            div
                                 span hello
-                            div 
+                            div
                                 span hello
-                            div 
+                            div
                                 span hello
                         .two.wide.column
                             button.ui.icon.button

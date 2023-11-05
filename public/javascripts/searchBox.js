@@ -1,7 +1,7 @@
 import { CONTEXT, urlToContext } from '/shared/context.js';
 
 /**
- * 
+ *
  * @returns {CONTEXT} The context of the current page. Will be one of the values in the CONTEXT enum.
  */
 export const determineContext = () => {
