@@ -24,6 +24,6 @@ export default async function executeSearch(req, res) {
     const search = searchFactory.getSearchFunction();
     const render = searchFactory.getRenderFunction();
     const results = await search(criteria);
-    const renderedResults = render(results);
+    const renderedResults = await render(results);
     res.status(200).send(renderedResults);
 }

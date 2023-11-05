@@ -1,5 +1,7 @@
 import { CONTEXT, urlToContext } from '/shared/context.js';
 
+
+let pageIndex;
 /**
  *
  * @returns {CONTEXT} The context of the current page. Will be one of the values in the CONTEXT enum.
@@ -16,7 +18,7 @@ export const initializeSearchBox = () => {
     console.log(context);
     displayAndHideSearchElements(context);
     addSearchElementBehavior(context);
-
+    pageIndex = 0;
 }
 
 const displayAndHideSearchElements = (context) => {
@@ -27,6 +29,7 @@ const displayAndHideSearchElements = (context) => {
 
 const addSearchElementBehavior = (context) => {
     addSearchButtonBehavior(context);
+    addEnterToSearchBehavior(context);
     switch (context) {
         case CONTEXT.CITIZENS:
             addCitizensSearchElementsBehavior();
@@ -47,6 +50,13 @@ const addSearchButtonBehavior = (context) => {
     $('#searchButton').click(getContextSpecificSearchButtonClickHandler(context));
 }
 
+const addEnterToSearchBehavior = (context) => {
+    $('.ui.action.input .ui.input').on('keydown', function (e) {
+        if (e.which === 13) {
+            $('#searchButton').click();
+        }
+    });
+}
 const getContextSpecificSearchButtonClickHandler = (context) => {
     return () => {
         if (!makeSureTextInputIsNotEmpty()) {
@@ -68,7 +78,6 @@ const getContextSpecificSearchButtonClickHandler = (context) => {
             default:
                 break;
         }
-
     }
 }
 
@@ -97,33 +106,31 @@ const searchCitizens = () => {
             usernameFragment: $('#usernameInput').val(),
         }
     }
-    makeSearchRequest(CONTEXT.CITIZENS, criteria, onCitizenSearchSuccess, onSearchError);
+    makeSearchRequest(CONTEXT.CITIZENS, criteria, pageIndex, onCitizenSearchSuccess, onSearchError);
 }
 
-const onCitizenSearchSuccess = (response) => {
-    // TODO: Display search results
-    console.log(response);
-
+const onCitizenSearchSuccess = (results) => {
+    $('#searchResults').append(results);
 }
 
 const searchAnnouncements = () => {
     const criteria = $('#announcementSearchInput').val();
-    makeSearchRequest(CONTEXT.ANNOUNCEMENTS, criteria, onAnnouncementSearchSuccess, onSearchError);
+    console.log("criteria");
+    console.log(criteria)
+    makeSearchRequest(CONTEXT.ANNOUNCEMENTS, criteria, pageIndex, onAnnouncementSearchSuccess, onSearchError);
 }
 
-const onAnnouncementSearchSuccess = (response) => {
-    // TODO: Display search results
-
+const onAnnouncementSearchSuccess = (results) => {
+    $('#searchResults').append(results);
 }
 
 const searchPublicMessages = () => {
     const criteria = $('#publicMessageSearchInput').val();
-    makeSearchRequest(CONTEXT.PUBLIC_MESSAGES, criteria, onPublicMessageSearchSuccess, onSearchError);
+    makeSearchRequest(CONTEXT.PUBLIC_MESSAGES, criteria, pageIndex, onPublicMessageSearchSuccess, onSearchError);
 }
 
-const onPublicMessageSearchSuccess = (response) => {
-    // TODO: Display search results
-
+const onPublicMessageSearchSuccess = (results) => {
+    $('#searchResults').append(results);
 }
 
 const searchPrivateMessages = () => {
@@ -135,11 +142,11 @@ const searchPrivateMessages = () => {
     //         query: $('#messageInput').val(),
     //     }
     // }
-    // makeSearchRequest(CONTEXT.PRIVATE_MESSAGES, criteria, onPrivateMessageSearchSuccess, onSearchError);
+    // makeSearchRequest(CONTEXT.PRIVATE_MESSAGES, criteria, pageIndex, onPrivateMessageSearchSuccess, onSearchError);
 }
 
-const onPrivateMessageSearchSuccess = (response) => {
-    // TODO: Display search results
+const onPrivateMessageSearchSuccess = (results) => {
+    $('#searchResults').append(results);
 
 }
 
@@ -147,8 +154,9 @@ const onSearchError = (xhr, status, error) => {
     console.error('AJAX error:', status, error);
 }
 
-const makeSearchRequest = (context, criteria, onSuccess, onError) => {
-    const query = {context, criteria};
+const makeSearchRequest = (context, criteria, pageIndex, onSuccess, onError) => {
+    $('#searchResults').empty();
+    const query = {context, criteria, pageIndex};
     $.ajax({
         method: 'GET',
         url: '/search',
