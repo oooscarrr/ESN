@@ -7,7 +7,7 @@ there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which
 whom,why,will,with,would,yet,you,your"
 
 // A list of all stop words
-stopWordsList = stopWords.toLowerCase().split(",");
+let stopWordsList = stopWords.toLowerCase().split(",");
 
 // A set of all stop words
 const stopWordsSet = new Set(stopWordsList);

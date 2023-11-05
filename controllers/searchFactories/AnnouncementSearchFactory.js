@@ -1,7 +1,6 @@
-import AbstractSearchFactory from './AbstractSearchFactory.js';
-import { filterStopWords } from './AbstractSearchFactory.js';
+import { AbstractSearchFactory, filterStopWords } from './AbstractSearchFactory.js';
 import { app } from '../../app.js';
-import { Announcement } from '../../models/Announcement';
+import { Announcement } from '../../models/Announcement.js';
 
 export default class AnnouncementSearchFactory extends AbstractSearchFactory {
     static getSearchFunction() {
