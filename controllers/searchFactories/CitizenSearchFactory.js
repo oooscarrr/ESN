@@ -1,4 +1,4 @@
-import AbstractSearchFactory from './AbstractSearchFactory.js';
+import { AbstractSearchFactory } from './AbstractSearchFactory.js';
 import { app } from '../../app.js';
 import { User } from '../../models/User.js';
 
@@ -39,7 +39,7 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
             return [];
         }
         let username = queryWordsArray[0];
-        return await User.find({username: {$regex: username, $options: 'i'}}).sort({isOnline: -1, username: 1});
+        return await User.find({username: {$regex: new RegExp(username, 'i')}}).sort({isOnline: -1, username: 1});
     }
 
     static searchCitizenByStatus = async (status) => {
@@ -53,6 +53,7 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
      */
     static renderUsers = (users) => {
         return app.render('searchResults/users', {users: users});
+        // return app.render('../../views/searchResults/users', {users: users});
         // TODO: implement views/searchResults/users.pug
     }
 }

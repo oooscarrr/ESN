@@ -38,6 +38,25 @@ a:hover {
   z-index: 100;
 }
 
+/* Change the color of links on hover */
+#navbar a:hover {
+  background-color: #434343;
+  color: white;
+}
+
+#dropdownMenu {
+  position: fixed;
+  left: 0;
+  top:40px;
+  z-index: 1000;
+  min-height: 300px; /* Adjust the minimum height as needed */
+  width: 100%;
+}
+
+#categorySelect {
+  display: none;
+}
+
 #contentBox {
   margin-top: 40px;
   padding: 10px;

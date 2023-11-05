@@ -13,10 +13,13 @@ import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 import privateMessageRouter from './routes/privateMessageRoutes.js';
 import announcementRouter from './routes/announcementRoutes.js';
-import speedTestRoutes from './routes/speedTestRoutes.js';
+import speedTestRouter from './routes/speedTestRoutes.js';
+import searchRouter from './routes/searchRoutes.js';
+
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
 import checkSuspended from './middlewares/checkSuspended.js';
+
 
 const app = express();
 const __dirname = path.resolve();
@@ -86,7 +89,8 @@ app.use('/users', userRouter);
 app.use('/messages/public', publicMessageRouter);
 app.use('/messages/private', privateMessageRouter);
 app.use('/announcements', announcementRouter);
-app.use('/speedtest', speedTestRoutes);
+app.use('/speedtest', speedTestRouter);
+app.use('/search', searchRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

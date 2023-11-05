@@ -1,9 +1,13 @@
+include /views/mixins/searchBox
 mixin navbar
     .ui.inverted.secondary.menu#navbar
         a.item(href='/users')
             i.home.icon
         a.item(href='/messages/public')
             i.users.icon
+        a.ui.right.dropdown.item
+            i.search.icon
+            +searchBox
         if user
             .ui.right.dropdown.item
                 i.hamburger.icon
@@ -12,7 +16,6 @@ mixin navbar
                     .item#changeStatusButton Change Status
                     a.item(href='/speedtest') Speed Test
                     .item#logoutButton Logout
-    
     .ui.modal#changeStatusModal
         .header Change Status
         .content
@@ -31,3 +34,6 @@ mixin navbar
                     label(for='emergency' style='color: red;') Life threatening emergency!
                 #buttonBox
                     button.ui.button#confirmButton(type='submit') Confirm
+
+    block append scripts
+        script(type='module' src='/javascripts/navbar.js')
