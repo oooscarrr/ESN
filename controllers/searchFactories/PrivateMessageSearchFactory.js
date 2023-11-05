@@ -47,7 +47,16 @@ export default class PrivateMessageSearchFactory extends AbstractSearchFactory {
      * @returns {string} The HTML string of the rendered messages
      */
     static renderMessages = (privateMessages) => {
-        return app.render('searchResults/privateMessages', {privateMessages: privateMessages});
-        // TODO: implement views/searchResults/privateMessages.pug
+        // console.log(privateMessages);
+        return new Promise((resolve, reject) => {
+            app.render('searchResults/privateMessages', {privateMessages: privateMessages}, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                } else {
+                    resolve(html);
+                }
+            });
+        });
     }
 }
