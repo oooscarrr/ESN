@@ -7,57 +7,59 @@ import jwt from 'jsonwebtoken';
 import { Alert } from '../models/Alert';
 
 describe('Private Chat Room functionality', () => {
-    let sender, receiver, testMessage1, testMessage2;
+    let userOne, userTwo, userOneToken;
 
     beforeAll(async () => {
         // Set up the test database
         await setupTestDatabase();
 
         // Create test users
-        sender = await User.registerNewUser('testSender', 'testPassword123');
-        receiver = await User.registerNewUser('testReceiver', 'testPassword123');
+        userOne = await User.registerNewUser('userOne', 'testPassword1');
+        userTwo = await User.registerNewUser('userTwo', 'testPassword2');
 
-        // Create test messages
-        testMessage1 = await PrivateMessage.create({
-            senderId: sender._id.toString(),
-            senderName: sender.username,
-            receiverId: receiver._id.toString(),
-            receiverName: receiver.username,
-            content: 'Hello, this is a test message from sender to receiver!'
-        });
-
-        testMessage2 = await PrivateMessage.create({
-            senderId: receiver._id.toString(),
-            senderName: receiver.username,
-            receiverId: sender._id.toString(),
-            receiverName: sender.username,
-            content: 'Hello, this is a test message from receiver to sender!'
+        // Generate a JWT for userOne
+        userOneToken = jwt.sign({ id: userOne._id }, process.env.JWT_SECRET_KEY, {
+            expiresIn: '5m'
         });
     });
 
     afterAll(async () => {
+        await User.deleteMany({});
+        await Alert.deleteMany({});
         await closeTestDatabase();
     });
 
-    it('Should fetch private messages between two users', async () => {
-        const userOne = await User.registerNewUser('userOne', 'testPassword1');
-        const userTwo = await User.registerNewUser('userTwo', 'testPassword2');
+    afterEach(async () => {
+        await PrivateMessage.deleteMany({});
+    });
 
+    it('Should send and persist a private message', async () => {
+        const response = await request(app)
+            .post('/messages/private')
+            .set('Cookie', [`token=${userOneToken}`]) // Send JWT as a cookie
+            .send({
+                receiverId: userTwo._id,
+                content: 'Hello from userOne to userTwo!'
+            });
+
+        expect(response.status).toBe(201);
+        const privateMessage = response.body.newPrivateMessage;
+        expect(privateMessage.senderId).toBe(userOne._id.toString());
+        expect(privateMessage.receiverId).toBe(userTwo._id.toString());
+        expect(privateMessage.content).toBe('Hello from userOne to userTwo!');
+    });
+
+    it('Should fetch private messages between two users', async () => {
+        // Create test messages
         await PrivateMessage.create({
             senderId: userOne._id,
             receiverId: userTwo._id,
             content: 'Hello from userOne to userTwo!'
         });
-
         await PrivateMessage.create({
             senderId: userTwo._id,
             receiverId: userOne._id,
             content: 'Hello from userTwo to userOne!'
-        });
-
-        // Generate a JWT for userOne
-        const userOneToken = jwt.sign({ id: userOne._id }, process.env.JWT_SECRET_KEY, {
-            expiresIn: '1h'
         });
 
         const response = await request(app)
@@ -70,16 +72,7 @@ describe('Private Chat Room functionality', () => {
     });
 
     it('Should fetch no private messages between two users when none exist', async () => {
-        const userOne = await User.registerNewUser('userOne', 'testPassword1');
-        const userTwo = await User.registerNewUser('userTwo', 'testPassword2');
-
         // No messages created between userOne and userTwo
-
-        // Generate a JWT for userOne
-        const userOneToken = jwt.sign({ id: userOne._id }, process.env.JWT_SECRET_KEY, {
-            expiresIn: '1h'
-        });
-
         const response = await request(app)
             .get(`/messages/private/${userOne._id}/${userTwo._id}`)
             .set('Cookie', [`token=${userOneToken}`]);
@@ -89,28 +82,20 @@ describe('Private Chat Room functionality', () => {
 
     // state-updating
     it('Should cancel an alert', async () => {
-        const sender = await User.registerNewUser('sender', 'testPassword1');
-        const receiver = await User.registerNewUser('receiver', 'testPassword2');
-
-        const alert = new Alert({ senderId: sender._id, receiverId: receiver._id, alerted: true });
+        const alert = new Alert({ senderId: userOne._id, receiverId: userTwo._id, alerted: true });
         await alert.save();
-
-        // Generate a JWT for sender
-        const senderToken = jwt.sign({ id: sender._id }, process.env.JWT_SECRET_KEY, {
-            expiresIn: '1h'
-        });
 
         const response = await request(app)
             .post('/messages/private/cancelAlert')
-            .set('Cookie', [`token=${senderToken}`])
+            .set('Cookie', [`token=${userOneToken}`])
             .send({
-                senderId: sender._id,
-                receiverId: receiver._id
+                senderId: userOne._id,
+                receiverId: userTwo._id
             });
 
         expect(response.status).toBe(200);
 
-        const updatedAlert = await Alert.findOne({ senderId: sender._id, receiverId: receiver._id });
+        const updatedAlert = await Alert.findOne({ senderId: userOne._id, receiverId: userTwo._id });
         expect(updatedAlert.alerted).toBe(false);
     });
 });
