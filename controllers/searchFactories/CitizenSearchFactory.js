@@ -1,5 +1,4 @@
 import AbstractSearchFactory from './AbstractSearchFactory.js';
-import { filterStopWords } from './AbstractSearchFactory.js';
 import { app } from '../../app.js';
 import { User } from '../../models/User.js';
 
@@ -30,8 +29,12 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
     }
 
     static searchCitizenByUsername = async (usernameFragment) => {
-        let queryWordsArray = filterStopWords(usernameFragment);
-        // Number of VALID words in username query must be one
+        // If usernameFragment is empty/null or only contaisn whitespaces
+        if (!usernameFragment || (typeof usernameFragment === "string" && usernameFragment.trim().length === 0)) {
+            return [];
+        }
+        let queryWordsArray = usernameFragment.toLowerCase().split(" ");
+        // Number of words in username query must be one
         if (queryWordsArray.length != 1) {
             return [];
         }
@@ -50,6 +53,6 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
      */
     static renderUsers = (users) => {
         return app.render('searchResults/users', {users: users});
-        // TODO: implement searchResults/users.pug
+        // TODO: implement views/searchResults/users.pug
     }
 }

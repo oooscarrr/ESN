@@ -1,6 +1,7 @@
 import AbstractSearchFactory from './AbstractSearchFactory.js';
 import { filterStopWords } from './AbstractSearchFactory.js';
 import { app } from '../../app.js';
+import { Announcement } from '../../models/Announcement';
 
 export default class AnnouncementSearchFactory extends AbstractSearchFactory {
     static getSearchFunction() {
@@ -11,11 +12,27 @@ export default class AnnouncementSearchFactory extends AbstractSearchFactory {
     }
 
     /**
-     * @param {string} includedWords The words that must be included in the announcement
+     * @param {Object} criteria Search criteria for public announcements
+     * @param {string} criteria.query A query string to search
+     * @param {string} criteria.pageIndex Index of page, each page has 10 results, if page === 2, returns public message #20 - 29
      * @returns {Array} An array of announcement objects that match the search criteria
      */
-    static searchByWords = async (includedWords) => {
-        // TODO: implement me
+    static searchByWords = async (criteria) => {
+        const pageIndex = criteria.pageIndex;
+        const numberOfResultsToSkip = parseInt(pageIndex) * 10;
+        const query = criteria.query;
+        const queryWordsArray = filterStopWords(query);
+
+        if (queryWordsArray.length === 0) {
+            return [];
+        }
+
+        return await Announcement.find({
+            $and: queryWordsArray.map(word => ({ content: { $regex: new RegExp(word, 'i') } }))
+        })
+        .sort({createdAt: -1 })
+        .skip(numberOfResultsToSkip)
+        .limit(10);
     }
 
     /**
@@ -23,8 +40,7 @@ export default class AnnouncementSearchFactory extends AbstractSearchFactory {
      * @returns {string} The HTML string of the rendered announcements
      */
     static renderAnnouncements = (announcements) => {
-        // TODO: implement me. I'm thinking something like:
-        // return app.render('search/results/announcements', {announcements: announcements});
-        // which will be res.send()ed by the controller
+        return app.render('searchResults/announcements', {announcements: announcements});
+        // TODO: implement views/searchResults/announcements.pug
     }
 }

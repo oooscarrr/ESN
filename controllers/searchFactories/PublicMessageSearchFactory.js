@@ -17,7 +17,7 @@ export default class PublicMessageSearchFactory extends AbstractSearchFactory {
      * @param {string} criteria.pageIndex Index of page, each page has 10 results, if page === 2, returns public message #20 - 29
      * @returns {Array} An array of message objects that match the search criteria
      */
-    static searchMessageByWords = async (includedWords) => {
+    static searchMessageByWords = async (criteria) => {
         const pageIndex = criteria.pageIndex;
         const numberOfResultsToSkip = parseInt(pageIndex) * 10;
         const query = criteria.query;
@@ -36,11 +36,11 @@ export default class PublicMessageSearchFactory extends AbstractSearchFactory {
     }
 
     /**
-     * @param {Array} messages An array of message objects to be rendered
+     * @param {Array} publicMessages An array of message objects to be rendered
      * @returns {string} The HTML string of the rendered messages
      */
-    static renderMessages = (messages) => {
-        return app.render('searchResults/publicMessages', {messages: messages});
-        // TODO: implement searchResults/publicMessages.pug
+    static renderMessages = (publicMessages) => {
+        return app.render('searchResults/publicMessages', {publicMessages: publicMessages});
+        // TODO: implement views/searchResults/publicMessages.pug
     }
 }

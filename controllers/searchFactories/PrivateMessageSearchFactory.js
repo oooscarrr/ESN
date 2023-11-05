@@ -41,11 +41,11 @@ export default class PrivateMessageSearchFactory extends AbstractSearchFactory {
     }
 
     /**
-     * @param {Array} messages An array of message objects to be rendered
+     * @param {Array} privateMessages An array of message objects to be rendered
      * @returns {string} The HTML string of the rendered messages
      */
-    static renderMessages = (messages) => {
-        return app.render('searchResults/privateMessages', {messages: messages});
-        // TODO: implement searchResults/privateMessages.pug
+    static renderMessages = (privateMessages) => {
+        return app.render('searchResults/privateMessages', {privateMessages: privateMessages});
+        // TODO: implement views/searchResults/privateMessages.pug
     }
 }

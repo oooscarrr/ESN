@@ -1,7 +1,7 @@
-import AnnouncementSearchFactory from "./searchFactories/AnnouncementSearchFactory";
-import CitizenSearchFactory from "./searchFactories/CitizenSearchFactory";
-import PrivateMessageSearchFactory from "./searchFactories/PrivateMessageSearchFactory";
-import PublicMessageSearchFactory from "./searchFactories/PublicMessageSearchFactory";
+import AnnouncementSearchFactory from "./searchFactories/AnnouncementSearchFactory.js";
+import CitizenSearchFactory from "./searchFactories/CitizenSearchFactory.js";
+import PrivateMessageSearchFactory from "./searchFactories/PrivateMessageSearchFactory.js";
+import PublicMessageSearchFactory from "./searchFactories/PublicMessageSearchFactory.js";
 
 const getSearchFactory = (context) => {
     switch (context) {
