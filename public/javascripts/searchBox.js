@@ -1,13 +1,5 @@
-// const contextDict = {
-//     '/users': 'citizens',
-//     '/announcements': 'announcements',
-//     '/messages/public': 'publicMessages',
-//     '/messages/private': 'privateMessages'
-// }
-// function searchDropdown() {
-//     if (isUserSearch()) {
-//         $('#categorySelect').show();
-//     }
+import { CONTEXT, urlToContext } from '/shared/context.js';
+
 
 //     // Prevent closing the dropdown when interacting with the input and button
 //     $('.ui.action.input').on('click', function (e) {

@@ -1,15 +1,47 @@
 mixin searchBox
-    //- .menu#dropdownMenu
-    //-     .item
-    //-         .ui.action.input
-    //-             select#categorySelect
-    //-                 option(value="username") Username
-    //-                 option(value="status") Status
-    //-             input(type="text", placeholder="Search...")
-    //-             button.ui.button Search
-    //-     .item
-    //-         span Search Results
-    .ui.search
+    #searchBox.horizontal.centered.box
+        case context
+            when contextModule.CONTEXT.CITIZENS
+                #citizenSearchBox.contextSensitiveBox
+                    .searchTitleBox 
+                        span Search Citizens
+                    .ui.action.input
+                        select.ui.compact.selection.dropdown#categorySelect
+                            option(value="username") Username
+                            option(value="status") Status
+                        select.ui.compact.selection.dropdown#statusSelect
+                            option(value="ok") OK
+                            option(value="help") Need Help
+                            option(value="emergency") Emergency
+                        input(type="text", placeholder="Type username...", autocomplete="off")
+                        button.ui.button Search
+            when contextModule.CONTEXT.ANNOUNCEMENTS
+                #announcementSearchBox
+                    .searchTitleBox 
+                        span Search Announcements
+                    .ui.action.input
+                        input(type="text", placeholder="Type Announcement...")
+                        button.ui.button Search
+            when contextModule.CONTEXT.PUBLIC_MESSAGES
+                #publicMessageSearchBox 
+                    .searchTitleBox 
+                        span Search Public Messages
+                    .ui.action.input
+                        input(type="text", placeholder="Type Message...")
+                        button.ui.button Search
+            when contextModule.CONTEXT.PRIVATE_MESSAGES
+                #privateMessageSearchBox
+                    .searchTitleBox 
+                        span Search Private Messages
+                    .ui.action.input
+                        select.ui.compact.selection.dropdown#categorySelect
+                            option(value="message") Message
+                            option(value="status") Status
+                        input(type="text", placeholder="Type Message...")
+                        button.ui.button Search
+
+
 
     block append scripts
+        script(type='module' src='/shared/context.js')
         script(type='module' src='/javascripts/searchBox.js')
