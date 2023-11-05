@@ -100,10 +100,8 @@ const searchCitizens = () => {
     makeSearchRequest(CONTEXT.CITIZENS, criteria, onCitizenSearchSuccess, onSearchError);
 }
 
-const onCitizenSearchSuccess = (response) => {
-    // TODO: Display search results
-    console.log(response);
-
+const onCitizenSearchSuccess = (data) => {
+    $('#searchResults').append(data);
 }
 
 const searchAnnouncements = () => {
@@ -111,7 +109,7 @@ const searchAnnouncements = () => {
     makeSearchRequest(CONTEXT.ANNOUNCEMENTS, criteria, onAnnouncementSearchSuccess, onSearchError);
 }
 
-const onAnnouncementSearchSuccess = (response) => {
+const onAnnouncementSearchSuccess = (data) => {
     // TODO: Display search results
 
 }
@@ -148,6 +146,7 @@ const onSearchError = (xhr, status, error) => {
 }
 
 const makeSearchRequest = (context, criteria, onSuccess, onError) => {
+    $('#searchResults').empty();
     const query = {context, criteria};
     $.ajax({
         method: 'GET',
