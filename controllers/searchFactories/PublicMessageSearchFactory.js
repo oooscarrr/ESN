@@ -18,11 +18,11 @@ export default class PublicMessageSearchFactory extends AbstractSearchFactory {
      * @returns {Array} An array of message objects that match the search criteria
      */
     static searchMessageByWords = async (criteria, pageIndex) => {
-        // const pageIndex = criteria.pageIndex;
+
         const numberOfResultsToSkip = parseInt(pageIndex) * 10;
-        const query = criteria;
-        // console.log(criteria);
-        const queryWordsArray = filterStopWords(query);
+        console.log(criteria);
+        console.log(pageIndex);
+        const queryWordsArray = filterStopWords(criteria);
 
         if (queryWordsArray.length === 0) {
             return [];

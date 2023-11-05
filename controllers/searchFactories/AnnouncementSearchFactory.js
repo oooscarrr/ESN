@@ -37,7 +37,6 @@ export default class AnnouncementSearchFactory extends AbstractSearchFactory {
      * @returns {string} The HTML string of the rendered announcements
      */
     static renderAnnouncements = (announcements) => {
-        console.log(announcements);
         return new Promise((resolve, reject) => {
             app.render('searchResults/announcements', {announcements: announcements}, (err, html) => {
                 if (err) {

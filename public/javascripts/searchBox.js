@@ -25,6 +25,9 @@ const displayAndHideSearchElements = (context) => {
     if (context == CONTEXT.CITIZENS) {
         $('#statusSelect').closest('.ui.dropdown').hide();
     }
+    if(context == CONTEXT.PRIVATE_MESSAGES){
+        $('#privateMessageStatusSelect').closest('.ui.dropdown').hide();
+    }
 }
 
 const addSearchElementBehavior = (context) => {
@@ -115,8 +118,6 @@ const onCitizenSearchSuccess = (results) => {
 
 const searchAnnouncements = () => {
     const criteria = $('#announcementSearchInput').val();
-    console.log("criteria");
-    console.log(criteria)
     makeSearchRequest(CONTEXT.ANNOUNCEMENTS, criteria, pageIndex, onAnnouncementSearchSuccess, onSearchError);
 }
 
@@ -189,8 +190,10 @@ const addPrivateMessagesSearchElementsBehavior = () => {
 const onPrivateMessageSearchCategorySelectChange = () => {
     const selectedCategory = $('#privateMessageSearchCategorySelect').val();
     if (selectedCategory == 'message') {
+        $('#privateMessageStatusSelect').closest('.ui.dropdown').hide();
         $('#messageInput').show();
     } else {
+        $('#privateMessageStatusSelect').closest('.ui.dropdown').show();
         $('#messageInput').hide();
     }
 }

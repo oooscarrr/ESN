@@ -33,7 +33,7 @@ mixin searchBox
                                     span Search Public Messages
                                 .ui.action.input
                                     .ui.input
-                                        input(type="text", placeholder="Type Message...")
+                                        input(type="text", placeholder="Type Message...")#publicMessageSearchInput
                                     button.ui.button#searchButton Search
                         when contextModule.CONTEXT.PRIVATE_MESSAGES
                             #privateMessageSearchBox
@@ -43,6 +43,10 @@ mixin searchBox
                                     select.ui.compact.selection.dropdown#privateMessageSearchCategorySelect
                                         option(value="message") Message
                                         option(value="status") Status
+                                    select.ui.compact.selection.dropdown#privateMessageStatusSelect
+                                        option(value="ok") OK
+                                        option(value="help") Need Help
+                                        option(value="emergency") Emergency
                                     .ui.input
                                         input(type="text", placeholder="Type Message...")#messageInput
                                     button.ui.button#searchButton Search

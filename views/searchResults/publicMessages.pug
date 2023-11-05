@@ -1,0 +1,17 @@
+for m in publicMessages
+    div
+        p #{m.senderName}
+        p #{m.content}
+        p #{m.userStatus}
+        p #{m.createdAt}
+//results format:
+//[
+//    {
+//        _id: new ObjectId("6546cf67c779cc4f45a55084"),
+//        senderName: 'carriec',
+//        content: "who's the hacker?",
+//        userStatus: 'undefined',
+//        createdAt: 2023-11-04T23:10:31.431Z,
+//        __v: 0
+//    }
+//]
