@@ -15,7 +15,7 @@ export const post_private_messages = async (req, res) => {
         const senderId = req.userId;
         const { receiverId, content } = req.body;
         const { sender, receiver } = await findSenderAndReceiver(senderId, receiverId);
-        await addAlert(senderId, receiverId);
+        await addAlertToDB(senderId, receiverId);
         const privateMsg = await createNewPrivateMessage(sender, receiver, content);
         io.emit('newPrivateMessage', privateMsg);
         res.status(201).send({ 'newPrivateMessage': privateMsg });
@@ -30,16 +30,20 @@ export const cancel_alert = async (req, res) => {
     try {
         const senderId = req.body.senderId;
         const receiverId = req.body.receiverId;
-        const alert = await Alert.findOne({senderId: senderId, receiverId: receiverId});
-        if (alert) {
-            alert.alerted = false;
-            await alert.save();
-        }
+        await removeAlertFromDB(senderId, receiverId);
         res.sendStatus(200);
     }
     catch (error) {
         res.sendStatus(500);
         return console.log('cancel_alert Error: ', error);
+    }
+}
+
+async function removeAlertFromDB(senderId, receiverId) {
+    const alert = await Alert.findOne({ senderId: senderId, receiverId: receiverId });
+    if (alert) {
+        alert.alerted = false;
+        await alert.save();
     }
 }
 
@@ -56,7 +60,7 @@ async function findSenderAndReceiver(senderId, receiverId) {
     return { sender, receiver };
 }
 
-async function addAlert(senderId, receiverId) {
+async function addAlertToDB(senderId, receiverId) {
     const alert = await Alert.findOne({ senderId: senderId, receiverId: receiverId });
     if (alert) {
         alert.alerted = true;
