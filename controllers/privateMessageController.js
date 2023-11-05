@@ -2,7 +2,6 @@ import { PrivateMessage } from '../models/privateMessage.js';
 import { User } from '../models/User.js';
 import { Alert } from '../models/Alert.js';
 import { io } from '../app.js';
-import jwt from 'jsonwebtoken';
 
 export const list_private_messages = async (req, res) => {
     const userOne = req.params.userIdOne;
