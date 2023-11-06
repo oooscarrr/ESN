@@ -1,0 +1,44 @@
+#resultBox .messageBox {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-bottom: 1.5em;
+    border: 1px solid #ccc;
+    padding: 1em;
+    border-radius: 5px;
+}
+#resultBox .messageBox .senderInfo{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+#resultBox .messageBox .senderInfo i.statusIcon{
+    background-color: #444;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    margin-left: 1em;
+}
+#resultBox .messageBox .senderInfo i.statusIcon.emergency {
+    background-color: #d22
+}
+#resultBox .messageBox .senderInfo i.statusIcon.help {
+    background-color: #dd0
+}
+#resultBox .messageBox .senderInfo i.statusIcon.emergency {
+    background-color: #2d2
+}
+
+#resultBox .messageBox .messageContent {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1em;
+    margin-bottom: 1em;;
+}

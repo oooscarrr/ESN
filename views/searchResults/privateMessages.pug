@@ -1,6 +1,8 @@
 for m in privateMessages
-    div
-        p #{m.senderName}
-        p #{m.content}
-        p #{m.userStatus}
-        p #{m.createdAt}
+    .messageBox
+        .senderInfo
+            span.serderName #{m.senderName}
+            i.statusIcon(class=m.senderStatus)
+        .messageContent
+            span #{m.content}
+            span #{m.createdAt.toLocaleString()}

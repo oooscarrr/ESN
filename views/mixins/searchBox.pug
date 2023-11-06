@@ -60,3 +60,5 @@ mixin searchBox
     block append scripts
         script(type='module' src='/shared/context.js')
         script(type='module' src='/javascripts/searchBox.js')
+    block append stylesheets
+        link(rel='stylesheet', href='/stylesheets/searchResult.css')
