@@ -8,52 +8,7 @@ const messageList = {
 }
 
 $(document).ready(function () {
-    $('.ui.error.message').hide();
-    $('#confirmJoinModal').modal('attach events', '.cancelButton', 'hide');
-    $('#welcomeModal').modal();
-    $('input').click(function () {
-        $('.ui.error.message').hide();
-        $('#usernameField').removeClass('error');
-        $('#passwordField').removeClass('error');
-    });
-    $("#joinForm").submit(function (e) {
-        e.preventDefault();
-        const username = $('#username').val();
-        const password = $('#password').val();
-        if (username == '' || password == '') {
-            if (username == '') {
-                $('#usernameField').addClass('error');
-            }
-            if (password == '') {
-                $('#passwordField').addClass('error');
-            }
-            showErrorMessage('Please fill in all fields');
-            return;
-        }
-        const data = $(this).serialize();
-
-        $.ajax({
-            method: 'GET',
-            url: `/users/${username}/validation`,
-            data: {
-                "password": password,
-            },
-        }).done(function (response) {
-            if (response.code == 1) {
-                window.location.href = '/users';
-                localStorage.setItem("currentUserId", response.userId);
-            }
-            else if (response.code == 5) {
-                $("#confirmJoinModal").modal('show');
-                $("#confirmJoinModal .confirmButton").off().click(function () {
-                    $("#confirmJoinModal").modal('hide');
-                    confirmJoin(data);
-                });
-            } else {
-                showErrorMessage(messageList[response.code]);
-            }
-        })
-    });
+    addElementsBehavior();
 });
 
 const confirmJoin = (data) => {
@@ -77,4 +32,69 @@ const showErrorMessage = (message) => {
     $('#errorHeader').text('Invalid Join');
     $('#errorMessage').text(message);
     $('.ui.error.message').show();
+}
+
+const usernameAndPasswordAreNotEmpty = (username, password) => {
+    if (username == '' || password == '') {
+        if (username == '') {
+            $('#usernameField').addClass('error');
+        }
+        if (password == '') {
+            $('#passwordField').addClass('error');
+        }
+        showErrorMessage('Please fill in all fields');
+        return false;
+    }
+    return true;
+}
+
+const submitJoinForm = function (e) {
+    e.preventDefault();
+    const username = $('#username').val();
+    const password = $('#password').val();
+    if (!usernameAndPasswordAreNotEmpty(username, password)) {
+        return;
+    }
+    const data = $(this).serialize();
+
+    $.ajax({
+        method: 'GET',
+        url: `/users/${username}/validation`,
+        data: {
+            "password": password,
+        },
+    }).done(function (response) {
+        if (response.code == 1) {
+            onLoginSuccess(response);
+        }
+        else if (response.code == 5) {
+            onRegistrationSuccess(data);
+        } else {
+            showErrorMessage(messageList[response.code]);
+        }
+    });
+};
+function onRegistrationSuccess(data) {
+    $("#confirmJoinModal").modal('show');
+    $("#confirmJoinModal .confirmButton").off().click(function () {
+        $("#confirmJoinModal").modal('hide');
+        confirmJoin(data);
+    });
+}
+
+function onLoginSuccess(response) {
+    window.location.href = '/users';
+    localStorage.setItem("currentUserId", response.userId);
+}
+
+function addElementsBehavior() {
+    $('.ui.error.message').hide();
+    $('#confirmJoinModal').modal('attach events', '.cancelButton', 'hide');
+    $('#welcomeModal').modal();
+    $('input').click(function () {
+        $('.ui.error.message').hide();
+        $('#usernameField').removeClass('error');
+        $('#passwordField').removeClass('error');
+    });
+    $("#joinForm").submit(submitJoinForm);
 }
