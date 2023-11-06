@@ -15,9 +15,12 @@
     justify-content: start;
     align-items: center;
 }
+#resultBox .messageBox .senderInfo span.senderName{
+    font-weight: bold;
+}
 
 #resultBox .messageBox .senderInfo i.statusIcon{
-    background-color: #444;
+    background-color: #888;
     width: 1em;
     height: 1em;
     border-radius: 50%;

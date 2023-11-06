@@ -1,14 +1,7 @@
 for a in announcements
-    div
-        p #{a.posterName}
-        p #{a.content}
-        p #{a.createdAt}
-//[
-//    {
-//        _id: new ObjectId("6546d9f35992be742c5e0655"),
-//        posterName: 'oscar',
-//        content: 'Ayo',
-//        createdAt: 2023-11-04T23:55:31.427Z,
-//        __v: 0
-//    }
-//]
+    .messageBox.announcement 
+        .senderInfo
+            span.senderName #{a.posterName}
+        .messageContent
+            span #{a.content}
+            span.timestamp #{a.createdAt.toLocaleString()}
