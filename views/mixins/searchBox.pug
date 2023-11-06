@@ -43,12 +43,8 @@ mixin searchBox
                                     select.ui.compact.selection.dropdown#privateMessageSearchCategorySelect
                                         option(value="message") Message
                                         option(value="status") Status
-                                    select.ui.compact.selection.dropdown#privateMessageStatusSelect
-                                        option(value="ok") OK
-                                        option(value="help") Need Help
-                                        option(value="emergency") Emergency
                                     .ui.input
-                                        input(type="text", placeholder="Type Message...")#messageInput
+                                        input(type="text", placeholder="Type Message...")#messageContentInput
                                     button.ui.button#searchButton Search
                 #resultBox
                     .ui.grid.middle.aligned

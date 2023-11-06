@@ -25,9 +25,6 @@ const displayAndHideSearchElements = (context) => {
     if (context == CONTEXT.CITIZENS) {
         $('#statusSelect').closest('.ui.dropdown').hide();
     }
-    if(context == CONTEXT.PRIVATE_MESSAGES){
-        $('#privateMessageStatusSelect').closest('.ui.dropdown').hide();
-    }
 }
 
 const addSearchElementBehavior = (context) => {
@@ -136,16 +133,16 @@ const onPublicMessageSearchSuccess = (results) => {
 
 const searchPrivateMessages = () => {
     const selectedCategory = $('#privateMessageSearchCategorySelect').val();
-    let criteria;
+    let criteria = {};
+    criteria.myUserId = currentUserId;
+    criteria.otherUserId = anotherUserId;
+    criteria.pageIndex = pageIndex;
     if (selectedCategory == 'message') {
-        criteria = {
-            input: $('#messageInput').val(),
-        }
+        criteria.query = $('#messageContentInput').val();
     }else{
-        criteria = {
-            status: $('#statusSelect').val(),
-        }
+        criteria.status = true;
     }
+    console.log(criteria);
     makeSearchRequest(CONTEXT.PRIVATE_MESSAGES, criteria, pageIndex, onPrivateMessageSearchSuccess, onSearchError);
 }
 
@@ -193,11 +190,9 @@ const addPrivateMessagesSearchElementsBehavior = () => {
 const onPrivateMessageSearchCategorySelectChange = () => {
     const selectedCategory = $('#privateMessageSearchCategorySelect').val();
     if (selectedCategory == 'message') {
-        $('#privateMessageStatusSelect').closest('.ui.dropdown').hide();
-        $('#messageInput').show();
+        $('#messageContentInput').show();
     } else {
-        $('#privateMessageStatusSelect').closest('.ui.dropdown').show();
-        $('#messageInput').hide();
+        $('#messageContentInput').hide();
     }
 }
 
