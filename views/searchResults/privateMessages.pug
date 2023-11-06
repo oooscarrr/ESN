@@ -5,4 +5,4 @@ for m in privateMessages
             i.statusIcon(class=m.senderStatus)
         .messageContent
             span #{m.content}
-            span #{m.createdAt.toLocaleString()}
+            span.timestamp #{m.createdAt.toLocaleString()}

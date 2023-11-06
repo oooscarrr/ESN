@@ -74,13 +74,21 @@ a:hover {
 }
 
 #searchBox #resultBox {
+  margin-top: 1em;
   height: 70vh;
   width: 100%;
-  overflow-y: auto;
+  
 }
 
 #searchBox #resultBox .ui.grid {
+  height: 100%;
   margin: 0;
+}
+
+#searchBox #resultBox #searchResults{
+  height: 100%;
+  margin: 0;
+  overflow-y: auto;
 }
 
 #contentBox {
