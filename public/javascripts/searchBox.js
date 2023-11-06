@@ -135,15 +135,18 @@ const onPublicMessageSearchSuccess = (results) => {
 }
 
 const searchPrivateMessages = () => {
-
-    // const selectedCategory = $('#privateMessageSearchCategorySelect').val();
-    // let criteria;
-    // if (selectedCategory == 'message') {
-    //     criteria = {
-    //         query: $('#messageInput').val(),
-    //     }
-    // }
-    // makeSearchRequest(CONTEXT.PRIVATE_MESSAGES, criteria, pageIndex, onPrivateMessageSearchSuccess, onSearchError);
+    const selectedCategory = $('#privateMessageSearchCategorySelect').val();
+    let criteria;
+    if (selectedCategory == 'message') {
+        criteria = {
+            input: $('#messageInput').val(),
+        }
+    }else{
+        criteria = {
+            status: $('#statusSelect').val(),
+        }
+    }
+    makeSearchRequest(CONTEXT.PRIVATE_MESSAGES, criteria, pageIndex, onPrivateMessageSearchSuccess, onSearchError);
 }
 
 const onPrivateMessageSearchSuccess = (results) => {

@@ -21,10 +21,9 @@ export default class PrivateMessageSearchFactory extends AbstractSearchFactory {
      * @param {string} criteria.pageIndex Index of page, each page has 10 results, if page === 2, returns private message #20 - 29
      * @returns {Array} An array of message objects that match the search criteria
      */
-    static searchMessageByWords = async (criteria) => {
+    static searchMessageByWords = async (criteria, pageIndex) => {
         const userIdOne = criteria.userIdOne;
         const userIdTwo = criteria.userIdTwo;
-        const pageIndex = criteria.pageIndex;
         const numberOfResultsToSkip = parseInt(pageIndex) * 10;
         const query = criteria.query;
         const queryWordsArray = filterStopWords(query);
