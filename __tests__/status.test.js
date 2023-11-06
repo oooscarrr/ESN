@@ -5,22 +5,20 @@ import { setupTestDatabase, closeTestDatabase } from '../test-setup';
 import jwt from 'jsonwebtoken';
 
 describe('User Status functionality', () => {
+    let user, token;
+
     beforeAll(async () => {
         // Set up the test database
         await setupTestDatabase();
+        user = await User.registerNewUser('testUser', 'testPassword123');
+        token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
+            expiresIn: '5m'
+        });
     });
 
     afterAll(async () => {
+        await User.deleteMany({});
         await closeTestDatabase();
-    });
-
-    let user, token;
-
-    beforeEach(async () => {
-        user = await User.registerNewUser('testUser', 'testPassword123');
-        token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-            expiresIn: '1h'
-        });
     });
 
     it('Should change user status to OK', async () => {
@@ -53,13 +51,17 @@ describe('User Status functionality', () => {
         expect(updatedUser.lastStatus).toBe('help');
     });
 
-    it('Should return an error when fetching status of non-existent user', async () => {
+    it('Should return an error when changing status of non-existent user', async () => {
         const nonExistentUserId = 'someNonExistentId';
+        const fakeToken = jwt.sign({id: nonExistentUserId}, process.env.JWT_SECRET_KEY, {
+            expiresIn: '1m'
+        });
         const response = await request(app)
-            .get(`/users/${nonExistentUserId}/status`)
-            .set('Cookie', [`token=${token}`]);
+            .post(`/users/status`)
+            .set('Cookie', [`token=${fakeToken}`])
+            .send({ status: 1 }); 
 
-        expect(response.status).toBe(404); // Not found
+        expect(response.status).toBe(500); // Not found
     });
 });
 

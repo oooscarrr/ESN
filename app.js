@@ -8,14 +8,18 @@ import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
 import path from 'path';
 import dotenv from 'dotenv';
+import homeRouter from './routes/homeRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import publicMessageRouter from './routes/publicMessageRoutes.js';
 import privateMessageRouter from './routes/privateMessageRoutes.js';
 import announcementRouter from './routes/announcementRoutes.js';
-import speedTestRoutes from './routes/speedTestRoutes.js';
+import speedTestRouter from './routes/speedTestRoutes.js';
+import searchRouter from './routes/searchRoutes.js';
+
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
 import checkSuspended from './middlewares/checkSuspended.js';
+
 
 const app = express();
 const __dirname = path.resolve();
@@ -79,32 +83,14 @@ io.on('connection', socket => {
   });
 });
 
-app.get('/', function (req, res) {
-  res.render('home');
-});
-
-app.get('/joinCommunity', async function (req, res) {
-  const token = req.cookies.token;
-  if (token) {
-    try {
-      const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      req.userId = data.id;
-      await change_user_online_status(req.userId, true);
-      return res.redirect('/users');
-    } catch {
-      return res.render('joinCommunity');
-    }
-  } else {
-    res.render('joinCommunity');
-  }
-});
-
 // Register routes
+app.use('/', homeRouter);
 app.use('/users', userRouter);
 app.use('/messages/public', publicMessageRouter);
 app.use('/messages/private', privateMessageRouter);
 app.use('/announcements', announcementRouter);
-app.use('/speedtest', speedTestRoutes);
+app.use('/speedtest', speedTestRouter);
+app.use('/search', searchRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

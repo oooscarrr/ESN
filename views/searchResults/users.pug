@@ -1,0 +1,42 @@
+//- - const statusIconDict = {'undefined': 'question circle', 'ok': 'smile icon', 'help': 'frown icon', 'emergency': 'exclamation triangle'}
+//- - const statusColorDict = {'undefined': 'grey', 'ok': 'rgb(50, 178, 50)', 'help': 'rgb(248, 167, 37)', 'emergency': 'red'}
+//- .horizontal.centered.box#contentBox
+//-     h1 ESN Directory
+//-     .ui.container#DirectoryBox
+//-         .ui.fluid.accordion#DirectoryContent
+//-             - online_users = users.filter(user => user.isOnline)
+//-             - offline_users = users.filter(user => !user.isOnline)
+//-             .title.active
+//-                 i.dropdown.icon
+//-                 span Online Users
+//-                 span.ui.label #{online_users.length}
+//-             .content.active
+//-                 .ui.relaxed.divided.list
+//-                     for user in online_users
+//-                         .item.user-row
+//-                             i.big.icon(class=statusIconDict[user.lastStatus] style='color: '+statusColorDict[user.lastStatus])
+//-                             .content
+//-                                 if user._id.valueOf() !== currentUserId
+//-                                     a.username(href='/messages/private/' + currentUserId + '/' + user._id) #{user.username}
+//-                                 else
+//-                                     a.username#me(href='/messages/private/' + currentUserId + '/' + user._id) #{user.username} (Me)
+//-                             div(id=user._id.valueOf())
+//-                                 if alertSenders.includes(user._id.valueOf())
+//-                                     .newMsg New Message
+//-             .title
+//-                 i.dropdown.icon
+//-                 span Offline Users
+//-                 span.ui.label #{offline_users.length}
+//-             .content
+//-                 .ui.relaxed.divided.list
+//-                     for user in offline_users
+//-                         .item.user-row
+//-                             i.big.icon(class=statusIconDict[user.lastStatus] style='color: '+statusColorDict[user.lastStatus])
+//-                             .content
+//-                                 a.username(href='/messages/private/' + currentUserId + '/' + user._id) #{user.username}
+//-                             div(id=user._id.valueOf())
+//-                                 if alertSenders.includes(user._id.valueOf())
+//-                                     .newMsg New Message
+
+for user in users
+    span #{user.username}
