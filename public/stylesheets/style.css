@@ -51,7 +51,7 @@ a:hover {
   position: fixed;
   top: 40px;
   margin-top: 0;
-  z-index: 1000;
+  z-index: 10;
   height: calc(100vh - 40px);
   width: 100vw;
   padding: 10px;

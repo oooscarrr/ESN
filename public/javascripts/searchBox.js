@@ -30,6 +30,7 @@ const displayAndHideSearchElements = (context) => {
 const addSearchElementBehavior = (context) => {
     addSearchButtonBehavior(context);
     addEnterToSearchBehavior(context);
+    addPaginationBehavior(context);
     switch (context) {
         case CONTEXT.CITIZENS:
             addCitizensSearchElementsBehavior();
@@ -57,6 +58,74 @@ const addEnterToSearchBehavior = (context) => {
         }
     });
 }
+
+const addPaginationBehavior = (context)=>{
+    $('#leftArrow').click(getContextSpecificSearchPrevHandler(context));
+    $('#rightArrow').click(getContextSpecificSearchNextHandler(context));
+}
+
+const getContextSpecificSearchNextHandler = (context) => {
+    return () => {
+        if (!makeSureTextInputIsNotEmpty()) {
+            return;
+        }
+        pageIndex++;
+        console.log(pageIndex);
+        switch (context) {
+            case CONTEXT.CITIZENS:
+                searchCitizens();
+                break;
+            case CONTEXT.ANNOUNCEMENTS:
+                searchAnnouncements();
+                break;
+            case CONTEXT.PUBLIC_MESSAGES:
+                searchPublicMessages();
+                break;
+            case CONTEXT.PRIVATE_MESSAGES:
+                searchPrivateMessages();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+
+const getContextSpecificSearchPrevHandler = (context) => {
+    return () => {
+        if (!makeSureTextInputIsNotEmpty() || pageIndex == 0) {
+            return;
+        }
+        pageIndex--;
+        console.log(pageIndex);
+        switch (context) {
+            case CONTEXT.CITIZENS:
+                searchCitizens();
+                break;
+            case CONTEXT.ANNOUNCEMENTS:
+                searchAnnouncements();
+                break;
+            case CONTEXT.PUBLIC_MESSAGES:
+                searchPublicMessages();
+                break;
+            case CONTEXT.PRIVATE_MESSAGES:
+                searchPrivateMessages();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+const onPrevPage = (context) =>{
+    if(pageIndex == 0){
+        return;
+    }
+    pageIndex--;
+    return getContextSpecificSearchButtonClickHandler(context);
+}
+
+
 const getContextSpecificSearchButtonClickHandler = (context) => {
     return () => {
         if (!makeSureTextInputIsNotEmpty()) {
@@ -195,93 +264,3 @@ const onPrivateMessageSearchCategorySelectChange = () => {
         $('#messageContentInput').hide();
     }
 }
-
-
-// export function showSearchDropdown(context) {
-//     if (context == CONTEXT.CITIZENS) {
-//         $('#categorySelect').show();
-//     }
-
-//     // Prevent closing the dropdown when interacting with the input and button
-//     $('.ui.action.input').on('click', function (e) {
-//         e.stopPropagation();
-//     });
-
-
-//     $('.ui.action.input button').on('click', function (e) {
-//         e.stopPropagation();
-//         search();
-//         clearSearchInput();
-//     });
-
-//     // Listen for keydown event on the input to handle the Enter key press
-//     $('.ui.action.input input').on('keydown', function (e) {
-//         e.stopPropagation();
-//         if (e.which === 13) {
-//             search();
-//             clearSearchInput(); // Call the function to clear the input
-//         }
-//     });
-// }
-
-
-
-// function clearSearchInput() {
-//     $('.ui.action.input input').val('');
-// }
-
-
-// function search() {
-//     let inputVal = $('.ui.action.input input').val();
-//     var currentPathname = window.location.pathname;
-//     let context = findContext(currentPathname);
-//     console.log(context);
-
-//     let criteria;
-//     if (context == 'citizens') {
-//         var selectedCategory = $('#categorySelect').val();
-//         if (selectedCategory == 'status') {
-//             criteria = {
-//                 status: inputVal,
-//             }
-//         } else {
-//             criteria = {
-//                 usernameFragment: inputVal,
-//             }
-//         }
-//     } else {
-//         criteria = inputVal;
-//     }
-//     console.log(criteria);
-
-//     sendSearchRequest(context, criteria);
-//     // const {context, criteria} = req.body;
-// }
-
-// function sendSearchRequest(inputContext, inputCriteria){
-//     $.ajax({
-//         method: 'GET',
-//         url: '/search',
-//         data:{
-//             context: inputContext,
-//             criteria: inputCriteria,
-//         },
-//         success: function(response) {
-//             console.log(response);
-//             $('#searchResults').html(response);
-//         },
-//         error: function(xhr, status, error) {
-//             console.error('AJAX error:', status, error);
-//         }
-//     });
-// }
-
-
-// function findContext(currentPathname) {
-//     for (const key in path_to_context) {
-//         if (currentPathname.startsWith(key)) {
-//             return path_to_context[key];
-//         }
-//     }
-//     return 'unknownContext';
-// }
