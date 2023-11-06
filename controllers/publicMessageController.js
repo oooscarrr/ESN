@@ -14,7 +14,16 @@ export const post_new_public_message = async (req, res) => {
     try {
         const userId = req.userId;
         const content = req.body.content;
+
+        // Validation for content presence
+        if (!content || content.trim() === '') {
+            return res.status(400).json({ error: 'Content cannot be empty.' });
+        }
+
         const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+}
         const publicMsg = new PublicMessage({ senderName: user.username, content: content, userStatus: user.lastStatus });
         io.emit('newPublicMessage', publicMsg);
         await publicMsg.save();
@@ -46,7 +55,7 @@ export const get_all_public_messages = async (req, res) => {
 
 export const list_public_messages = async (req, res) => {
     const all_messages = await PublicMessage.find({}).sort({ createdAt: -1 }).limit(100).exec();
-    all_messages.sort(function(a, b){
+    all_messages.sort(function (a, b) {
         return a.createdAt - b.createdAt;
     });
     res.render('publicMessages/list', { messages: all_messages });
