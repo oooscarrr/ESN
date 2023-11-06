@@ -180,6 +180,8 @@ const searchCitizens = () => {
 
 const onCitizenSearchSuccess = (results) => {
     $('#searchResults').append(results);
+    $('.ui.accordion').accordion();
+
 }
 
 const searchAnnouncements = () => {

@@ -44,6 +44,7 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
 
     static searchCitizenByStatus = async (status) => {
         let userStatus = status.toLowerCase();
+        console.log(`Searching for users with status ${userStatus}`)
         return await User.find({lastStatus: userStatus}).sort({isOnline: -1, username: 1});
     }
 

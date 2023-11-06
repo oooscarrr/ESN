@@ -19,20 +19,25 @@
     font-weight: bold;
 }
 
-#resultBox .messageBox .senderInfo i.statusIcon{
+#resultBox i.statusIcon
+{
     background-color: #888;
     width: 1em;
     height: 1em;
     border-radius: 50%;
-    margin-left: 1em;
 }
-#resultBox .messageBox .senderInfo i.statusIcon.emergency {
+
+#resultBox .messageBox .senderInfo i.statusIcon{
+    margin-left: 0.5em;
+}
+
+#resultBox i.statusIcon.emergency {
     background-color: #d22
 }
-#resultBox .messageBox .senderInfo i.statusIcon.help {
+#resultBox i.statusIcon.help {
     background-color: #dd0
 }
-#resultBox .messageBox .senderInfo i.statusIcon.emergency {
+#resultBox i.statusIcon.ok {
     background-color: #2d2
 }
 

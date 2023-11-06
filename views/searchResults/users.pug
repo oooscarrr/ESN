@@ -1,3 +1,29 @@
-for user in users
-    div
-        span #{user.username}
+- online_users = users.filter(user => user.isOnline)
+- offline_users = users.filter(user => !user.isOnline)
+.ui.container#DirectoryBox
+    .ui.fluid.accordion#DirectoryContent
+        .title.active
+            i.dropdown.icon
+            span Online Users
+            span.ui.label #{online_users.length}
+        .content.active
+            .ui.relaxed.divided.list
+                for user in online_users
+                    .item.user-row
+                        i.statusIcon(class=user.lastStatus)
+                        .content
+                            if user._id.valueOf() !== currentUserId
+                                a.username(href='/messages/private/' + currentUserId + '/' + user._id) #{user.username}
+                            else
+                                a.username#me(href='/messages/private/' + currentUserId + '/' + user._id) #{user.username} (Me)
+        .title
+            i.dropdown.icon
+            span Offline Users
+            span.ui.label #{offline_users.length}
+        .content
+            .ui.relaxed.divided.list
+                for user in offline_users
+                    .item.user-row
+                        i.statusIcon(class=user.lastStatus)
+                        .content
+                            a.username(href='/messages/private/' + currentUserId + '/' + user._id) #{user.username}
