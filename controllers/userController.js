@@ -27,15 +27,7 @@ export const validate_login_info = async (req, res) => {
         if (user) {
             // User exists and password is correct
             if (await bcrypt.compare(password, user.password)) {
-                // console.log(req.cookie);
-                const token = jwt.sign({
-                    id: user._id.valueOf()
-                }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
-                await change_user_online_status(user._id, true);
-                return res
-                    .cookie('token', token)
-                    .send({'status': 'success', 'code': 1, 'userId': user._id.valueOf()});
-                // User exists but password is incorrect
+                return await markUserOnline(user, res);
             } else {
                 return res.send({'status': 'error', 'code': 2});
             }
@@ -90,13 +82,7 @@ export const create_user = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.registerNewUser(username, hashedPassword);
         const user = await User.findByUsername(username);
-        const token = jwt.sign({
-                    id: user._id.valueOf()
-                }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
-        await change_user_online_status(user._id, true);
-        return res
-            .cookie('token', token)
-            .send({'userId': user._id.valueOf()});
+        return await markUserOnline(user, res);
     } catch (error) {
         res.sendStatus(500);
         return console.log('create_user Error: ', error);
@@ -104,6 +90,8 @@ export const create_user = async (req, res) => {
         console.log('User Saved')
     }
 }
+
+
 
 /*
 This function returns ??
@@ -160,4 +148,14 @@ export const change_user_online_status = async (userId, onlineStatus) => {
     } catch (error) {
         console.log('change_user_online_status Error:', error);
     }
+}
+
+async function markUserOnline(user, res) {
+    const token = jwt.sign({
+        id: user._id.valueOf()
+    }, process.env.JWT_SECRET_KEY); //the secret key to sign the token
+    await change_user_online_status(user._id, true);
+    return res
+        .cookie('token', token)
+        .send({ 'status': 'success', 'code': 1, 'userId': user._id.valueOf() });
 }

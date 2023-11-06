@@ -40,10 +40,16 @@ function sendMessage() {
 
 $(document).ready(function () {
     scrollToBottom();
+    addElementsBehavior();
+});
 
-    $("#sendMessageBtn").click(function () {
-        sendMessage();
-    });
+socket.on('newPublicMessage', function (message) {
+    $("#messageList").append(msgObj(message))
+    scrollToBottom();
+});
+
+function addElementsBehavior() {
+    $("#sendMessageBtn").click(sendMessage);
 
     $('#messageInput').on("keydown", function (event) {
         if (event.key === "Enter") {
@@ -51,9 +57,4 @@ $(document).ready(function () {
             sendMessage();
         }
     });
-});
-
-socket.on('newPublicMessage', function (message) {
-    $("#messageList").append(msgObj(message))
-    scrollToBottom();
-});
+}

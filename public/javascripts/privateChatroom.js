@@ -35,26 +35,57 @@ function sendMessage() {
 
     // Post new private message
     if (messageContent.trim() !== "") {
-        $.ajax({
-            method: 'POST',
-            url: '/messages/private',
-            data: {
-                receiverId: anotherUserId,
-                content: messageContent,
-            }
-        }).done(function (response) {
-            $("#messageInput").val("");
-        }).fail(function (response) {
-            console.error('Failed to send message:', response);
-        });
+        postMessage(messageContent);
     }
 }
 
 
-$(document).ready(function () {
-    scrollToBottom();
 
-    // Cancel alert first
+const renderNewMessage = function (message) {
+    if ((currentUserId === message.senderId || currentUserId === message.receiverId) && (anotherUserId === message.receiverId || anotherUserId === message.senderId)) {
+        if (currentUserId === message.senderId) {
+            $("#messageList").append(senderMsgObj(message));
+        } else {
+            $("#messageList").append(receiverMsgObj(message));
+        }
+        
+        if (currentUserId === message.receiverId) {
+            cancelAlert();
+        }
+        
+        scrollToBottom();
+    }
+};
+
+function postMessage(messageContent) {
+    $.ajax({
+        method: 'POST',
+        url: '/messages/private',
+        data: {
+            receiverId: anotherUserId,
+            content: messageContent,
+        }
+    }).done(function (response) {
+        $("#messageInput").val("");
+    }).fail(function (response) {
+        console.error('Failed to send message:', response);
+    });
+}
+
+function addElementsBehavior() {
+    $("#sendMessageBtn").click(function () {
+        sendMessage();
+    });
+    
+    $('#messageInput').on("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+}
+
+function cancelAlert() {
     $.ajax({
         method: 'POST',
         url: '/messages/private/cancelAlert',
@@ -63,46 +94,19 @@ $(document).ready(function () {
             receiverId: currentUserId,
         }
     }).done(function () {
-        console.log("alert cancelled")
+        console.log("alert cancelled");
     }).fail(function () {
         console.error('Failed to cancel alert:');
     });
+}
 
-    $("#sendMessageBtn").click(function () {
-        sendMessage();
-    });
 
-    $('#messageInput').on("keydown", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            sendMessage();
-        }
-    });
+$(document).ready(function () {
+    scrollToBottom();
+
+    // Cancel alert first
+    cancelAlert();
+
+    addElementsBehavior();
 });
-
-socket.on('newPrivateMessage', function (message) {
-    if ((currentUserId === message.senderId || currentUserId === message.receiverId) && (anotherUserId === message.receiverId || anotherUserId === message.senderId)) {
-        if (currentUserId === message.senderId) {
-            $("#messageList").append(senderMsgObj(message))
-        } else {
-            $("#messageList").append(receiverMsgObj(message))
-        }
-
-        if (currentUserId === message.receiverId) {
-            $.ajax({
-                method: 'POST',
-                url: '/messages/private/cancelAlert',
-                data: {
-                    senderId: anotherUserId,
-                    receiverId: currentUserId,
-                }
-            }).done(function () {
-                console.log("alert cancelled_2")
-            }).fail(function () {
-                console.error('Failed to cancel alert:');
-            });
-        }
-
-        scrollToBottom();
-    }
-});
+socket.on('newPrivateMessage', renderNewMessage);
