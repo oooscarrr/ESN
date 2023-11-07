@@ -22,10 +22,8 @@ describe('Public messages functionality', () => {
     });
 
     afterEach(async () => {
-
         await PublicMessage.deleteMany({});
         jest.restoreAllMocks();
-
     });
 
     // Test 1: Successfully posting a new public message
@@ -108,5 +106,22 @@ describe('Public messages functionality', () => {
         mockSave.mockRestore();
     });
 
+    // Test 7: Should get all public messages
+    it('Should render all public messages', async () => {
+        await request(app)
+            .post('/messages/public')
+            .set('Cookie', [`token=${token}`])
+            .send({ content: 'A new public message' });
+        await request(app)
+            .post('/messages/public')
+            .set('Cookie', [`token=${token}`])
+            .send({ content: 'Another public message' });
+        const response = await request(app)
+            .get('/messages/public')
+            .set('Cookie', [`token=${token}`]);
 
+        expect(response.statusCode).toBe(200);
+        expect(response.text).toContain('A new public message');
+        expect(response.text).toContain('Another public message');
+    });
 });

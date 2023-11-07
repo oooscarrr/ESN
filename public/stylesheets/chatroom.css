@@ -18,19 +18,24 @@
     margin-bottom: 15px;
     max-width: 80%;
     align-self: flex-start;
-    /* position: relative; */
 }
 
 .sender-info {
+    max-width: max-content;
     display: inline-flex;
     align-items: center;
 }
 
 .sender-info .sender-name {
+    display: inline-block;
+    max-width: 75%;
     font-weight: bold;
     color: #007aff; 
     font-size: 16px;
     margin-right: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .sender-info .sender-name.self {

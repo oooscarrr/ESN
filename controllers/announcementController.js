@@ -35,8 +35,5 @@ This function retrieves all announcements in descending order ranked by time pos
 */
 export const list_announcements = async (req, res) => {
     const all_announcements = await Announcement.find({}).sort({ createdAt: -1 }).limit(100).exec();
-    all_announcements.sort(function(a, b){
-        return a.createdAt - b.createdAt;
-    });
     res.render('announcements/list', { announcements: all_announcements });
 }

@@ -4,6 +4,7 @@ import { User } from '../models/User';
 import { Announcement } from '../models/Announcement';
 import { setupTestDatabase, closeTestDatabase } from '../test-setup';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 
 describe('Announcement functionality', () => {
     let user, token;
@@ -39,7 +40,7 @@ describe('Announcement functionality', () => {
     });
 
     it('Should return error when non-existent user posts an announcement', async () => {
-        const nonExistentUserId = 'someNonExistentId';
+        const nonExistentUserId = new mongoose.Types.ObjectId('000000000000000000000000');
         const fakeToken = jwt.sign({ id: nonExistentUserId }, process.env.JWT_SECRET_KEY, {
             expiresIn: '1m'
         });
