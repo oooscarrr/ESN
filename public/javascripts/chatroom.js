@@ -21,7 +21,7 @@ function msgObj(message) {
 }
 
 function sendMessage() {
-    let messageContent = $("#messageInput").val();
+    const messageContent = $("#messageInput").val();
 
     if (messageContent.trim() !== "") {
         $.ajax({

@@ -3,6 +3,7 @@ import { app } from '../app';
 import { User } from '../models/User';
 import { setupTestDatabase, closeTestDatabase } from '../test-setup';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 
 describe('User Status functionality', () => {
     let user, token;
@@ -52,7 +53,7 @@ describe('User Status functionality', () => {
     });
 
     it('Should return an error when changing status of non-existent user', async () => {
-        const nonExistentUserId = 'someNonExistentId';
+        const nonExistentUserId = new mongoose.Types.ObjectId('000000000000000000000000');
         const fakeToken = jwt.sign({id: nonExistentUserId}, process.env.JWT_SECRET_KEY, {
             expiresIn: '1m'
         });
