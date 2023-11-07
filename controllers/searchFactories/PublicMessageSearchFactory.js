@@ -20,8 +20,6 @@ export default class PublicMessageSearchFactory extends AbstractSearchFactory {
     static searchMessageByWords = async (criteria, pageIndex) => {
 
         const numberOfResultsToSkip = parseInt(pageIndex) * 10;
-        console.log(criteria);
-        console.log(pageIndex);
         const queryWordsArray = filterStopWords(criteria);
 
         if (queryWordsArray.length === 0) {
