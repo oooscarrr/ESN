@@ -20,13 +20,13 @@
     align-self: flex-start;
 }
 
-.sender-info {
+.chatroom-container .sender-info {
     max-width: max-content;
     display: inline-flex;
     align-items: center;
 }
 
-.sender-info .sender-name {
+.chatroom-container .sender-info .sender-name {
     display: inline-block;
     max-width: 75%;
     font-weight: bold;
