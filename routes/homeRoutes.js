@@ -5,7 +5,7 @@ import { change_user_online_status } from '../controllers/userController.js';
 const router = express.Router();
 router.get('/', function (req, res) {
     res.render('home');
-  });
+});
   
 router.get('/joinCommunity', async function (req, res) {
     const token = req.cookies.token;
