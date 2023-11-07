@@ -177,7 +177,8 @@ describe('search functionality test cases', () => {
         expect(response4.status).toBe(201);
 
         const func = PrivateMessageSearchFactory.getSearchFunction();
-        const results = await func({userIdOne: Daniel._id, userIdTwo: Alice._id, query: "Hey Daniel", pageIndex: 0});
+        const results = await func({status:'', query: 'Hey Daniel', myUserId: Daniel._id, otherUserId: Alice._id}, 0);
+        // const results = await func({userIdOne: Daniel._id, userIdTwo: Alice._id, query: "Hey Daniel", pageIndex: 0});
         expect(results.length).toBe(2);
         expect(results[0].senderName).toBe('Daniel');
         expect(results[0].receiverName).toBe('Alice');
@@ -231,7 +232,7 @@ describe('search functionality test cases', () => {
         expect(response3.status).toBe(201);
 
         const func = PublicMessageSearchFactory.getSearchFunction();
-        const results = await func({query: "DANIEL", pageIndex: 0});
+        const results = await func("DANIEL", 0);
         expect(results.length).toBe(3);
         expect(results[0].senderName).toBe('Daniel');
         expect(results[0].content).toBe("said A second message from Daniel!");
@@ -241,15 +242,15 @@ describe('search functionality test cases', () => {
         expect(results[2].content).toBe("said A public message from Daniel!");
 
         // Stop words
-        const results2 = await func({query: "said", pageIndex: 0});
+        const results2 = await func("said", 0);
         expect(results2.length).toBe(0);
 
         // Words not exist
-        const results3 = await func({query: "security", pageIndex: 0});
+        const results3 = await func("security", 0);
         expect(results3.length).toBe(0);
 
         // Page index
-        const results4 = await func({query: "Daniel", pageIndex: 1});
+        const results4 = await func("Daniel", 1);
         expect(results4.length).toBe(0);
     });
 
@@ -281,7 +282,7 @@ describe('search functionality test cases', () => {
         expect(response3.status).toBe(201);
 
         const func = AnnouncementSearchFactory.getSearchFunction();
-        const results = await func({query: "DANIEL", pageIndex: 0});
+        const results = await func("DANIEL", 0);
         expect(results.length).toBe(2);
         expect(results[0].posterName).toBe('littleDaniel');
         expect(results[0].content).toBe("said An announcement from littleDaniel!");
@@ -289,15 +290,15 @@ describe('search functionality test cases', () => {
         expect(results[1].content).toBe("said An announcement from Daniel!");
 
         // Stop words
-        const results2 = await func({query: "said", pageIndex: 0});
+        const results2 = await func("said", 0);
         expect(results2.length).toBe(0);
 
         // Words not exist
-        const results3 = await func({query: "security", pageIndex: 0});
+        const results3 = await func("security", 0);
         expect(results3.length).toBe(0);
 
         // Page index
-        const results4 = await func({query: "Daniel", pageIndex: 1});
+        const results4 = await func("Daniel", 1);
         expect(results4.length).toBe(0);
     });
 
