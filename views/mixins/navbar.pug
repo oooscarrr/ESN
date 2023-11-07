@@ -5,6 +5,8 @@ mixin navbar
             i.home.icon
         a.item(href='/messages/public')
             i.users.icon
+        a.item(href='/announcements')
+            i.bullhorn.icon
         .right.menu
             if context !== contextModule.CONTEXT.OTHER
                 .item#navbarSearchButton
@@ -13,7 +15,6 @@ mixin navbar
                 .item.ui.dropdown
                     i.hamburger.icon
                     .menu
-                        a.item(href='/announcements') Announcements
                         .item#changeStatusButton Change Status
                         a.item(href='/speedtest') Speed Test
                         .item#logoutButton Logout
