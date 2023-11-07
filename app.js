@@ -15,10 +15,11 @@ import privateMessageRouter from './routes/privateMessageRoutes.js';
 import announcementRouter from './routes/announcementRoutes.js';
 import speedTestRouter from './routes/speedTestRoutes.js';
 import searchRouter from './routes/searchRoutes.js';
-
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
 import checkSuspended from './middlewares/checkSuspended.js';
+import attachReqUrl from './middlewares/attachReqUrl.js';
+import attachContext from './middlewares/attachContext.js';
 
 
 const app = express();
@@ -32,6 +33,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/shared', express.static(path.join(__dirname, 'shared')));
 const cookieOptions = {
   maxAge: 1000 * 60 * 60 * 24,
   httpOnly: true,
@@ -40,6 +42,8 @@ const cookieOptions = {
 app.use(cookieParser(cookieOptions));
 app.use(attachUserInfo);
 app.use(checkSuspended);
+app.use(attachReqUrl);
+app.use(attachContext);
 
 // Set up view engine
 app.set('views', path.join(__dirname, 'views'));

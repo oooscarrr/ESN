@@ -1,0 +1,8 @@
+for m in publicMessages
+    .messageBox
+        .senderInfo
+            span.senderName #{m.senderName}
+            i.statusIcon(class=m.userStatus)
+        .messageContent
+            span #{m.content}
+            span.timestamp #{m.createdAt.toLocaleString()}

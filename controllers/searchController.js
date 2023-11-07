@@ -19,11 +19,11 @@ const getSearchFactory = (context) => {
 }
 
 export default async function executeSearch(req, res) {
-    const {context, criteria} = req.query;
+    const {context, criteria, pageIndex} = req.query;
     const searchFactory = getSearchFactory(context);
     const search = searchFactory.getSearchFunction();
     const render = searchFactory.getRenderFunction();
-    const results = await search(criteria);
-    const renderedResults = render(results);
+    const results = await search(criteria, pageIndex);
+    const renderedResults = await render(results);
     res.status(200).send(renderedResults);
 }
