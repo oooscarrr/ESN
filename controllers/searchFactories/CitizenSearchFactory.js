@@ -52,8 +52,15 @@ export default class CitizenSearchFactory extends AbstractSearchFactory {
      * @returns {string} The HTML string of the rendered users
      */
     static renderUsers = (users) => {
-        return app.render('searchResults/users', {users: users});
-        // return app.render('../../views/searchResults/users', {users: users});
-        // TODO: implement views/searchResults/users.pug
+        return new Promise((resolve, reject) => {
+            app.render('searchResults/users', { users: users }, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                } else {
+                    resolve(html);
+                }
+            });
+        });
     }
 }

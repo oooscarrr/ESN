@@ -16,11 +16,9 @@ export default class AnnouncementSearchFactory extends AbstractSearchFactory {
      * @param {string} criteria.pageIndex Index of page, each page has 10 results, if page === 2, returns public message #20 - 29
      * @returns {Array} An array of announcement objects that match the search criteria
      */
-    static searchByWords = async (criteria) => {
-        const pageIndex = criteria.pageIndex;
+    static searchByWords = async (criteria, pageIndex) => {
         const numberOfResultsToSkip = parseInt(pageIndex) * 10;
-        const query = criteria.query;
-        const queryWordsArray = filterStopWords(query);
+        const queryWordsArray = filterStopWords(criteria);
 
         if (queryWordsArray.length === 0) {
             return [];
@@ -39,7 +37,15 @@ export default class AnnouncementSearchFactory extends AbstractSearchFactory {
      * @returns {string} The HTML string of the rendered announcements
      */
     static renderAnnouncements = (announcements) => {
-        return app.render('searchResults/announcements', {announcements: announcements});
-        // TODO: implement views/searchResults/announcements.pug
+        return new Promise((resolve, reject) => {
+            app.render('searchResults/announcements', {announcements: announcements}, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                } else {
+                    resolve(html);
+                }
+            });
+        });
     }
 }
