@@ -1,3 +1,9 @@
+#resultBox span#emptyResultPrompt {
+    width: 100%;
+    display: block;
+    text-align: center;
+    font-size: 1.5em;
+}
 #resultBox .messageBox {
     width: 100%;
     display: flex;

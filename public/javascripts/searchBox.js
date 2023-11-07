@@ -27,6 +27,7 @@ const displayAndHideSearchElements = (context) => {
         $('#leftArrow').hide()
         $('#rightArrow').hide()
     }
+    $('#emptyResultPrompt').hide();
 }
 
 const addSearchElementBehavior = (context) => {
@@ -181,6 +182,7 @@ const searchCitizens = () => {
 }
 
 const onCitizenSearchSuccess = (results) => {
+    promptOrUnpromptEmptyResults(results);
     $('#searchResults').append(results);
     $('.ui.accordion').accordion();
 
@@ -192,6 +194,7 @@ const searchAnnouncements = () => {
 }
 
 const onAnnouncementSearchSuccess = (results) => {
+    promptOrUnpromptEmptyResults(results);
     $('#searchResults').append(results);
 }
 
@@ -201,6 +204,7 @@ const searchPublicMessages = () => {
 }
 
 const onPublicMessageSearchSuccess = (results) => {
+    promptOrUnpromptEmptyResults(results);
     $('#searchResults').append(results);
 }
 
@@ -220,6 +224,7 @@ const searchPrivateMessages = () => {
 }
 
 const onPrivateMessageSearchSuccess = (results) => {
+    promptOrUnpromptEmptyResults(results);
     $('#searchResults').append(results);
 
 }
@@ -228,8 +233,15 @@ const onSearchError = (xhr, status, error) => {
     console.error('AJAX error:', status, error);
 }
 
+const promptOrUnpromptEmptyResults = (results) => {
+    if(results.trim() == ''){
+        $('#emptyResultPrompt').show();
+    } else {
+        $('#emptyResultPrompt').hide();
+    }
+}
 const makeSearchRequest = (context, criteria, pageIndex, onSuccess, onError) => {
-    $('#searchResults').empty();
+    $('#searchResults').children().not('#emptyResultPrompt').remove();
     const query = {context, criteria, pageIndex};
     $.ajax({
         method: 'GET',
