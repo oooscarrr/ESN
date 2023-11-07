@@ -47,6 +47,7 @@ describe('User Status functionality', () => {
             .send({ status: 2 }); // 2 corresponds to 'help'
 
         const updatedUser = await User.findById(user._id);
+
         expect(updatedUser.lastStatus).toBe('help');
     });
 
