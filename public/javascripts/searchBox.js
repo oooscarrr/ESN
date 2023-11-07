@@ -24,6 +24,8 @@ export const initializeSearchBox = () => {
 const displayAndHideSearchElements = (context) => {
     if (context == CONTEXT.CITIZENS) {
         $('#statusSelect').closest('.ui.dropdown').hide();
+        $('#leftArrow').closest('.ui.button').hide();
+        $('#rightArrow').closest('.ui.button').hide();
     }
 }
 
