@@ -10,7 +10,7 @@
     overflow: hidden;
 }
 
-.message-box {
+.chatroom-container .message-box {
     padding: 8px;
     background-color: #e5f2ff;
     border-radius: 15px;
@@ -38,18 +38,18 @@
     text-overflow: ellipsis;
 }
 
-.sender-info .sender-name.self {
+.chatroom-container .sender-info .sender-name.self {
     color: green; 
 }
 
-.message-content {
+.chatroom-container .message-content {
     padding: 10px;
     position: relative;
     word-wrap: break-word;
     font-size: 15px;
 }
 
-.timestamp {
+.chatroom-container .timestamp {
     font-size: 10px;
     color: #aaa; 
     position: absolute;
@@ -57,7 +57,7 @@
     right: 15px;
 }
 
-.input-area {
+.chatroom-container .input-area {
     position: fixed;     
     bottom: 0;           
     width: 100%;        
@@ -71,7 +71,7 @@
 }
 
 
-input#messageInput {
+.chatroom-container input#messageInput {
     flex-grow: 1;
     padding: 10px;
     border: 1px solid #e0e0e0;
@@ -79,7 +79,7 @@ input#messageInput {
     margin-right: 10px;
 }
 
-button#sendMessageBtn {
+.chatroom-container button#sendMessageBtn {
     background-color: #007aff;
     color: #fff;
     padding: 10px 15px;
@@ -89,7 +89,7 @@ button#sendMessageBtn {
     transition: background-color 0.3s;
 }
 
-button#sendMessageBtn:hover {
+.chatroom-container button#sendMessageBtn:hover {
     background-color: #005ad5;
 }
 

@@ -58,6 +58,7 @@ const renderNewMessage = function (message) {
 };
 
 function postMessage(messageContent) {
+    console.log("post message ${messageContent}");
     $.ajax({
         method: 'POST',
         url: '/messages/private',
@@ -73,9 +74,7 @@ function postMessage(messageContent) {
 }
 
 function addElementsBehavior() {
-    $("#sendMessageBtn").click(function () {
-        sendMessage();
-    });
+    $("#sendMessageBtn").click(sendMessage);
     
     $('#messageInput').on("keydown", function (event) {
         if (event.key === "Enter") {

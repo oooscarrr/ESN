@@ -1,0 +1,7 @@
+for a in announcements
+    .messageBox.announcement 
+        .senderInfo
+            span.senderName #{a.posterName}
+        .messageContent
+            span #{a.content}
+            span.timestamp #{a.createdAt.toLocaleString()}

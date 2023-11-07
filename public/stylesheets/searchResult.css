@@ -1,0 +1,58 @@
+#resultBox .messageBox {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-bottom: 1.5em;
+    border: 1px solid #ccc;
+    padding: 1em;
+    border-radius: 5px;
+}
+#resultBox .messageBox .senderInfo{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+#resultBox .messageBox .senderInfo span.senderName{
+    font-weight: bold;
+}
+
+#resultBox i.statusIcon
+{
+    background-color: #888;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+}
+
+#resultBox .messageBox .senderInfo i.statusIcon{
+    margin-left: 0.5em;
+}
+
+#resultBox i.statusIcon.emergency {
+    background-color: #d22
+}
+#resultBox i.statusIcon.help {
+    background-color: #dd0
+}
+#resultBox i.statusIcon.ok {
+    background-color: #2d2
+}
+
+#resultBox .messageBox .messageContent {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1em;
+    margin-bottom: 1em;;
+}
+#resultBox .messageBox .messageContent span{
+    width: 100%;
+}
+#resultBox .messageBox .messageContent span.timestamp{
+    text-align: right;
+}

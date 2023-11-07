@@ -1,37 +1,45 @@
-import {showLoaded} from './searchBox.js';
+import * as searchBox from './searchBox.js';
+
+const sendLogoutRequest = function () {
+    $.ajax({
+        method: 'POST',
+        url: '/users/logout',
+    }).done(function () {
+        localStorage.removeItem("currentUserId");
+        socket.disconnect();
+        window.location.href = '/';
+    });
+};
+const sendStatusChangeRequest = function (e) {
+    e.preventDefault();
+    const data = $(this).serialize();
+    $.ajax({
+        method: 'POST',
+        url: '/users/status',
+        data: data
+    }).done(function () {
+        $('#changeStatusModal').modal('hide');
+        if (location.pathname === '/users') {
+            location.reload();
+        }
+    });
+};
+const toggleSearchBoxVisibility = function () {
+    $('#searchBox').transition('fade', '500ms');
+}
 
 $(document).ready(() => {
-    showLoaded();
-    $('#logoutButton').click(function () {
-        $.ajax({
-            method: 'POST',
-            url: '/users/logout',
-        }).done(function () {
-            localStorage.removeItem("currentUserId");
-            socket.disconnect();
-            window.location.href = '/';
-        });
-    });
+    $('#logoutButton').click(sendLogoutRequest);
 
     $('.ui.dropdown').dropdown();
 
-    // searchDropdown();
+    searchBox.initializeSearchBox();
 
+    // searchDropdown();
+    // searchBox.showSearchDropdown(context);
+    $('#navbarSearchButton').click(toggleSearchBoxVisibility);
     $('#changeStatusModal').modal('attach events', '#changeStatusButton', 'show');
-    $('#changeStatusForm').submit(function (e) {
-        e.preventDefault();
-        const data = $(this).serialize();
-        $.ajax({
-            method: 'POST',
-            url: '/users/status',
-            data: data
-        }).done(function () {
-            $('#changeStatusModal').modal('hide');
-            if (location.pathname === '/users') {
-                location.reload();
-            }
-        });
-    });
+    $('#changeStatusForm').submit(sendStatusChangeRequest);
 
     $('.ui.radio.checkbox').checkbox();
 });
