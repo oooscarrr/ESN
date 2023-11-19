@@ -3,18 +3,18 @@
 }
 
 .ui.custom-scrolling-container {
-    max-height: 350px;
-    width: 95%;
+    max-height: 340px;
+    width: 97%;
     overflow-y: auto;
 }
 
 .ui.card.custom-width {
-    width: 100%;
-    margin-bottom: 15px;
+    width: 95%;
+    margin: 2.5%;
 }
 
 .ui.button.custom {
-    margin-top: 15px;
+    margin-top: 5%;
 }
 
 

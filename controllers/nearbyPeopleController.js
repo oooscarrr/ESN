@@ -80,6 +80,4 @@ export const list_nearby_people = async (req, res) => {
     const nearbyPeople = await get_nearby_people(userId);
     
     res.render('nearbyPeople/list', {users: nearbyPeople});
-
-    console.log("NEARBY: ", nearbyPeople);
 }

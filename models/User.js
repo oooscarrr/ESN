@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema(
         isActive: { type: Boolean, default: true },
         latitude: { type: Number, default: null},
         longitude: { type: Number, default: null},
+        groups: { type: [String], default: [] },
     },
     {
         statics: {
