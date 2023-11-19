@@ -1,0 +1,20 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title Hazards Map
+
+block append scripts
+    script(src='/javascripts/hazardsMap/index.js')
+    script(async='' src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCtSslTFr3ROI5tMdZl1HlnHCPHd_QEjX8&callback=console.debug&libraries=maps,marker&v=beta')
+
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/hazardsMap.css')
+
+block content
+    +navbar
+    .hazards-page-container
+        h1.header-title Hazards Map
+        .ui.button Report Hazard
+        gmp-map(center='37.41061186089065, -122.05980078650498' zoom='12' map-id='HAZARD_MAP')
+        gmp-advanced-marker(position='37.41061186089065, -122.05980078650498' title='My location')
