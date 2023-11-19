@@ -1,0 +1,20 @@
+.dist {
+    color: gray;
+}
+
+.ui.custom-scrolling-container {
+    max-height: 350px;
+    width: 95%;
+    overflow-y: auto;
+}
+
+.ui.card.custom-width {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.ui.button.custom {
+    margin-top: 15px;
+}
+
+

@@ -1,0 +1,102 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title Nearby People
+block append scripts
+    script(src='/socket.io/socket.io.js')
+    script(src='javascripts/nearbyPeople.js')
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/nearbyPeople.css')
+block content
+    - const statusIconDict = {'undefined': 'question circle', 'ok': 'smile icon', 'help': 'frown icon', 'emergency': 'exclamation triangle'}
+    - const statusColorDict = {'undefined': 'grey', 'ok': 'rgb(50, 178, 50)', 'help': 'rgb(248, 167, 37)', 'emergency': 'red'}
+    +navbar
+    .horizontal.centered.box#contentBox
+        h2 Nearby People
+        .ui.container#DirectoryBox
+            .ui.fluid.accordion#DirectoryContent
+                - online_users = users.filter(user => user.user.isOnline)
+                - offline_users = users.filter(user => !user.user.isOnline)
+                .title.active
+                    i.dropdown.icon
+                    span Online Users
+                    span.ui.label #{online_users.length}
+                .content.active
+                    .ui.relaxed.divided.list
+                        for user in online_users
+                            .item.user-row
+                                i.big.icon(class=statusIconDict[user.user.lastStatus] style='color: '+statusColorDict[user.user.lastStatus])
+                                .content
+                                    a.username(href='/messages/private/' + currentUserId + '/' + user.user._id) #{user.user.username}
+                                - const roundedDistance = Math.ceil(user.distance);
+                                if roundedDistance == 1
+                                    span.dist= roundedDistance + ' meter away'
+                                else
+                                    span.dist= roundedDistance + ' meters away'
+                .title
+                    i.dropdown.icon
+                    span Offline Users
+                    span.ui.label #{offline_users.length}
+                .content
+                    .ui.relaxed.divided.list
+                        for user in offline_users
+                            .item.user-row
+                                i.big.icon(class=statusIconDict[user.user.lastStatus] style='color: '+statusColorDict[user.user.lastStatus])
+                                .content
+                                    a.username(href='/messages/private/' + currentUserId + '/' + user.user._id) #{user.user.username}
+                                - const roundedDistance = Math.ceil(user.distance);
+                                if roundedDistance == 1
+                                    span.dist= roundedDistance + ' meter away'
+                                else
+                                    span.dist= roundedDistance + ' meters away'
+                .title
+                    i.dropdown.icon
+                    span Nearby Groups
+                    span.ui.label 10
+                .content
+                    .ui.custom-scrolling-container
+                        .ui.card.custom-width
+                            .content
+                                .header TEST NAME
+                                .description TEST DESCRIPTION
+                            .extra.content
+                                .ui.two.buttons
+                                    .ui.basic.green.button Join
+                        .ui.card.custom-width
+                            .content
+                                .header TEST NAME
+                                .description TEST DESCRIPTION
+                            .extra.content
+                                .ui.two.buttons
+                                    .ui.basic.green.button Join
+                        .ui.card.custom-width
+                            .content
+                                .header TEST NAME
+                                .description TEST DESCRIPTION
+                            .extra.content
+                                .ui.two.buttons
+                                    .ui.basic.green.button Join
+                        .ui.card.custom-width
+                            .content
+                                .header TEST NAME
+                                .description TEST DESCRIPTION
+                            .extra.content
+                                .ui.two.buttons
+                                    .ui.basic.green.button Join
+                        .ui.card.custom-width
+                            .content
+                                .header TEST NAME
+                                .description TEST DESCRIPTION
+                            .extra.content
+                                .ui.two.buttons
+                                    .ui.basic.green.button Join
+                        .ui.card.custom-width
+                            .content
+                                .header TEST NAME
+                                .description TEST DESCRIPTION
+                            .extra.content
+                                .ui.two.buttons
+                                    .ui.basic.green.button Join
+                .ui.button.custom Create a new group chat with nearby people
+        

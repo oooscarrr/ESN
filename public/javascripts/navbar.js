@@ -28,6 +28,53 @@ const toggleSearchBoxVisibility = function () {
     $('#searchBox').transition('fade', '500ms');
 }
 
+function ableToGetLocation(position) {
+    // Update user geolocation
+    console.log(position.coords.latitude);
+    console.log(position.coords.longitude);
+    $.ajax({
+        method: 'POST',
+        url: '/users/geolocation',
+        data: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+        }
+    }).done(function () {
+        // Remove the loading message
+        hideLoadingIndicator();
+        // Redirect to nearbypeople page
+        window.location.href = '/nearbypeople';
+    }).fail(function (response) {
+        console.error('Failed to update geolocation', response);
+    });
+}
+
+function unableToGetLocation() {
+    alert("Please enable your location sharing.");
+    // Remove the loading message
+    hideLoadingIndicator();
+}
+
+function hideLoadingIndicator() {
+    // Hide the loading indicator using Fomantic UI classes
+    $("#loading-message").remove();
+}
+
+function getGeolocation() {
+    if ("geolocation" in navigator) {
+        // Display the loading message
+        var loadingMessage = document.createElement("div");
+        loadingMessage.id = "loading-message";
+        loadingMessage.className = "ui active dimmer";
+        loadingMessage.innerHTML = `<div class="ui text loader">Loading...</div>`;
+        document.body.appendChild(loadingMessage);
+        
+        navigator.geolocation.getCurrentPosition(ableToGetLocation, unableToGetLocation, {timeout:10000});
+    } else {
+        alert("Geolocation data not available")
+    }
+}
+
 $(document).ready(() => {
     $('#logoutButton').click(sendLogoutRequest);
 
@@ -42,98 +89,7 @@ $(document).ready(() => {
     $('#changeStatusForm').submit(sendStatusChangeRequest);
 
     $('.ui.radio.checkbox').checkbox();
+
+    // Find nearby people button
+    $('#findNearbyPeople').click(getGeolocation);
 });
-
-// function searchDropdown() {
-//     if (isUserSearch()) {
-//         $('#categorySelect').show();
-//     }
-
-//     // Prevent closing the dropdown when interacting with the input and button
-//     $('.ui.action.input').on('click', function (e) {
-//         e.stopPropagation();
-//     });
-
-
-//     $('.ui.action.input button').on('click', function (e) {
-//         e.stopPropagation();
-//         search();
-//         clearSearchInput();
-//     });
-
-//     // Listen for keydown event on the input to handle the Enter key press
-//     $('.ui.action.input input').on('keydown', function (e) {
-//         e.stopPropagation();
-//         if (e.which === 13) {
-//             search();
-//             clearSearchInput(); // Call the function to clear the input
-//         }
-//     });
-// }
-// function isUserSearch() {
-//     var currentPathname = window.location.pathname;
-//     console.log((currentPathname));
-//     if(currentPathname == '/users'){
-//         return true;
-//     }
-//     return false;
-// }
-// function clearSearchInput() {
-//     $('.ui.action.input input').val('');
-// }
-
-
-// function search() {
-//     let inputVal = $('.ui.action.input input').val();
-//     var currentPathname = window.location.pathname;
-//     let context = findContext(currentPathname);
-//     console.log(context);
-
-//     let criteria;
-//     if (context == 'citizens') {
-//         var selectedCategory = $('#categorySelect').val();
-//         if (selectedCategory == 'status') {
-//             criteria = {
-//                 status: inputVal,
-//             }
-//         } else {
-//             criteria = {
-//                 usernameFragment: inputVal,
-//             }
-//         }
-//     } else {
-//         criteria = inputVal;
-//     }
-//     console.log(criteria);
-
-//     sendSearchRequest(context, criteria);
-//     // const {context, criteria} = req.body;
-// }
-
-// function sendSearchRequest(inputContext, inputCriteria){
-//     $.ajax({
-//         method: 'GET',
-//         url: '/search',
-//         data:{
-//             context: inputContext,
-//             criteria: inputCriteria,
-//         },
-//         success: function(response) {
-//             console.log(response);
-//             $('#searchResults').html(response);
-//         },
-//         error: function(xhr, status, error) {
-//             console.error('AJAX error:', status, error);
-//         }
-//     });
-// }
-
-
-// function findContext(currentPathname) {
-//     for (const key in contextDict) {
-//         if (currentPathname.startsWith(key)) {
-//             return contextDict[key];
-//         }
-//     }
-//     return 'unknownContext';
-// }
