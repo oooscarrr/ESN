@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt';
 import { User } from '../models/User.js';
+import { Group } from '../models/Group.js';
 import { app } from '../app.js';
 
 /**
@@ -74,12 +74,63 @@ async function get_nearby_people(userId) {
     return sortedUsers
 }
 
+/**
+ * @param {*} nearbyPeople a list of nearby users
+ * @returns a list of Groups that nearby users are in
+ */
+async function get_nearby_groups(nearbyPeople) {
+    if (nearbyPeople.length === 0) {
+        return [];
+    }
+
+    var nearbyGroupIdsArrays = [];
+    for (let i = 0; i < nearbyPeople.length; ++i) {
+        nearbyGroupIdsArrays.push(nearbyPeople[i].user.groups);
+    }
+
+    console.log("nearbyGroupIdsArrays: ", nearbyGroupIdsArrays);
+
+    // Find the union
+    const unionSet = new Set();
+    nearbyGroupIdsArrays.forEach((arr) => {
+        // Add each element to the Set
+        arr.forEach((element) => {
+            unionSet.add(element);
+        });
+    });
+
+    const nearbyGroupIds = Array.from(unionSet);
+
+    // Get the list of Group objects
+    let nearbyGroups = []
+    for (let i = 0; i < nearbyGroupIds.length; ++i) {
+        const id = nearbyGroupIds[i];
+        try {
+            const group = await Group.findById(id);
+            if (group) {
+                nearbyGroups.push(group);
+            } else {
+                continue;
+            }
+        } catch (error) {
+            console.error('get_nearby_groups Error: ', error);
+            continue;
+        }
+    }
+
+    return nearbyGroups;
+}
+
 
 export const list_nearby_people = async (req, res) => {
     const userId = req.userId;
     const nearbyPeople = await get_nearby_people(userId);
+    const nearbyGroups = await get_nearby_groups(nearbyPeople);
     
+    console.log("NEARBY GROUPS: ", nearbyGroups);
+    // console.log("NEARBY PEOPLE: ", nearbyPeople);
+
     app.locals.nearbyPeople = nearbyPeople;
     
-    res.render('nearbyPeople/list', {users: nearbyPeople});
+    res.render('nearbyPeople/list', {users: nearbyPeople, groups: nearbyGroups});
 }

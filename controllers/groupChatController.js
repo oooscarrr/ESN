@@ -4,7 +4,6 @@ import { GroupMessage } from '../models/GroupMessage.js';
 import { io } from '../app.js';
 
 /**
- * 
  * @param {*} groupName
  * @param {*} description 
  * @returns create a new group object and add the groupId to all users in the group
@@ -60,4 +59,18 @@ export const create_new_group = async (req, res) => {
         res.sendStatus(500);
         console.log('No people nearby, unable to create a new group');
     }
+}
+
+/**
+ * @returns a rendered page of a group chat
+ */
+export const list_group_chat = async (req, res) => {
+    const groupId = req.params.groupId;
+    const groupInfo = await Group.findById(groupId);
+    const groupMessages = await GroupMessage.find({groupId: groupId}).sort({createdAt: 1});
+
+    console.log("GROUP INFO: ", groupInfo);
+    console.log("GROUP MESSAGES: ", groupMessages);
+
+    res.render('groupChat/list', {groupInfo: groupInfo, groupMessages: groupMessages});
 }

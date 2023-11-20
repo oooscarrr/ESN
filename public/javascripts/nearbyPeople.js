@@ -24,8 +24,7 @@ function confirm() {
             // Close the modal
             $('#newGroupModal').modal('hide');
             // Redirect to the group chat page
-            // window.location.href = '/groups/' + response.groupId;
-            console.log(response.groupId);
+            window.location.href = '/groups/' + response.groupId;
         }).fail(function (response) {
             console.error('Failed to create the new group', response);
         });
@@ -35,6 +34,29 @@ function confirm() {
 function cancel() {
     // Close the modal
     $('#newGroupModal').modal('hide');
+}
+
+// Onclick declared in nearbyPeople.pug
+function showUserListModal(userList) {
+    // Select the modal element
+    const modal = $('#userListModal');
+  
+    // Clear the existing content in the modal
+    modal.find('.content').empty();
+  
+    // Append the list of usernames to the modal content
+    userList.forEach(user => {
+      modal.find('.content').append(`<div>${user.username}</div>`);
+    });
+  
+    // Show the modal
+    modal.modal('show');
+}
+
+// Onclick declared in nearbyPeople.pug
+function closeUserListModal() {
+    // Close the modal
+    $('#userListModal').modal('hide');
 }
 
 

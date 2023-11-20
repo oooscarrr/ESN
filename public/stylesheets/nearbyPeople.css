@@ -3,7 +3,7 @@
 }
 
 .ui.custom-scrolling-container {
-    max-height: 395px;
+    max-height: 360px;
     width: 97%;
     overflow-y: auto;
 }

@@ -5,7 +5,7 @@ block title
     title Nearby People
 block append scripts
     script(src='/socket.io/socket.io.js')
-    script(src='javascripts/nearbyPeople.js')
+    script(src='/javascripts/nearbyPeople.js')
 block append stylesheets
     link(rel='stylesheet', href='/stylesheets/nearbyPeople.css')
 block content
@@ -57,48 +57,18 @@ block content
                     .ui.primary.button.custom#newGroupButton Create a new group chat with nearby people
 
         .ui.custom-scrolling-container
-            .ui.card.custom-width
-                .content
-                    .header TEST NAME
-                    .description TEST DESCRIPTION
-                .extra.content
-                    .ui.two.buttons
-                        .ui.basic.green.button Join
-            .ui.card.custom-width
-                .content
-                    .header TEST NAME
-                    .description TEST DESCRIPTION
-                .extra.content
-                    .ui.two.buttons
-                        .ui.basic.green.button Join
-            .ui.card.custom-width
-                .content
-                    .header TEST NAME
-                    .description TEST DESCRIPTION
-                .extra.content
-                    .ui.two.buttons
-                        .ui.basic.green.button Join
-            .ui.card.custom-width
-                .content
-                    .header TEST NAME
-                    .description TEST DESCRIPTION
-                .extra.content
-                    .ui.two.buttons
-                        .ui.basic.green.button Join
-            .ui.card.custom-width
-                .content
-                    .header TEST NAME
-                    .description TEST DESCRIPTION
-                .extra.content
-                    .ui.two.buttons
-                        .ui.basic.green.button Join
-            .ui.card.custom-width
-                .content
-                    .header TEST NAME
-                    .description TEST DESCRIPTION
-                .extra.content
-                    .ui.two.buttons
-                        .ui.basic.green.button Join
+            for group in groups
+                .ui.card.custom-width
+                    .content
+                        .header #{group.groupName}
+                        i.icon.user.friends.horizontal(style="float: right; cursor: pointer;", onclick=`showUserListModal(${JSON.stringify(group.users)})`)
+                        if group.description
+                            .description <i>Description: #{group.description}</i>
+                        else
+                            .description <i>Description: N/A</i>
+                    .extra.content
+                        .ui.two.buttons
+                            .ui.basic.green.button Join
     
     .ui.modal#newGroupModal
         .header Enter Group Information
@@ -116,4 +86,11 @@ block content
         .actions
             .ui.button#confirmCreateGroupButton Confirm
             .ui.button#cancelCreateGroupButton Cancel
+
+    .ui.modal#userListModal
+        .header Citizens in the group
+        .content
+            // Will append a list of usernames in showUserListModal()
+        .actions
+            .ui.button(onclick=`closeUserListModal()`) Close
         
