@@ -21,6 +21,12 @@ export const create_new_group = async (req, res) => {
             userId: user._id.valueOf(),
         }))
 
+        // Check if groupName already exists
+        const groupChecker = await Group.findOne({groupName: groupName});
+        if (groupChecker) {
+            return res.status(400).send('Group name already exists');
+        }
+
         // Add current user into users
         const currentUserId = req.userId;
         const currentUser = await User.findById(currentUserId);
@@ -36,8 +42,7 @@ export const create_new_group = async (req, res) => {
             const group = await Group.create({ groupName: groupName, description: description, users: users });
             groupId = group._id.valueOf();
         } catch (error) {
-            res.sendStatus(500);
-            return console.log('create_new_group Error: ', error);
+            return res.status(500).send(error);
         } finally {
             console.log('Group Saved Successfully')
         }
@@ -65,12 +70,42 @@ export const create_new_group = async (req, res) => {
  * @returns a rendered page of a group chat
  */
 export const list_group_chat = async (req, res) => {
+    const userId = req.userId;
     const groupId = req.params.groupId;
     const groupInfo = await Group.findById(groupId);
     const groupMessages = await GroupMessage.find({groupId: groupId}).sort({createdAt: 1});
 
-    console.log("GROUP INFO: ", groupInfo);
-    console.log("GROUP MESSAGES: ", groupMessages);
+    // console.log("GROUP INFO: ", groupInfo);
+    // console.log("GROUP MESSAGES: ", groupMessages);
 
-    res.render('groupChat/list', {groupInfo: groupInfo, groupMessages: groupMessages});
+    res.render('groupChat/list', {currentUserId: userId, groupInfo: groupInfo, groupMessages: groupMessages});
+}
+
+/**
+ * @param {*} groupId 
+ * @param {*} res 
+ */
+export const post_group_message = async (req, res) => {
+    let newGroupMessage;
+    const senderId = req.userId;
+    const groupId = req.body.groupId;
+    const content = req.body.input;
+
+    const user = await User.findById(senderId)
+    if (!user) {
+        return res.status(400).send('User does not exist');
+    }
+    const senderName = user.username;
+    const senderStatus = user.lastStatus;
+
+    try {
+        newGroupMessage = await GroupMessage.create({ groupId: groupId, senderId: senderId, senderName: senderName, content: content, senderStatus: senderStatus });
+    } catch (error) {
+        return res.status(500).send(error);
+    } finally {
+        console.log('Group Message Saved Successfully')
+    }
+
+    io.emit('newGroupMessage', newGroupMessage);
+    return res.sendStatus(201);
 }

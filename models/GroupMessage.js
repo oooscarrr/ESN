@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 const groupMessageSchema = new mongoose.Schema(
     {
         groupId: String,
-        groupName: String,
+        senderId: String,
         senderName: String,
         content: String,
         createdAt: { type: Date, default: Date.now },

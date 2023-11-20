@@ -18,12 +18,12 @@ block content
     +navbar
     
     .horizontal.centered.box#contentBox
-        // Group name and number of citizens in group
+        // Group name, number of citizens in group, and a setting icon
         - const groupName = groupInfo.groupName;
         h1(style='margin-bottom: 5px') 
             | #{groupName.length > 15 ? groupName.substring(0, 15) + '...' : groupName}
             span(style='font-size: smaller; margin-left: 3px') (#{groupInfo.users.length})
-            div.ui.icon.top.left.pointing.dropdown.button.small(style='margin-left: 30px')
+            div.ui.icon.top.left.pointing.dropdown.button.mini(style='margin-left: 30px')
                 i.wrench.icon
                 .menu
                     .item(onclick="handleChangeGroupName()")
@@ -35,7 +35,7 @@ block content
         .chatroom-container(style='height: 87vh;') 
             // All chat messages
             ul#messageList(style='margin-top: 5px')
-                //- for message in privateMessages
+                for message in groupMessages
                     .message-box
                         .sender-info
                             if message.senderId === currentUserId
@@ -46,62 +46,6 @@ block content
                         .message-content
                             p #{message.content}
                             span.timestamp #{message.createdAt.toLocaleString()}
-                .message-box
-                    .sender-info
-                        span.sender-name Daniel
-                        i.large.icon(class=statusIconDict[1] style='color: '+statusColorDict[1])
-                    .message-content
-                        p Hey this is a test Hey this is a test Hey this is a test Hey this is a test Hey this is a test Hey this is a test Hey this is a test Hey this is a test Hey this is a test
-                        span.timestamp #{new Date().toLocaleString()}
-                .message-box
-                    .sender-info
-                        span.sender-name Daniel
-                        i.large.icon(class=statusIconDict[0] style='color: '+statusColorDict[0])
-                    .message-content
-                        p Hey this is a test
-                        span.timestamp #{new Date().toLocaleString()}
-                .message-box
-                    .sender-info
-                        span.sender-name Daniel
-                        i.large.icon(class=statusIconDict[0] style='color: '+statusColorDict[0])
-                    .message-content
-                        p Hey this is a test
-                        span.timestamp #{new Date().toLocaleString()}
-                .message-box
-                    .sender-info
-                        span.sender-name Daniel
-                        i.large.icon(class=statusIconDict[0] style='color: '+statusColorDict[0])
-                    .message-content
-                        p Hey this is a test
-                        span.timestamp #{new Date().toLocaleString()}
-                .message-box
-                    .sender-info
-                        span.sender-name Daniel
-                        i.large.icon(class=statusIconDict[0] style='color: '+statusColorDict[0])
-                    .message-content
-                        p Hey this is a test
-                        span.timestamp #{new Date().toLocaleString()}
-                .message-box
-                    .sender-info
-                        span.sender-name Daniel
-                        i.large.icon(class=statusIconDict[0] style='color: '+statusColorDict[0])
-                    .message-content
-                        p Hey this is a test
-                        span.timestamp #{new Date().toLocaleString()}
-                .message-box
-                    .sender-info
-                        span.sender-name Daniel
-                        i.large.icon(class=statusIconDict[0] style='color: '+statusColorDict[0])
-                    .message-content
-                        p Hey this is a test
-                        span.timestamp #{new Date().toLocaleString()}
-                .message-box
-                    .sender-info
-                        span.sender-name Daniel
-                        i.large.icon(class=statusIconDict[0] style='color: '+statusColorDict[0])
-                    .message-content
-                        p Hey this is a test
-                        span.timestamp #{new Date().toLocaleString()}
             // Input field and send button
             .input-area
                 input#messageInput(type='text', placeholder='Type your message...')

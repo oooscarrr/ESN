@@ -3,11 +3,11 @@ const socket = io.connect();
 
 function confirm() {
     // Get input values
-    var groupName = $('#nameInput').val();
-    var description = $('#descriptionInput').val();
+    let groupName = $('#nameInput').val().trim();
+    let description = $('#descriptionInput').val();
 
     // Group name input cannot be empty or contain only whitespaces
-    if (groupName.trim() === "") {
+    if (groupName === "") {
         alert("Group name input cannot be empty");
         $('#nameInput').val('');
         $('#descriptionInput').val('');
@@ -26,7 +26,7 @@ function confirm() {
             // Redirect to the group chat page
             window.location.href = '/groups/' + response.groupId;
         }).fail(function (response) {
-            console.error('Failed to create the new group', response);
+            alert(response.responseText);
         });
     }
 }
@@ -34,6 +34,8 @@ function confirm() {
 function cancel() {
     // Close the modal
     $('#newGroupModal').modal('hide');
+    $('#nameInput').val('');
+    $('#descriptionInput').val('');
 }
 
 // Onclick declared in nearbyPeople.pug
