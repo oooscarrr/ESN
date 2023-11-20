@@ -41,7 +41,8 @@ $(document).ready(() => {
     $('#changeStatusModal').modal('attach events', '#changeStatusButton', 'show');
     $('#changeStatusForm').submit(sendStatusChangeRequest);
 
-    $('.ui.radio.checkbox').checkbox();
+
+
 });
 
 // function searchDropdown() {

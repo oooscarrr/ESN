@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema(
         lastStatus: { type: String, enum: ['undefined', 'ok', 'help', 'emergency'], default: 'undefined' },
         lastStatusAt: { type: Date, default: Date.now },
         isActive: { type: Boolean, default: true },
+        sosRequestsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        sosRequestsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        sosContacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        sosMessage: { type: String, default: '' },
+        socketId: { type: String }
+    
     },
     {
         statics: {

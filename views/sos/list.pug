@@ -1,0 +1,49 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title SOS Directory
+
+block append scripts
+    script(src='/javascripts/sos.js')
+
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/sos.css')
+
+block content
+    +navbar
+    .horizontal.centered.box#contentBox
+        h1 SOS Directory
+        .ui.container
+            form.ui.form#sosMessageForm
+                .field
+                    label SOS Message
+                    textarea(name="sosMessage" placeholder="Enter your SOS message here...")
+                button.ui.button(type="submit") Confirm
+        .ui.container#DirectoryBox
+            .ui.fluid.accordion#DirectoryContent
+                .title.active
+                    i.dropdown.icon
+                    span Users
+                .content.active
+                    .ui.relaxed.divided.list
+                        for user in users
+                            .item.user-row
+                                i.big.icon(class='user icon')
+                                div.content
+                                    div.username #{user.username}
+                                    if user._id.valueOf() !== currentUserId
+                                        if sosRequestsReceived.includes(user._id.valueOf())
+                                            button.ui.button.acceptSOS(onclick='acceptSosRequest("' + user._id.valueOf() + '")') Accept
+                                            button.ui.button.rejectSOS(onclick='rejectSosRequest("' + user._id.valueOf() + '")') Reject
+                                        else if sosRequestsSent.includes(user._id.valueOf())
+                                            button.ui.button.pendingSOS(disabled) Pending
+                                        else if sosContacts.includes(user._id.valueOf())
+                                            span.sosContact SOS Contact
+                                        else
+                                            button.ui.button.sendSOS(onclick='sendSosRequest("' + user._id.valueOf() + '")') Send Request
+
+
+
+
+                                    

@@ -15,12 +15,13 @@ import privateMessageRouter from './routes/privateMessageRoutes.js';
 import announcementRouter from './routes/announcementRoutes.js';
 import speedTestRouter from './routes/speedTestRoutes.js';
 import searchRouter from './routes/searchRoutes.js';
+import sosRouter from './routes/sosRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
 import checkSuspended from './middlewares/checkSuspended.js';
 import attachReqUrl from './middlewares/attachReqUrl.js';
 import attachContext from './middlewares/attachContext.js';
-
+import { User } from './models/User.js';
 
 const app = express();
 const __dirname = path.resolve();
@@ -50,12 +51,23 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 const onlineUsers = {};
+
+async function updateUserSocketId(userId, socketId) {
+  try {
+    await User.findByIdAndUpdate(userId, { socketId: socketId });
+  } catch (error) {
+    console.error('Error updating user socketId:', error);
+  }
+}
+
+
 // Set up socket.io
 io.on('connection', socket => {
   console.log('IO Connected by', socket.id);
   const cookies = cookie.parse(socket.handshake.headers.cookie);
   const token = cookies.token;
   let userId;
+  
   if (token) {
     try {
       const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -71,6 +83,12 @@ io.on('connection', socket => {
       socket.disconnect();
     }
   }
+  console.log('momomo', userId, socket.id);
+  if (userId) {
+    console.log('momomo', userId, socket.id)
+    updateUserSocketId(userId, socket.id);
+  }
+
   socket.on('disconnect', () => {
     console.log('IO Disconnected by', socket.id);
     if (userId) {
@@ -95,6 +113,7 @@ app.use('/messages/private', privateMessageRouter);
 app.use('/announcements', announcementRouter);
 app.use('/speedtest', speedTestRouter);
 app.use('/search', searchRouter);
+app.use('/users/sos', sosRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -111,5 +130,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 export { server, io, app };
