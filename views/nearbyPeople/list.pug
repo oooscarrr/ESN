@@ -13,7 +13,7 @@ block content
     - const statusColorDict = {'undefined': 'grey', 'ok': 'rgb(50, 178, 50)', 'help': 'rgb(248, 167, 37)', 'emergency': 'red'}
     +navbar
     .horizontal.centered.box#contentBox
-        h2 Nearby People
+        h2 Nearby People and Groups
         .ui.container#DirectoryBox
             .ui.fluid.accordion#DirectoryContent
                 - online_users = users.filter(user => user.user.isOnline)
@@ -50,9 +50,12 @@ block content
                                     span.dist= roundedDistance + ' meter away'
                                 else
                                     span.dist= roundedDistance + ' meters away'
-                .ui.button.custom Create a new group chat with nearby people
+                // disable the button for creating new group when there are no nearby people
+                if users.length == 0
+                    .ui.primary.button.custom.disabled#newGroupButton Create a new group chat with nearby people
+                else
+                    .ui.primary.button.custom#newGroupButton Create a new group chat with nearby people
 
-        h2 Nearby Groups
         .ui.custom-scrolling-container
             .ui.card.custom-width
                 .content
@@ -96,4 +99,21 @@ block content
                 .extra.content
                     .ui.two.buttons
                         .ui.basic.green.button Join
+    
+    .ui.modal#newGroupModal
+        .header Enter Group Information
+        .content
+            form.ui.form#newGroupForm
+            // Group Name input
+            .field.ui.input
+                label#newGroupFormLabel Group Name
+                input#nameInput(type='text', name='groupName', placeholder='Enter group name...')
+            // Brief Description input
+            .field.ui.input
+                label#newGroupFormLabel <i>(Optional)</i> Brief Description
+                input#descriptionInput(type='text', name='description', placeholder='Enter brief description...')
+        // Modal actions
+        .actions
+            .ui.button#confirmCreateGroupButton Confirm
+            .ui.button#cancelCreateGroupButton Cancel
         

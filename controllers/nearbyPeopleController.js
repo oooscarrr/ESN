@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { User } from '../models/User.js';
-import { io } from '../app.js';
+import { app } from '../app.js';
 
 /**
  * A helper function for calculate_distance
@@ -78,6 +78,8 @@ async function get_nearby_people(userId) {
 export const list_nearby_people = async (req, res) => {
     const userId = req.userId;
     const nearbyPeople = await get_nearby_people(userId);
+    
+    app.locals.nearbyPeople = nearbyPeople;
     
     res.render('nearbyPeople/list', {users: nearbyPeople});
 }
