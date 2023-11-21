@@ -17,6 +17,21 @@ const userSchema = new mongoose.Schema(
         latitude: { type: Number, default: null},
         longitude: { type: Number, default: null},
         groups: { type: [String], default: [] },
+        nearbyUsers: {
+            type: [
+              {
+                username: {
+                  type: String,
+                  required: true,
+                },
+                userId: {
+                  type: String,
+                  required: true,
+                },
+              },
+            ],
+            default: [],
+          },
     },
     {
         statics: {

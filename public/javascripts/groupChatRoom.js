@@ -6,8 +6,28 @@ const currentGroupId = pathSegments[pathSegments.length - 1];
 const currentUserId = localStorage.getItem("currentUserId");
 
 const socket = io.connect();
+
 socket.on('newGroupMessage', renderNewGroupMessage);
+
 socket.on('newJoiner', async (groupId) => {
+    if (currentGroupId === groupId) {
+        location.reload(true);
+    }
+});
+
+socket.on('newGroupName', async (groupId) => {
+    if (currentGroupId === groupId) {
+        location.reload(true);
+    }
+});
+
+socket.on('deleteGroup', async (groupId) => {
+    if (currentGroupId === groupId) {
+        window.location.href = '/groups';
+    }
+});
+
+socket.on('leaveGroup', async (groupId) => {
     if (currentGroupId === groupId) {
         location.reload(true);
     }
@@ -83,18 +103,12 @@ function messageSendHandler() {
 
 // Onclick declared in nearbyPeople.pug
 function showUserListModal(userList) {
-    // Select the modal element
     const modal = $('#userListModal');
-  
-    // Clear the existing content in the modal
     modal.find('.content').empty();
-  
-    // Append the list of usernames to the modal content
     userList.forEach(user => {
       modal.find('.content').append(`<div>${user.username}</div>`);
     });
   
-    // Show the modal
     modal.modal('show');
 }
 
@@ -102,6 +116,103 @@ function showUserListModal(userList) {
 function closeUserListModal() {
     $('#userListModal').modal('hide');
 }
+
+// Onclick declared in nearbyPeople.pug
+function handleChangeGroupName() {
+    $('#groupNameInput').val('');
+    const modal = $('#newGroupNameModal');
+    modal.modal('show');
+}
+
+function cancelGroupNameChange() {
+    $('#newGroupNameModal').modal('hide');
+}
+
+function confirmGroupNameChange(groupId) {
+    // Get input values
+    let newGroupName = $('#groupNameInput').val().trim();
+
+    // Group name input cannot be empty or contain only whitespaces
+    if (newGroupName === "") {
+        alert("Group name input cannot be empty or contain only whitespaces");
+        $('#groupNameInput').val('');
+    } else {
+        $.ajax({
+            method: 'POST',
+            url: '/groups/name',
+            data: {
+                groupId: groupId,
+                newGroupName: newGroupName
+            }
+        }).done(function () {
+            $('#newGroupNameModal').modal('hide');
+        }).fail(function (response) {
+            alert(response.responseText);
+            $('#groupNameInput').val('');
+        });
+    }
+}
+
+// Onclick declared in nearbyPeople.pug
+function handleChangeGroupDescription() {
+    $('#DescriptionInput').val('');
+    const modal = $('#newDescriptionModal');
+    modal.modal('show');
+}
+
+function cancelDescriptionChange() {
+    $('#newDescriptionModal').modal('hide');
+}
+
+function confirmDescriptionChange(groupId) {
+    // Get input values
+    let newDescription = $('#descriptionInput').val().trim();
+
+    if (newDescription === "") {
+        alert("Group description input cannot be empty or contain only whitespaces");
+        $('#descriptionInput').val('');
+    } else {
+        $.ajax({
+            method: 'POST',
+            url: '/groups/description',
+            data: {
+                groupId: groupId,
+                newDescription: newDescription
+            }
+        }).done(function () {
+            $('#newDescriptionModal').modal('hide');
+        }).fail(function (response) {
+            alert(response.responseText);
+            $('#descriptionInput').val('');
+        });
+    }
+}
+
+// Onclick declared in nearbyPeople.pug
+function handleLeaveGroup() {
+    const modal = $('#leaveGroupModal');
+    modal.modal('show');
+}
+
+function cancelLeaveGroup() {
+    $('#leaveGroupModal').modal('hide');
+}
+
+function confirmLeaveGroup(groupId) {
+    $.ajax({
+        method: 'POST',
+        url: '/groups/leave',
+        data: {
+            groupId: groupId,
+        }
+    }).done(function () {
+        $('#leaveGroupModal').modal('hide');
+        window.location.href = '/groups';
+    }).fail(function (response) {
+        alert(response.responseText);
+    });
+}
+
 
 $(document).ready(function () {
     scrollToBottom();

@@ -59,3 +59,36 @@ block content
             // Will append a list of usernames in showUserListModal()
         .actions
             .ui.button(onclick=`closeUserListModal()`) Close
+    
+    .ui.modal#newGroupNameModal
+        .header Change Group Name
+        .content
+            form.ui.form#newGroupNameForm
+            // Group Name input
+            .field.ui.input(style="display: flex; flex-direction: column;")
+                label#newGroupNameLabel(style="margin-bottom: 10px") New Group Name
+                input#groupNameInput(type='text', name='groupName', placeholder='Enter a new group name...')
+        // Modal actions
+        .actions
+            .ui.button#confirmChangeGroupNameButton(onclick=`confirmGroupNameChange(${JSON.stringify(groupInfo._id.valueOf())})`) Confirm
+            .ui.button#cancelGroupNameChange(onclick=`cancelGroupNameChange()`) Cancel
+
+    .ui.modal#newDescriptionModal
+        .header Change Group Description
+        .content
+            form.ui.form#newDescriptionForm
+            // Group Description input
+            .field.ui.input(style="display: flex; flex-direction: column;")
+                label#newDescriptionLabel(style="margin-bottom: 10px") New Group Description
+                input#descriptionInput(type='text', name='description', placeholder='Enter a new group description...')
+        // Modal actions
+        .actions
+            .ui.button#confirmChangeDescriptionButton(onclick=`confirmDescriptionChange(${JSON.stringify(groupInfo._id.valueOf())})`) Confirm
+            .ui.button#cancelDescriptionChange(onclick=`cancelDescriptionChange()`) Cancel
+
+    .ui.modal#leaveGroupModal
+        .header Leave Group Chat #{groupInfo.groupName}?
+        // Modal actions
+        .actions
+            .ui.button.red#confirmLeaveButton(onclick=`confirmLeaveGroup(${JSON.stringify(groupInfo._id.valueOf())})`) Confirm
+            .ui.button#cancelLeaveButton(onclick=`cancelLeaveGroup()`) Cancel

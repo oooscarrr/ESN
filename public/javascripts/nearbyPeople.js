@@ -5,9 +5,17 @@ socket.on('newGroup', async () => {
     location.reload(true);
 });
 
-// socket.on('newNearbyPeople', async (nearbyUserIds) => {
-//     location.reload(true);
-// });
+socket.on('newNearbyPeople', async () => {
+    location.reload(true);
+});
+
+socket.on('newJoiner', async () => {
+    location.reload(true);
+});
+
+socket.on('deleteGroup', async () => {
+    location.reload(true);
+});
 
 
 function confirm() {

@@ -17,7 +17,7 @@ function deg2rad(deg) {
  * @param {Number} lon2 longitude of user 2
  * @returns {Number} distance (in meters) between user 1 and user 2
  */
-function calculate_distance(lat1, lon1, lat2, lon2) {
+export function calculate_distance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2-lat1);  // deg2rad above
     const dLon = deg2rad(lon2-lon1); 
@@ -34,7 +34,7 @@ function calculate_distance(lat1, lon1, lat2, lon2) {
  * @param {String} userId id of the user that we are searching nearby people for
  * @returns {List} a list of nearby users ranked by their distance to the user (online first)
  */
-async function get_nearby_people(userId) {
+export async function get_nearby_people(userId) {
     const user = await User.findById(userId);
     const lat = user ? user.latitude : null;
     const lon = user ? user.longitude : null;
@@ -79,7 +79,7 @@ async function get_nearby_people(userId) {
  * @param {*} nearbyPeople a list of nearby users
  * @returns a list of Groups that nearby users are in
  */
-async function get_nearby_groups(nearbyPeople) {
+export async function get_nearby_groups(nearbyPeople) {
     if (nearbyPeople.length === 0) {
         return [];
     }
@@ -88,8 +88,6 @@ async function get_nearby_groups(nearbyPeople) {
     for (let i = 0; i < nearbyPeople.length; ++i) {
         nearbyGroupIdsArrays.push(nearbyPeople[i].user.groups);
     }
-
-    console.log("nearbyGroupIdsArrays: ", nearbyGroupIdsArrays);
 
     // Find the union
     const unionSet = new Set();
@@ -131,7 +129,20 @@ export const list_nearby_people = async (req, res) => {
     // console.log("NEARBY GROUPS: ", nearbyGroups);
     // console.log("NEARBY PEOPLE: ", nearbyPeople);
 
-    app.locals.nearbyPeople = nearbyPeople;
+    const nearbyUsers = nearbyPeople.map(({ user }) => ({
+        username: user.username,
+        userId: user._id.valueOf(),
+    }))
+
+    try {
+        const currentUser = await User.findById(userId);
+        currentUser.nearbyUsers = nearbyUsers;
+        await currentUser.save();
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+
+    console.log("nearbyUsers: ", nearbyUsers);
     
     res.render('nearbyPeople/list', {currentUserId: userId, users: nearbyPeople, groups: nearbyGroups});
 }

@@ -30,8 +30,6 @@ const toggleSearchBoxVisibility = function () {
 
 function ableToGetLocation(position) {
     // Update user geolocation
-    console.log(position.coords.latitude);
-    console.log(position.coords.longitude);
     $.ajax({
         method: 'POST',
         url: '/users/geolocation',
