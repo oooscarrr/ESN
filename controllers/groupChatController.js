@@ -58,7 +58,8 @@ export const create_new_group = async (req, res) => {
             user.groups.push(groupId);
             await user.save();
         }
-        
+
+        io.emit('newGroup');
         return res.status(200).send({ 'groupId': groupId });
     } else {
         res.sendStatus(500);
@@ -67,18 +68,47 @@ export const create_new_group = async (req, res) => {
 }
 
 /**
+ * 
+ */
+export const list_group_chat_list = async (req, res) => {
+    const userId = req.userId;
+
+    try {
+        const user = await User.findById(userId);
+        const groupIds = user.groups;
+        let groups = [];
+
+        for (let i = 0; i < groupIds.length; ++i) {
+            const group = await Group.findById(groupIds[i]);
+            if (group) {
+                groups.push(group);
+            }
+        }
+
+        res.render('groupChat/groupChatList', {groups: groups});
+    } catch(error) {
+        res.status(500).send(error);
+    }
+}
+
+/**
  * @returns a rendered page of a group chat
  */
-export const list_group_chat = async (req, res) => {
+export const list_group_chat_room = async (req, res) => {
     const userId = req.userId;
     const groupId = req.params.groupId;
-    const groupInfo = await Group.findById(groupId);
-    const groupMessages = await GroupMessage.find({groupId: groupId}).sort({createdAt: 1});
 
-    // console.log("GROUP INFO: ", groupInfo);
-    // console.log("GROUP MESSAGES: ", groupMessages);
+    try {
+        const groupInfo = await Group.findById(groupId);
+        const groupMessages = await GroupMessage.find({groupId: groupId}).sort({createdAt: 1});
 
-    res.render('groupChat/list', {currentUserId: userId, groupInfo: groupInfo, groupMessages: groupMessages});
+        // console.log("GROUP INFO: ", groupInfo);
+        // console.log("GROUP MESSAGES: ", groupMessages);
+
+        res.render('groupChat/groupChatroom', {currentUserId: userId, groupInfo: groupInfo, groupMessages: groupMessages});
+    } catch (error) {
+        res.status(500).send(error);
+    }
 }
 
 /**
@@ -108,4 +138,38 @@ export const post_group_message = async (req, res) => {
 
     io.emit('newGroupMessage', newGroupMessage);
     return res.sendStatus(201);
+}
+
+/**
+ * 
+ * @param {*} groupId group to join
+ */
+export const joinGroup = async (req, res) => {
+    const userId = req.userId;
+    const groupId = req.body.groupId;
+
+    try {
+        const user = await User.findById(userId);
+        const group = await Group.findById(groupId);
+
+        if (!user || !group) {
+            res.status(400).send('Group or user does not exist');
+        }
+
+        user.groups.push(groupId);
+        await user.save();
+
+        group.users.push({
+            username: user.username,
+            userId: userId
+        })
+        await group.save();
+    } catch(error) {
+        return res.status(500).send(error);
+    } finally {
+        console.log('User joined group successfully')
+    }
+
+    io.emit('newJoiner', groupId);
+    return res.sendStatus(200);
 }

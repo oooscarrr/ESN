@@ -1,6 +1,7 @@
 import { User } from '../models/User.js';
 import { Group } from '../models/Group.js';
 import { app } from '../app.js';
+import { io } from '../app.js';
 
 /**
  * A helper function for calculate_distance
@@ -127,10 +128,10 @@ export const list_nearby_people = async (req, res) => {
     const nearbyPeople = await get_nearby_people(userId);
     const nearbyGroups = await get_nearby_groups(nearbyPeople);
     
-    console.log("NEARBY GROUPS: ", nearbyGroups);
+    // console.log("NEARBY GROUPS: ", nearbyGroups);
     // console.log("NEARBY PEOPLE: ", nearbyPeople);
 
     app.locals.nearbyPeople = nearbyPeople;
     
-    res.render('nearbyPeople/list', {users: nearbyPeople, groups: nearbyGroups});
+    res.render('nearbyPeople/list', {currentUserId: userId, users: nearbyPeople, groups: nearbyGroups});
 }

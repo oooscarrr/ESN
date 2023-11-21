@@ -6,7 +6,7 @@ block title
 
 block append scripts
     script(src='/socket.io/socket.io.js')
-    script(src='/javascripts/groupChat.js')
+    script(src='/javascripts/groupChatRoom.js')
 
 //- We use the SAME css file here as the public chatroom
 block append stylesheets
@@ -18,12 +18,14 @@ block content
     +navbar
     
     .horizontal.centered.box#contentBox
-        // Group name, number of citizens in group, and a setting icon
         - const groupName = groupInfo.groupName;
+        // Group name
         h1(style='margin-bottom: 5px') 
-            | #{groupName.length > 15 ? groupName.substring(0, 15) + '...' : groupName}
-            span(style='font-size: smaller; margin-left: 3px') (#{groupInfo.users.length})
-            div.ui.icon.top.left.pointing.dropdown.button.mini(style='margin-left: 30px')
+            | #{groupName.length > 20 ? groupName.substring(0, 20) + '...' : groupName}
+            // People icon
+            i.icon.user.friends.small(style="margin-left: 30px", onclick=`showUserListModal(${JSON.stringify(groupInfo.users)})`)
+            // Gear button
+            div.ui.icon.top.left.pointing.dropdown.button.mini(style='margin-left: 10px')
                 i.wrench.icon
                 .menu
                     .item(onclick="handleChangeGroupName()")
@@ -50,3 +52,10 @@ block content
             .input-area
                 input#messageInput(type='text', placeholder='Type your message...')
                 button#sendMessageBtn Send
+
+    .ui.modal#userListModal
+        .header Citizens in the group
+        .content
+            // Will append a list of usernames in showUserListModal()
+        .actions
+            .ui.button(onclick=`closeUserListModal()`) Close

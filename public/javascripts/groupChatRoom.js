@@ -7,6 +7,11 @@ const currentUserId = localStorage.getItem("currentUserId");
 
 const socket = io.connect();
 socket.on('newGroupMessage', renderNewGroupMessage);
+socket.on('newJoiner', async (groupId) => {
+    if (currentGroupId === groupId) {
+        location.reload(true);
+    }
+});
 
 const statusIconDict = {
     'undefined': 'question circle',
@@ -43,7 +48,6 @@ function receiverMsgObj(message) {
 }
 
 function renderNewGroupMessage(message) {
-    console.log("SOCKET: ", message);
     if (message.groupId === currentGroupId) {
         if (currentUserId === message.senderId) {
             $("#messageList").append(senderMsgObj(message));
@@ -77,9 +81,37 @@ function messageSendHandler() {
     }
 }
 
+// Onclick declared in nearbyPeople.pug
+function showUserListModal(userList) {
+    // Select the modal element
+    const modal = $('#userListModal');
+  
+    // Clear the existing content in the modal
+    modal.find('.content').empty();
+  
+    // Append the list of usernames to the modal content
+    userList.forEach(user => {
+      modal.find('.content').append(`<div>${user.username}</div>`);
+    });
+  
+    // Show the modal
+    modal.modal('show');
+}
+
+// Onclick declared in nearbyPeople.pug
+function closeUserListModal() {
+    $('#userListModal').modal('hide');
+}
 
 $(document).ready(function () {
     scrollToBottom();
     // Handle confirm button click
     $('#sendMessageBtn').click(messageSendHandler);
+
+    $('#messageInput').on("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            messageSendHandler();
+        }
+    });
 });

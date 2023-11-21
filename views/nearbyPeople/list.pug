@@ -55,20 +55,26 @@ block content
                     .ui.primary.button.custom.disabled#newGroupButton Create a new group chat with nearby people
                 else
                     .ui.primary.button.custom#newGroupButton Create a new group chat with nearby people
-
-        .ui.custom-scrolling-container
-            for group in groups
-                .ui.card.custom-width
-                    .content
-                        .header #{group.groupName}
-                        i.icon.user.friends.horizontal(style="float: right; cursor: pointer;", onclick=`showUserListModal(${JSON.stringify(group.users)})`)
-                        if group.description
-                            .description <i>Description: #{group.description}</i>
-                        else
-                            .description <i>Description: N/A</i>
-                    .extra.content
-                        .ui.two.buttons
-                            .ui.basic.green.button Join
+        
+        if groups.length === 0
+            span There are no nearby groups
+        else
+            .ui.custom-scrolling-container
+                for group in groups
+                    .ui.card.custom-width
+                        .content
+                            .header #{group.groupName}
+                            i.icon.user.friends.horizontal(style="float: right; cursor: pointer;", onclick=`showUserListModal(${JSON.stringify(group.users)})`)
+                            if group.description
+                                .description <i>Description: #{group.description}</i>
+                            else
+                                .description <i>Description: N/A</i>
+                        .extra.content
+                            .ui.two.buttons
+                                if group.users.some(user => user.userId === currentUserId)
+                                    .ui.basic.button.disabled  You are already in this group
+                                else 
+                                    .ui.basic.green.button(onclick=`joinGroup(${JSON.stringify(group._id.valueOf())})`)  Join
     
     .ui.modal#newGroupModal
         .header Enter Group Information

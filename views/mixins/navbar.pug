@@ -7,6 +7,8 @@ mixin navbar
             i.users.icon
         a.item(href='/announcements')
             i.bullhorn.icon
+        a.item(href='/groups')
+            i.comments.icon
         .right.menu
             if context !== contextModule.CONTEXT.OTHER
                 .item#navbarSearchButton

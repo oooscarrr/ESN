@@ -1,4 +1,13 @@
 const socket = io.connect();
+const currentUserId = localStorage.getItem("currentUserId");
+
+socket.on('newGroup', async () => {
+    location.reload(true);
+});
+
+// socket.on('newNearbyPeople', async (nearbyUserIds) => {
+//     location.reload(true);
+// });
 
 
 function confirm() {
@@ -59,6 +68,21 @@ function showUserListModal(userList) {
 function closeUserListModal() {
     // Close the modal
     $('#userListModal').modal('hide');
+}
+
+// Onclick declared in nearbyPeople.pug
+function joinGroup(groupId) {
+    $.ajax({
+        method: 'POST',
+        url: '/groups/join',
+        data: {
+            groupId: groupId
+        }
+    }).done(function () {
+        window.location.href = '/groups/' + groupId;
+    }).fail(function (response) {
+        alert(response.responseText);
+    });
 }
 
 
