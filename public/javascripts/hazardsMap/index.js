@@ -63,7 +63,6 @@ function initAutocomplete() {
     const input = document.getElementById("pac-input");
     const searchBox = new google.maps.places.SearchBox(input);
 
-    // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
     // Bias the SearchBox results towards current map's viewport.
     map.addListener("bounds_changed", () => {
         searchBox.setBounds(map.getBounds());
@@ -124,6 +123,6 @@ function initAutocomplete() {
 }
 
 $(document).ready(function () {
-    // initMap();
-    addElementsBehavior();
+    // // initMap();
+    // addElementsBehavior();
 });
