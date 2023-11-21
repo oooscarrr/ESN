@@ -6,7 +6,9 @@ block title
 
 block append scripts
     script(src='/javascripts/hazardsMap/index.js')
-    script(async='' src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCtSslTFr3ROI5tMdZl1HlnHCPHd_QEjX8&callback=console.debug&libraries=maps,marker&v=beta')
+    script(async='' src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCtSslTFr3ROI5tMdZl1HlnHCPHd_QEjX8&callback=initMap&libraries=places,marker&v=beta' defer='')
+    script(src='https://polyfill.io/v3/polyfill.min.js?features=default')
+    //script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtSslTFr3ROI5tMdZl1HlnHCPHd_QEjX8&libraries=places")
 
 block append stylesheets
     link(rel='stylesheet', href='/stylesheets/hazardsMap.css')
@@ -15,6 +17,30 @@ block content
     +navbar
     .hazards-page-container
         h1.header-title Hazards Map
-        .ui.button Report Hazard
-        gmp-map(center='37.41061186089065, -122.05980078650498' zoom='12' map-id='HAZARD_MAP')
-        gmp-advanced-marker(position='37.41061186089065, -122.05980078650498' title='My location')
+        .ui.button#reportHazard Report Hazard
+        .ui.large.modal#enterAddress
+            .header Address
+            .content
+                p Address:
+                textarea#address(placeholder="Enter your address")
+                br
+                p Details:
+                textarea#details(placeholder="Enter the details of this place")
+            .actions
+                .ui.button.red.cancelButton No
+                .ui.button.green.confirmButton#confirmAddress Yes
+        .ui.modal#confirmReport
+            .header Confirm Reporting
+            .content Are you sure you want to join?
+            .actions
+                .ui.button.red.cancelButton No
+                .ui.button.green.confirmButton Yes
+        input#pac-input.controls(type='text' placeholder='Search Box')
+        div#map
+
+
+    //(center='37.41061186089065, -122.05980078650498' zoom='12' map-id='HAZARD_MAP')
+    //    gmp-advanced-marker(position='37.41061186089065, -122.05980078650498' title='My location')
+
+
+
