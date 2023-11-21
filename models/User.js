@@ -42,6 +42,10 @@ const userSchema = new mongoose.Schema(
                 const user = new User({ username: username, password: hashedPassword });
                 return user.save();
             },
+            async registerNewUserWithLocation(username, hashedPassword, lat, lon) {
+                const user = new User({ username: username, password: hashedPassword, latitude: lat, longitude: lon });
+                return user.save();
+            },
             async changeUserOnlineStatus(userId, onlineStatus) {
                 const user = await this.findById(userId);
                 user.isOnline = onlineStatus;

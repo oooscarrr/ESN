@@ -10,9 +10,11 @@ import { io } from '../app.js';
  */
 export const create_new_group = async (req, res) => {
     const currentUserId = req.userId;
-    const currentUser = await User.findById(currentUserId);
+    const groupName = req.body.groupName;
+    const description = req.body.description;
     let nearbyUsers;
-
+    
+    const currentUser = await User.findById(currentUserId);
     if (currentUser) {
         nearbyUsers = currentUser.nearbyUsers;
     } else {
@@ -24,8 +26,6 @@ export const create_new_group = async (req, res) => {
     // and refreshed whenever a user opens or refreshes the nearbypeople page
     if (nearbyUsers.length > 0) {
         let groupId;
-        const groupName = req.body.groupName;
-        const description = req.body.description;
 
         // Check if groupName already exists
         const groupChecker = await Group.findOne({groupName: groupName});
@@ -64,9 +64,9 @@ export const create_new_group = async (req, res) => {
         }
 
         io.emit('newGroup');
-        return res.status(200).send({ 'groupId': groupId });
+        return res.status(201).send({ 'groupId': groupId });
     } else {
-        return res.statue.send('No people nearby, unable to create a new group');
+        return res.status(400).send('No people nearby, unable to create a new group');
     }
 }
 
@@ -134,12 +134,13 @@ export const post_group_message = async (req, res) => {
     try {
         newGroupMessage = await GroupMessage.create({ groupId: groupId, senderId: senderId, senderName: senderName, content: content, senderStatus: senderStatus });
         io.emit('newGroupMessage', newGroupMessage);
-        return res.sendStatus(201);
     } catch (error) {
         return res.status(500).send(error);
     } finally {
         console.log('Group Message Saved Successfully')
     }
+
+    return res.sendStatus(201);
 }
 
 /**
@@ -168,12 +169,13 @@ export const join_group = async (req, res) => {
         await group.save();
 
         io.emit('newJoiner', groupId);
-        return res.sendStatus(200);
     } catch(error) {
         return res.status(500).send(error);
     } finally {
         console.log('User joined group successfully')
     }
+
+    return res.sendStatus(200);
 }
 
 /**
@@ -199,12 +201,13 @@ export const change_group_name = async (req, res) => {
         await group.save();
 
         io.emit('newGroupName', groupId);
-        return res.sendStatus(200);
     } catch(error) {
         return res.status(500).send(error);
     } finally {
         console.log('New group name saved successfully')
     }
+
+    return res.sendStatus(200);
 }
 
 /**
@@ -223,13 +226,13 @@ export const change_group_name = async (req, res) => {
 
         group.description = newDescription;
         await group.save();
-
-        return res.sendStatus(200);
     } catch(error) {
         return res.status(500).send(error);
     } finally {
         console.log('New group description saved successfully')
     }
+
+    return res.sendStatus(200);
 }
 
 /**
@@ -293,11 +296,11 @@ export const leave_group = async (req, res) => {
         if (!userFoundInGroup) {
             return res.status(500).send("User not found in group");
         }
-
-        return res.sendStatus(200);
     } catch(error) {
         return res.status(500).send(error);
     } finally {
         console.log('Leave group successfully')
     }
+
+    return res.sendStatus(200);
 }
