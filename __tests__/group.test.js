@@ -5,7 +5,7 @@ import { Group } from '../models/Group';
 import { GroupMessage } from '../models/GroupMessage';
 import { setupTestDatabase, closeTestDatabase } from '../test-setup';
 import { calculate_distance, get_nearby_people, get_nearby_groups } from '../controllers/nearbyPeopleController.js';
-import { create_new_group, list_group_chat_list, list_group_chat_room, post_group_message, join_group, change_group_name, change_group_description, leave_group } from '../controllers/groupChatController.js';
+import { remove_group_from_user } from '../controllers/groupChatController.js';
 import jwt from 'jsonwebtoken';
 
 describe('group chat functionality test cases', () => {
@@ -264,57 +264,166 @@ describe('group chat functionality test cases', () => {
     });
 
 
-    // it('Join group', async () => {
-    //     let groupExists = false;
-    //     let userExists = false;
+    it('Join group', async () => {
+        let groupExists = false;
+        let userExists = false;
 
-    //     groupExists = none.groups.includes(groupId1);
-    //     for (let i = 0; i < group1.users.length; ++i) {
-    //         const u = group1.users[i];
-    //         if (u.username === 'none') {
-    //             userExists = true;
-    //             break;
-    //         }
-    //     }
+        groupExists = far.groups.includes(groupId1);
+        for (let i = 0; i < group1.users.length; ++i) {
+            const u = group1.users[i];
+            if (u.username === 'far') {
+                userExists = true;
+                break;
+            }
+        }
 
-    //     expect(groupExists).toBe(false);
-    //     expect(userExists).toBe(false);
+        expect(groupExists).toBe(false);
+        expect(userExists).toBe(false);
 
-    //     console.log('noneGroup1: ', none.groups);
-    //     console.log('noneGroups2: ', group1.users);
+        const response1 = await request(app)
+            .post('/groups/join')
+            .set('Cookie', [`token=${farToken}`]) // Send JWT as a cookie
+            .send({
+                groupId: groupId1,
+            });
+        expect(response1.status).toBe(200);
 
-    //     const response1 = await request(app)
-    //         .post('/groups/join')
-    //         .set('Cookie', [`token=${noneToken}`]) // Send JWT as a cookie
-    //         .send({
-    //             groupId: groupId1,
-    //         });
-    //     expect(response1.status).toBe(200);
+        const newGroup1 = await Group.findById(groupId1);
+        const newFar = await User.findById(far._id.valueOf());
 
-    //     console.log('noneGroup3: ', none.groups);
-    //     console.log('noneGroups4: ', group1.users);
+        groupExists = newFar.groups.includes(groupId1);
+        for (let i = 0; i < newGroup1.users.length; ++i) {
+            const u = newGroup1.users[i];
+            if (u.username === 'far') {
+                userExists = true;
+                break;
+            }
+        }
 
-    //     groupExists = none.groups.includes(groupId1);
-    //     for (let i = 0; i < group1.users.length; ++i) {
-    //         const u = group1.users[i];
-    //         if (u.username === 'none') {
-    //             userExists = true;
-    //             break;
-    //         }
-    //     }
-
-    //     expect(groupExists).toBe(true);
-    //     expect(userExists).toBe(true);
-    // });
+        expect(groupExists).toBe(true);
+        expect(userExists).toBe(true);
+    });
 
 
-    // it('List group chat list', async () => {
-    //     const response = await request(app)
-    //         .get('/groups')
-    //         .set('Cookie', [`token=${lynToken}`]) // Send JWT as a cookie
+    it('Change group name', async () => {
+        expect(group1.groupName).toBe('group1');
 
-    //     expect(response.status).toBe(200);
-    //     expect(response.text).toContain('group1');
-    //     expect(response.text).toContain('group2');
-    // });
+        const response1 = await request(app)
+            .post('/groups/name')
+            .set('Cookie', [`token=${farToken}`]) // Send JWT as a cookie
+            .send({
+                groupId: groupId1,
+                newGroupName: 'newGroupName'
+            });
+        expect(response1.status).toBe(200);
+        
+        const newGroup1 = await Group.findById(groupId1);
+        expect(newGroup1.groupName).toBe('newGroupName');
+
+        const response2 = await request(app)
+            .post('/groups/name')
+            .set('Cookie', [`token=${farToken}`]) // Send JWT as a cookie
+            .send({
+                groupId: groupId1,
+                newGroupName: 'group1'
+            });
+        expect(response2.status).toBe(200);
+
+        const response3 = await request(app)
+            .post('/groups/name')
+            .set('Cookie', [`token=${farToken}`]) // Send JWT as a cookie
+            .send({
+                groupId: groupId1,
+                newGroupName: 'group1'
+            });
+        expect(response3.status).toBe(400);
+    });
+
+
+    it('Change group description', async () => {
+        expect(group1.description).toBe(null);
+
+        const response1 = await request(app)
+            .post('/groups/description')
+            .set('Cookie', [`token=${farToken}`]) // Send JWT as a cookie
+            .send({
+                groupId: groupId1,
+                newDescription: 'newDescription'
+            });
+        expect(response1.status).toBe(200);
+
+        const newGroup1 = await Group.findById(groupId1);
+        expect(newGroup1.description).toBe('newDescription');
+    });
+
+
+    it('Remove group from user', async () => {
+        let groupExists = lyn.groups.includes(groupId2);
+        expect(groupExists).toBe(true);
+
+        await remove_group_from_user(lyn._id.valueOf(), groupId2);
+        const newLyn = await User.findById(lyn._id.valueOf());
+        groupExists = newLyn.groups.includes(groupId2);
+        expect(groupExists).toBe(false);
+    });
+
+
+    it('Leave group', async () => {
+        expect(lyn.groups.includes(groupId2)).toBe(true);
+        expect(alex.groups.includes(groupId2)).toBe(true);
+
+        group2.users = [{
+            username: 'lyn',
+            userId: lyn._id.valueOf(),
+        }, {
+            username: 'alex',
+            userId: alex._id.valueOf(),
+        }]
+        await group2.save();
+
+        // Lyn joins group
+        const response1 = await request(app)
+            .post('/groups/join')
+            .set('Cookie', [`token=${danielToken}`]) // Send JWT as a cookie
+            .send({
+                groupId: groupId2,
+            });
+        expect(response1.status).toBe(200);
+
+        // Lyn leaves group
+        const response2 = await request(app)
+            .post('/groups/leave')
+            .set('Cookie', [`token=${lynToken}`]) // Send JWT as a cookie
+            .send({
+                groupId: groupId2,
+            });
+        expect(response2.status).toBe(200);
+        
+        let newGroup2 = await Group.findById(groupId2);
+        let newLyn = await User.findById(lyn._id.valueOf());
+
+        expect(newGroup2.users.length).toBe(2);
+        expect(newGroup2.users.includes({
+            username: 'lyn',
+            userId: lyn._id.valueOf(),
+        })).toBe(false);
+        expect(newLyn.groups.includes(groupId2)).toBe(false);
+
+        // Daniel leaves group, group deleted
+        const response3 = await request(app)
+            .post('/groups/leave')
+            .set('Cookie', [`token=${danielToken}`]) // Send JWT as a cookie
+            .send({
+                groupId: groupId2,
+            });
+        expect(response3.status).toBe(200);
+
+        newGroup2 = await Group.findById(groupId2);
+        let newDaniel = await User.findById(daniel._id.valueOf());
+        let newAlex = await User.findById(alex._id.valueOf());
+
+        expect(newGroup2).toBe(null);
+        expect(newDaniel.groups.includes(groupId2)).toBe(false);
+        expect(newAlex.groups.includes(groupId2)).toBe(false);
+    });
 });

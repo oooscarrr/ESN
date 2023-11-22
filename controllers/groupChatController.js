@@ -239,7 +239,7 @@ export const change_group_name = async (req, res) => {
  * @param {*} userId user to remove group from
  * @param {*} groupId group to remove from user
  */
-const remove_group_from_user = async (userId, groupId) => {
+export const remove_group_from_user = async (userId, groupId) => {
     try {
         const user = await User.findById(userId);
         for (let i = 0; i < user.groups.length; ++i) {
