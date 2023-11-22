@@ -22,3 +22,15 @@ textarea {
 #itemImage {
     margin-bottom: 1.5em;
 }
+
+#requestsSegment {
+    margin-top: 4.8em;
+}
+
+#descriptionDetail {
+    overflow-wrap: break-word;
+}
+
+#reqMessage {
+    overflow-wrap: break-word;
+}

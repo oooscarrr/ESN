@@ -25,7 +25,11 @@ block content
                         each item in myListings
                             .item
                                 .right.floated.content
+                                    if item.requests.length <= 1
+                                        .item #{item.requests.length} request
+                                    else
+                                        .item #{item.requests.length} requests
                                     a.ui.small.button(href=`/resource/item/${item._id}`) View
                                 .content
-                                    .header #{item.name}
+                                    .large.header #{item.name}
                                     .description Updated #{item.timeSinceLastUpdate}

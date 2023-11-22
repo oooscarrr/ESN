@@ -6,14 +6,28 @@ const addElementsBehavior = () => {
     $('#submitButton').click(submitForm);
     $('#cancelButton').click(cancelForm);
     $('#name').click(() => {
-        $('#nameField').removeClass('warning');
+        $('#nameField').removeClass('error');
+    });
+    $('#quantity').click(() => {
+        $('#quantityField').removeClass('error');
     });
 };
 
+const checkFields = () => {
+    if ($('#name').val() == '' || $('#name').val().length > 20) {
+        $('#nameField').addClass('error');
+        return false;
+    }
+    if ($('#quantity').val() < 1) {
+        $('#quantityField').addClass('error');
+        return false;
+    }
+    return true;
+}
+
 const submitForm = (e) => {
     e.preventDefault();
-    if ($('#name').val() == '' || $('#name').val().length > 20) {
-        $('#nameField').addClass('warning');
+    if (!checkFields()) {
         return;
     }
     const data = new FormData();

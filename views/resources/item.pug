@@ -11,25 +11,42 @@ block append stylesheets
     
 block content
     +navbar 
-    .horizontal.centered.box
+    .box
         .ui.container#itemDetailContainer
             .returnButton(onClick='window.history.back()')
                 i.angle.left.icon.large
             .ui.header.centered
                 h2 #{item.name}
-                .sub.header #{item.ownerName}, #{item.quantity} available
+                .sub.header#ownerAndQuantity #{item.ownerName}, #{item.quantity} available
             .ui.centered.medium.image#itemImage
                 img(src=item.imageURL || '/images/defaultImage.png')
             .ui.segment
-                p #{item.description}
+                p#descriptionDetail #{item.description}
             .ui.right.floated.buttons
                 if isOwner
                     .ui.button#editButton Edit
                     .ui.red.button#deleteButton Delete
                 else if requested
-                    .ui.button#cancelRequestButton Cancel Request
+                    .ui.red.button#cancelRequestButton Cancel Request
                 else
                     .ui.green.button#requestButton Request
+            if isOwner && requests.length > 0
+                .ui.segment#requestsSegment
+                    .ui.header.centered
+                        h3 Requests
+                    .ui.divided.list
+                        each request in requests
+                            .item
+                                .right.floated.content
+                                    a.ui.small.button.viewRequestButton(
+                                        data-requester-name=request.requesterName,
+                                        data-request-id=request._id,
+                                        data-quantity=request.quantity,
+                                        data-message=request.message
+                                    ) View
+                                .content
+                                    .large.header #{request.requesterName}
+                                    .description #{request.timeSinceLastUpdate}
         
         .ui.mini.modal#confirmDeleteModal
             .header Confirm Delete
@@ -46,16 +63,52 @@ block content
                 form.ui.form#editForm
                     .field#nameField
                         label Name
-                        input#name(type='text', name='name', value=item.name)
+                            input#editName(type='text', name='name', value=item.name)
                     .field#quantityField
                         label Quantity
-                        input#quantity(type='number', name='quantity', value=item.quantity)
+                            input#editQuantity(type='number', name='quantity', value=item.quantity)
                     .field
                         label Description
-                        textarea#description(type='text', name='description') #{item.description}
+                            textarea#editDescription(type='text', name='description') #{item.description}
                     .field
                         label Upload Image
-                        input#image(type='file', accept='image/*', name='image')
+                            input#editImage(type='file', accept='image/*', name='image')
             .actions
                 .ui.button#cancelEditButton Cancel
                 .ui.button.green#confirmEditButton Save
+            
+        .ui.modal#requestModal
+            .header Send Request
+            .content
+                form.ui.form#requestForm
+                    .field#requestQuantityField
+                        label Quantity
+                            input#requestQuantity(type='number', name='quantity', value=1)
+                    .field
+                        label Message
+                            textarea#requestMessage(type='text', name='message')
+            .actions
+                .ui.button#cancelSendRequestButton Cancel
+                .ui.button.green#sendRequestButton Send Request
+            
+        .ui.mini.modal#cancelRequestModal
+            .header Confirm Cancel Request
+            .content Are you sure you want to cancel this request?
+            .actions
+                .ui.buttons 
+                    .ui.button#cancelCancelRequestButton No
+                    .or
+                    .ui.button.red#confirmCancelRequestButton Yes
+        
+        .ui.modal#handleRequestModal
+            .header#requesterNameHeader
+            .content
+                p#reqQuantity
+                .ui.segment
+                    p#reqMessage
+            .actions
+                .ui.button#cancelHandleRequestButton Cancel
+                .ui.buttons
+                    .ui.red.button#rejectRequestButton Reject
+                    .or
+                    .ui.green.button#acceptRequestButton Accept

@@ -1,0 +1,32 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title My Requests
+block append scripts
+    script(src='/socket.io/socket.io.js')
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/board.css')
+
+block content
+    +navbar
+    .box
+        .ui.container#myListingsContainer
+            .returnButton(onClick='window.history.back()')
+                i.angle.left.icon.large
+            .ui.header.centered
+                h2 My Requests
+            if myRequests.length == 0
+                .ui.segment
+                    p You have no requested item.
+            else
+                .ui.segment
+                    .ui.divided.list
+                        each request in myRequests
+                            .item
+                                .right.floated.content
+                                    .item #{request.status}
+                                    a.ui.small.button(href=`/resource/item/${request.resource}`) View
+                                .content
+                                    .large.header #{request.itemName}
+                                    .description Requested #{request.timeSinceRequest}
