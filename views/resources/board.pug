@@ -17,9 +17,9 @@ block content
         .ui.container
             .ui.segment.center.aligned
                 .ui.small.buttons
-                    a.button.ui.button(href='resource/listitem') List Item
-                    a.button.ui.button(href='resource/mylistings') My Listings
-                    a.button.ui.button(href='resource/myrequests') My Requests
+                    a.button.ui.button(href='resources/newitem') List Item
+                    a.button.ui.button(href='resources/mylistings') My Listings
+                    a.button.ui.button(href='resources/myrequests') My Requests
             .ui.input.fluid
                 input#searchResourceInput(type='text', placeholder='Search...')
                 button.ui.blue.button#searchResourceButton Search
@@ -28,9 +28,9 @@ block content
                     each item in resources
                         .column.four.wide
                             .ui.card.centered
-                                a.image(href=`/resource/item/${item._id}`)
+                                a.image(href=`/resources/item/${item._id}`)
                                     img(src=item.imageURL || '/images/defaultImage.png')
-                                a.content(href=`/resource/item/${item._id}`)
+                                a.content(href=`/resources/item/${item._id}`)
                                     .header #{item.name}
                                     .meta
                                         span #{item.timeSinceLastUpdate}

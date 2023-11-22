@@ -96,7 +96,7 @@ app.use('/messages/private', privateMessageRouter);
 app.use('/announcements', announcementRouter);
 app.use('/speedtest', speedTestRouter);
 app.use('/search', searchRouter);
-app.use('/resource', resourceRouter);
+app.use('/resources', resourceRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

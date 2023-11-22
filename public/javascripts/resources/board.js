@@ -8,5 +8,5 @@ const addElementsBehavior = () => {
 
 const search = () => {
     const keyword = $('#searchResourceInput').val().trim();
-    window.location.href = `/resource?keyword=${keyword}`;
+    window.location.href = `/resources?keyword=${keyword}`;
 }

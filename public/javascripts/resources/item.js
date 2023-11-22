@@ -13,10 +13,11 @@ const addElementsBehavior = () => {
     $('#cancelRequestModal').modal('attach events', '#cancelCancelRequestButton', 'hide');
     $('.viewRequestButton').click(function () {
         const requestId = $(this).data('request-id');
+        const requesterId = $(this).data('requester-id');
         const requesterName = $(this).data('requester-name');
         const quantity = $(this).data('quantity');
         const message = $(this).data('message');
-        showHandleRequestModal(requestId, requesterName, quantity, message);
+        showHandleRequestModal(requestId, requesterId, requesterName, quantity, message);
     });
     $('#handleRequestModal').modal('attach events', '#cancelHandleRequestButton', 'hide');
 
@@ -43,9 +44,9 @@ const deleteResource = () => {
     const id = window.location.href.split('/').pop();
     $.ajax({
         method: 'DELETE',
-        url: `/resource/${id}`,
+        url: `/resources/${id}`,
     }).done(() => {
-        window.location.href = '/resource';
+        window.location.href = '/resources';
     }).fail(response => {
         console.log(response.message);
     });
@@ -85,7 +86,7 @@ const editResource = () => {
     }
     $.ajax({
         method: 'PUT',
-        url: `/resource/${id}`,
+        url: `/resources/${id}`,
         data: data,
         processData: false,
         contentType: false,
@@ -96,7 +97,7 @@ const editResource = () => {
     });
 }
 
-const showHandleRequestModal = (requestId, requesterName, quantity, message) => {
+const showHandleRequestModal = (requestId, requesterId, requesterName, quantity, message) => {
     $('#handleRequestModal').modal('show');
     $('#requesterNameHeader').text(`Request from ${requesterName}`);
     $('#reqQuantity').text(`Quantity: ${quantity}`);
@@ -106,31 +107,33 @@ const showHandleRequestModal = (requestId, requesterName, quantity, message) => 
     } else {
         $('#acceptRequestButton').off().click(() => {
             $('#handleRequestModal').modal('hide');
-            acceptRequest(requestId);
+            acceptRequest(requestId, requesterId);
         });
     }
     $('#rejectRequestButton').off().click(() => {
         $('#handleRequestModal').modal('hide');
-        rejectRequest(requestId);
+        rejectRequest(requestId, requesterId);
     });
 }
 
-const acceptRequest = (id) => {
+const acceptRequest = (requestId, requesterId) => {
     $.ajax({
         method: 'PUT',
-        url: `/resource/acceptrequest/${id}`,
+        url: `/resources/acceptance/${requestId}`,
     }).done(() => {
+        sendPrivateMessage(requesterId, `Your request for ${getItemName()} has been accepted`);
         window.location.reload();
     }).fail(response => {
         console.log(response.message);
     });
 }
 
-const rejectRequest = (id) => {
+const rejectRequest = (requestId, requesterId) => {
     $.ajax({
         method: 'PUT',
-        url: `/resource/rejectrequest/${id}`,
+        url: `/resources/rejection/${requestId}`,
     }).done(() => {
+        sendPrivateMessage(requesterId, `Your request for ${getItemName()} has been rejected`);
         window.location.reload();
     }).fail(response => {
         console.log(response.message);
@@ -154,7 +157,7 @@ const sendRequest = () => {
     const id = window.location.href.split('/').pop();
     $.ajax({
         method: 'POST',
-        url: `/resource/sendrequest`,
+        url: `/resources/newrequest`,
         data: {
             resourceId: id,
             quantity: $('#requestQuantity').val(),
@@ -179,7 +182,7 @@ const cancelRequest = () => {
     const id = window.location.href.split('/').pop();
     $.ajax({
         method: 'DELETE',
-        url: `/resource/deleterequest/${id}`,
+        url: `/resources/requestdeletion/${id}`,
     }).done(() => {
         window.location.reload();
     }).fail(response => {
@@ -190,4 +193,23 @@ const cancelRequest = () => {
 const getCurrentQuantity = () => {
     const quantity = $('#ownerAndQuantity').text().split(',')[1].trim().split(' ')[0];
     return Number(quantity);
+}
+
+const getItemName = () => {
+    return $('#itemName').text();
+}
+
+const sendPrivateMessage = (receiverId, content) => {
+    $.ajax({
+        method: 'POST',
+        url: '/messages/private',
+        data: {
+            receiverId: receiverId,
+            content: content,
+        }
+    }).done(function () {
+        console.log('Sent private message');
+    }).fail(function (response) {
+        console.error('Failed to send private message:', response);
+    });
 }

@@ -39,18 +39,18 @@ const submitForm = (e) => {
     }
     $.ajax({
         method: 'POST',
-        url: '/resource',
+        url: '/resources',
         data: data,
         processData: false,
         contentType: false,
     }).done(function (response) {
         console.log(response);
-        window.location.href = `/resource`;
+        window.location.href = `/resources`;
     }).fail(function (response) {
         console.log(response.message);
     });
 };
 
 const cancelForm = () => {
-    window.location.href = '/resource';
+    window.location.href = '/resources';
 }

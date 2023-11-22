@@ -148,7 +148,7 @@ This function searches resources by keyword or gets all resources if no keyword 
 - Input:
     optional keyword (str)
 - Output:
-    An array of resources
+    An array of resources rendered
 */
 export const get_resources = async (req, res) => {
     try {
@@ -217,11 +217,11 @@ export const display_item_detail = async (req, res) => {
         }
         resource.timeSinceLastUpdate = timeSince(resource.updatedAt);
         const isOwner = resource.owner.toString() === req.userId;
-        let requests = await ResourceRequest.find({ resource: req.params.resourceId }).sort({ updatedAt: -1 });
+        let requests = await ResourceRequest.find({ resource: req.params.resourceId }).sort({ createdAt: -1 });
         let requested = false;
         if (isOwner) {
             requests.forEach(request => {
-                request.timeSinceLastUpdate = timeSince(request.updatedAt);
+                request.timeSinceRequest = timeSince(request.createdAt);
             });
         } else {
             for (let request of requests) {
@@ -231,13 +231,19 @@ export const display_item_detail = async (req, res) => {
                 }
             }
         }
-        requests = requests.filter(request => request.status === 'pending');
         res.render('resources/item', { item: resource, isOwner: isOwner, requests: isOwner ? requests : null, requested: requested });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
+/*
+This function accepts a request
+- Input:
+    requestId (str)
+- Output:
+    status code
+*/
 export const accept_request = async (req, res) => {
     try {
         const requestId = req.params.requestId;
@@ -263,6 +269,13 @@ export const accept_request = async (req, res) => {
     }
 };
 
+/*
+This function rejects a request
+- Input:
+    requestId (str)
+- Output:
+    status code
+*/
 export const reject_request = async (req, res) => {
     try {
         const requestId = req.params.requestId;
@@ -286,6 +299,15 @@ export const reject_request = async (req, res) => {
     }
 };
 
+/*
+This function sends a request
+- Input:
+    resourceId (str)
+    quantity (int)
+    message (str)
+- Output:
+    status code
+*/
 export const send_request = async (req, res) => {
     try {
         console.log(req.body);
@@ -316,6 +338,13 @@ export const send_request = async (req, res) => {
 
 // };
 
+/*
+This function deletes a request
+- Input:
+    requestId (str)
+- Output:
+    status code
+*/
 export const delete_request = async (req, res) => {
     try {
         const resource = await Resource.findById(req.params.resourceId);
@@ -336,11 +365,18 @@ export const delete_request = async (req, res) => {
     }
 };
 
+/*
+This function gets all requests sent by the user
+- Input:
+    N/A
+- Output:
+    An array of requests rendered
+*/
 export const get_my_requests = async (req, res) => {
     try {
-        const result = await ResourceRequest.find({ requester: req.userId }).sort({ updatedAt: -1 });
+        const result = await ResourceRequest.find({ requester: req.userId }).sort({ createdAt: -1 });
         for (let request of result) {
-            request.timeSinceRequest = timeSince(request.updatedAt);
+            request.timeSinceRequest = timeSince(request.createdAt);
             const resource = await Resource.findById(request.resource);
             request.itemName = resource.name;
         }

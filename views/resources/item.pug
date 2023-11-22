@@ -5,6 +5,7 @@ block title
     title Resource Item
 
 block append scripts
+    script(src='/javascripts/resources/item.js')
 
 block append stylesheets
     link(rel='stylesheet', href='/stylesheets/board.css')
@@ -16,7 +17,7 @@ block content
             .returnButton(onClick='window.history.back()')
                 i.angle.left.icon.large
             .ui.header.centered
-                h2 #{item.name}
+                h2#itemName #{item.name}
                 .sub.header#ownerAndQuantity #{item.ownerName}, #{item.quantity} available
             .ui.centered.medium.image#itemImage
                 img(src=item.imageURL || '/images/defaultImage.png')
@@ -34,19 +35,23 @@ block content
                 .ui.segment#requestsSegment
                     .ui.header.centered
                         h3 Requests
-                    .ui.divided.list
+                    .ui.middle.aligned.divided.list
                         each request in requests
                             .item
                                 .right.floated.content
-                                    a.ui.small.button.viewRequestButton(
-                                        data-requester-name=request.requesterName,
-                                        data-request-id=request._id,
-                                        data-quantity=request.quantity,
-                                        data-message=request.message
-                                    ) View
+                                    if request.status == 'pending'
+                                        a.ui.small.button.viewRequestButton(
+                                            data-requester-id=request.requester,
+                                            data-requester-name=request.requesterName,
+                                            data-request-id=request._id,
+                                            data-quantity=request.quantity,
+                                            data-message=request.message
+                                        ) View
+                                    else
+                                        .ui.container #{request.status}
                                 .content
                                     .large.header #{request.requesterName}
-                                    .description #{request.timeSinceLastUpdate}
+                                    .description #{request.timeSinceRequest}
         
         .ui.mini.modal#confirmDeleteModal
             .header Confirm Delete
