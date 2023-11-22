@@ -1,5 +1,7 @@
 import * as searchBox from './searchBox.js';
 
+const socket = io.connect();
+
 const sendLogoutRequest = function () {
     $.ajax({
         method: 'POST',
