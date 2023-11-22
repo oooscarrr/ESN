@@ -4,7 +4,8 @@ import {
     create_user,
     list_users,
     logout,
-    change_last_status
+    change_last_status,
+    getUserSosMessage
 } from '../controllers/userController.js';
 import authorization from '../middlewares/authorization.js';
 
@@ -15,6 +16,7 @@ router.post('', create_user);
 router.post('/logout', authorization, logout);
 router.get('', authorization, list_users);
 router.post('/status', authorization, change_last_status);
+router.get('/sos-message/:userId', authorization, getUserSosMessage);
 
 
 export default router;

@@ -1,4 +1,18 @@
 import * as searchBox from './searchBox.js';
+const socket = io.connect();
+window.socket = socket;
+const UserId = localStorage.getItem("currentUserId");
+
+socket.on('connect', function () {
+    console.log("WebSocket Connected: ", socket.connected);
+
+    socket.on('receiveSosAlert', function (data) {
+        console.log("Received SOS Alert: ", data);
+        const message = `SOS Alert from ${data.message}`;
+        alert(message);
+    });
+});
+
 
 const sendLogoutRequest = function () {
     $.ajax({
@@ -28,6 +42,78 @@ const toggleSearchBoxVisibility = function () {
     $('#searchBox').transition('fade', '500ms');
 }
 
+const getSosLocationAndSendMessage = () => {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const { latitude, longitude } = position.coords;
+            console.log("Location obtained: Lat:", latitude, "Long:", longitude); // Log the coordinates
+            sendSosAlert(latitude, longitude);
+        }, function () {
+            alert('Unable to retrieve your location');
+        });
+    } else {
+        alert('Geolocation is not supported by this browser.');
+    }
+};
+
+
+const sendSosAlert = (latitude, longitude) => {
+    const userId = localStorage.getItem("currentUserId");
+    // console.log(0, userId);
+    const fetchUserSosMessage = (userId) => {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                method: 'GET',
+                url: `/users/sos-message/${userId}`,
+                success: function (response) {
+                    if (response && response.sosMessage) {
+                        console.log('User SOS Message:', response.sosMessage,);
+                        resolve({ sosMessage: response.sosMessage, username: response.username });
+                    } else {
+                        console.error('SOS message not found for this user.');
+                        reject('SOS message not found');
+                    }
+                },
+                error: function (err) {
+                    console.error('Error fetching user SOS message:', err);
+                    reject(err);
+                }
+            });
+        });
+    };
+    // console.log(1, userId);
+    if (userId) {
+        fetchUserSosMessage(userId)
+            .then(({ sosMessage, username }) => {
+                console.log('Received SOS Message:', sosMessage);
+                // Do something with the sosMessage
+                // $('#sosMessageDisplay').text(sosMessage);
+
+                console.log(sosMessage);
+                const fullMessage = `${username}: ${sosMessage} My current location: Lat ${latitude}, Long ${longitude}`;
+                console.log("Full SOS message:", fullMessage);
+
+                $.ajax({
+                    url: '/users/sos/alert',
+                    method: 'POST',
+                    data: { userId, message: fullMessage },
+                    success: function (response) {
+                        console.log('SOS alert sent:', response.message);
+                    },
+                    error: function (err) {
+                        console.error('Error sending SOS alert:', err);
+                    }
+                });
+
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+};
+
+
 $(document).ready(() => {
     $('#logoutButton').click(sendLogoutRequest);
 
@@ -40,6 +126,8 @@ $(document).ready(() => {
     $('#navbarSearchButton').click(toggleSearchBoxVisibility);
     $('#changeStatusModal').modal('attach events', '#changeStatusButton', 'show');
     $('#changeStatusForm').submit(sendStatusChangeRequest);
+
+    $('#sosButton').click(getSosLocationAndSendMessage);
 
 
 

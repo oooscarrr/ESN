@@ -21,7 +21,7 @@ await connectDB(username, password, dbAddress);
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3001');
+var port = normalizePort(process.env.PORT || '3000');
 
 /**
  * Listen on provided port, on all network interfaces.

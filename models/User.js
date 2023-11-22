@@ -19,7 +19,6 @@ const userSchema = new mongoose.Schema(
         sosContacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         sosMessage: { type: String, default: '' },
         socketId: { type: String }
-    
     },
     {
         statics: {
@@ -29,6 +28,21 @@ const userSchema = new mongoose.Schema(
             registerNewUser(username, hashedPassword) {
                 const user = new User({ username: username, password: hashedPassword });
                 return user.save();
+            },
+            async getSOSMessage(userId) {
+                try {
+                    console.log('calling getSOSMessage');
+                    const user = await this.findById(userId);
+                    if (user) {
+                        return user.sosMessage;
+                    } else {
+                        // Handle the case where no user is found
+                        throw new Error('User not found');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user:', error.message);
+                    // Handle or throw the error as needed
+                }
             },
             async changeUserOnlineStatus(userId, onlineStatus) {
                 const user = await this.findById(userId);
