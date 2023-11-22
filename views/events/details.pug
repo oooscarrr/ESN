@@ -1,0 +1,66 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title Volunteer Events
+
+block append scripts
+//-   script(src='/javascripts/event/details.js')
+
+block append stylesheets
+  link(rel='stylesheet', href='/stylesheets/event.css')
+
+block content
+    +navbar
+    .horizontal.centered.box
+        a.ui.button(href="/events")
+            i.left.arrow.icon
+            | Events
+        h1 #{event.title}
+        .ui.container
+            .ui.small.card
+                .content
+                    .meta Start Time: #{event.startDateTime.toLocaleString()}
+                    .meta End Time: #{event.endDateTime.toLocaleString()}
+                    .description Description:
+                    .description
+                        .ui.segment
+                            p #{event.description}
+                a.ui.grey.button(href=`/events/${event._id}/edit`)
+                    i.edit.icon
+                    | Edit
+                a.ui.teal.button(href=`/events/${event._id}/participants`)
+                    i.users.icon
+                    | See Participants
+                if event.organizer.equals(user._id)
+                    a.ui.red.button(href=`/events/${event._id}/cancel`)
+                        i.cancel.icon
+                        | Cancel Event
+                else if event.participants.includes(user._id)
+                    a.ui.red.button(href=`/events/${event._id}/leave`)
+                        i.cancel.icon
+                        | Leave Event
+                else
+                    a.ui.green.button(href=`/events/${event._id}/join`)
+                        i.check.icon
+                        | Join Event
+                
+
+
+                //- .extra.content
+                //-     // Conditionally display the Edit button if the user is the organizer
+                //-     if user.isOrganizer
+                //-     button.ui.button(type='button') Edit
+                //-     // Actions
+                //-     .ui.vertical.buttons
+                //-     button.ui.button(type='button') See Participants
+                //-     // Conditionally show Cancel button for organizer
+                //-     if user.isOrganizer
+                //-         button.ui.button(type='button') Cancel Event
+                //-     // Conditional logic based on whether the user has joined the event
+                //-     if user.hasJoined
+                //-         button.ui.button(type='button') Leave Event
+                //-     else
+                //-         button.ui.button(type='button') Join Event
+
+                        

@@ -1,10 +1,13 @@
 import express from 'express';
-import * as EventController from '../controllers/eventController';
+import * as EventController from '../controllers/eventController.js';
 
 const router = express.Router();
 
+router.get('/create', EventController.showCreationPage);
 router.post('/', EventController.createVolunteerEvent);
-router.patch('/:evnetId', EventController.updateVolunteerEvent);
+router.get('/:eventId', EventController.showEventDetails);
+router.get('/:eventId/edit', EventController.showEditPage);
+router.put('/:eventId', EventController.updateVolunteerEvent);
 router.delete('/:eventId', EventController.cancelVolunteerEvent);
 router.get('/:eventId/participants', EventController.listEventParticipants);
 router.post('/:eventId/pending-invitations', EventController.inviteUsersToEvent);

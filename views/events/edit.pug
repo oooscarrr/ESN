@@ -1,0 +1,49 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title Volunteer Events
+
+block append scripts
+  script(src='/javascripts/event/create.js')
+
+block append stylesheets
+  link(rel='stylesheet', href='/stylesheets/event.css')
+
+block content
+    +navbar
+    .horizontal.centered.box
+        h1 Create/Edit Event
+        .ui.container
+            - var context = event ? 'edit' : 'create'
+            form.ui.form#eventForm(data-context=context)
+                .field
+                    label Start Time
+                    .ui.calendar#startTime
+                        .ui.input
+                            if event
+                                input(type='text', placeholder='Start Time', name='startDateTime', value=event.startDateTime)
+                            else
+                                input(type='text', placeholder='Start Time', name='startDateTime')
+                .field
+                    label End Time
+                    .ui.calendar#endTime
+                        .ui.input
+                            if event
+                                input(type='text', placeholder='End Time', name='endDateTime', value=event.endDateTime)
+                            else
+                                input(type='text', placeholder='End Time', name='endDateTime')
+                .field
+                    label Event Title
+                    if event
+                        input(type='text', name='title', placeholder='Title', value=event.title)
+                    else
+                        input(type='text', name='title', placeholder='Title')
+                .field
+                    label Event Description
+                    if event
+                        textarea(name='description', placeholder='Description') #{event.description}
+                    else
+                        textarea(name='description', placeholder='Description')
+                button.ui.fluid.green.button(type='submit') Save Event
+                        
