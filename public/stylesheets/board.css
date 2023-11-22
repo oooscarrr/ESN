@@ -1,0 +1,24 @@
+textarea {
+    resize: none;
+}
+
+.ui.horizontal.centered.box {
+    padding-top: 1.5em;
+    overflow: hidden;
+}
+
+#quantityField {
+    width: 100px;
+}
+
+#myListingsContainer {
+    width: 95%;
+}
+
+#itemDetailContainer {
+    overflow: hidden;
+}
+
+#itemImage {
+    margin-bottom: 1.5em;
+}

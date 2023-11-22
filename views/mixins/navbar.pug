@@ -1,12 +1,14 @@
 include /views/mixins/searchBox
 mixin navbar
     .ui.inverted.secondary.menu#navbar
-        a.item(href='/users')
-            i.home.icon
-        a.item(href='/messages/public')
+        a.item(href='/users' data-tooltip='Directory' data-position='bottom center' data-variation='tiny basic')
+            i.address.book.icon
+        a.item(href='/messages/public' data-tooltip='Public Chat' data-position='bottom center' data-variation='tiny basic')
             i.users.icon
-        a.item(href='/announcements')
+        a.item(href='/announcements' data-tooltip='Announcements' data-position='bottom center' data-variation='tiny basic')
             i.bullhorn.icon
+        a.item(href='/resource' data-tooltip='Resource Bulletin Board' data-position='bottom center' data-variation='tiny basic')
+            i.first.aid.icon
         .right.menu
             if context !== contextModule.CONTEXT.OTHER
                 .item#navbarSearchButton
