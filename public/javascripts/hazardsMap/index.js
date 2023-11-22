@@ -75,7 +75,6 @@ function setHazardName(hazard) {
 }
 
 function calculateDistance() {
-    console.log("vgebahsehseh");
     const apiUrl = `/hazards/${referencePointID}/`;
     $.ajax({
         url: apiUrl, type: 'GET', dataType: 'json', success: function (data) {
@@ -214,7 +213,7 @@ function addHazard(lng, lat) {
 
 
 function removeHazard() {
-    console.log("grdzarggag");
+    // console.log("grdzarggag");
     $.ajax({
         url: `/hazards/delete/${referencePointID}`, type: 'DELETE', success: function (data) {
             console.log('Hazard deleted successfully:', data);

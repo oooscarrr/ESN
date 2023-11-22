@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.use(authorization);
 
-//TODO:
 router.get('', display_hazards);
 router.post('/report', add_hazard);
 router.delete('/delete/:id', delete_hazard);

@@ -35,10 +35,10 @@ export const delete_hazard = async (req, res) => {
         const hazardId = req.params.id;
         const deletedHazard = await Hazard.deleteHazard(hazardId);
         // const deletedHazard = await Hazard.deleteAllHazards();
-        if (!deletedHazard) {
+        if (!deletedHazard || deletedHazard.deletedCount == 0) {
             return res.status(404).send('Hazard not found');
         }
-        res.status(200).json({message: 'Hazard deleted successfully', deletedHazard});
+        res.status(200).json({message: 'Hazard deleted successfully', deletedHazard: deletedHazard});
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -47,5 +47,10 @@ export const delete_hazard = async (req, res) => {
 export const get_hazard_byID = async (req, res) => {
     const hazardId = req.params.id;
     const hazard = await Hazard.findHazard(hazardId);
-    res.status(200).send(hazard);
+    if (hazard) {
+        res.status(200).send(hazard);
+    } else {
+        res.status(404).send("No such hazard");
+    }
+
 }
