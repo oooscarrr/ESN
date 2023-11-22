@@ -1,72 +1,51 @@
-// import { PrivateMessage } from '../models/privateMessage.js';
-// import { User } from '../models/User.js';
-// import { Alert } from '../models/Alert.js';
+import {Hazard} from '../models/Hazard.js';
 // import { io } from '../app.js';
 //
 export const display_hazards = async (req, res) => {
-    // const userOne = req.params.userIdOne;
-    // const userTwo = req.params.userIdTwo;
-    // const privateMessages = await PrivateMessage.find({$or: [{senderId: userOne, receiverId: userTwo}, {senderId: userTwo, receiverId: userOne}]}).sort({createdAt: 1 });
-    res.render('hazardMap/index', {});
+    try {
+        const allHazards = await Hazard.findAllHazards();
+        console.log(allHazards);
+        res.render('hazardMap/index', {hazards: allHazards});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
 }
-//
-// export const post_private_messages = async (req, res) => {
-//     try {
-//         const senderId = req.userId;
-//         const { receiverId, content } = req.body;
-//         const { sender, receiver } = await findSenderAndReceiver(senderId, receiverId);
-//         await addAlertToDB(senderId, receiverId);
-//         const privateMsg = await createNewPrivateMessage(sender, receiver, content);
-//         io.emit('newPrivateMessage', privateMsg);
-//         res.status(201).send({ 'newPrivateMessage': privateMsg });
-//     }
-//     catch (error) {
-//         res.sendStatus(500);
-//         return console.log('post_private_message Error: ', error);
-//     }
-// }
-//
-// export const cancel_alert = async (req, res) => {
-//     try {
-//         const senderId = req.body.senderId;
-//         const receiverId = req.body.receiverId;
-//         await removeAlertFromDB(senderId, receiverId);
-//         res.sendStatus(200);
-//     }
-//     catch (error) {
-//         res.sendStatus(500);
-//         return console.log('cancel_alert Error: ', error);
-//     }
-// }
-//
-// async function removeAlertFromDB(senderId, receiverId) {
-//     const alert = await Alert.findOne({ senderId: senderId, receiverId: receiverId });
-//     if (alert) {
-//         alert.alerted = false;
-//         await alert.save();
-//     }
-// }
-//
-// async function createNewPrivateMessage(sender, receiver, content) {
-//     const privateMsg = new PrivateMessage({ senderId: sender._id, senderName: sender.username, receiverId: receiver._id, receiverName: receiver.username, content: content, senderStatus: sender.lastStatus });
-//     await privateMsg.save();
-//     return privateMsg;
-// }
-//
-// async function findSenderAndReceiver(senderId, receiverId) {
-//     const sender = await User.findById(senderId);
-//     const receiver = await User.findById(receiverId);
-//
-//     return { sender, receiver };
-// }
-//
-// async function addAlertToDB(senderId, receiverId) {
-//     const alert = await Alert.findOne({ senderId: senderId, receiverId: receiverId });
-//     if (alert) {
-//         alert.alerted = true;
-//         await alert.save();
-//     } else {
-//         const alert = new Alert({ senderId: senderId, receiverId: receiverId, alerted: true });
-//         await alert.save();
-//     }
-// }
+
+
+export const add_hazard = async (req, res) => {
+    try {
+        const {latitude, longitude, details} = req.body;
+        const newHazard = await Hazard.addHazard(latitude, longitude, details);
+
+        // Include the hazard ID in the response
+        res.status(201).send({
+            id: newHazard._id,
+            latitude: latitude,
+            longitude: longitude,
+            details: details
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+export const delete_hazard = async (req, res) => {
+    try {
+        const hazardId = req.params.id;
+        const deletedHazard = await Hazard.deleteHazard(hazardId);
+        // const deletedHazard = await Hazard.deleteAllHazards();
+        if (!deletedHazard) {
+            return res.status(404).send('Hazard not found');
+        }
+        res.status(200).json({message: 'Hazard deleted successfully', deletedHazard});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+export const get_hazard_byID = async (req, res) => {
+    const hazardId = req.params.id;
+    const hazard = await Hazard.findHazard(hazardId);
+    res.status(200).send(hazard);
+}
