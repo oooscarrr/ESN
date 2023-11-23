@@ -47,10 +47,7 @@ export const isValidLatLng = (latitude, longitude) => {
 
 export const hazardExists = async (hazardId) => {
     const hazardFound = await Hazard.findHazard(hazardId);
-    if (
-        hazardFound &&
-        hazardFound._id == hazardID
-    ) {
+    if (hazardFound && hazardFound._id == hazardId) {
         return true;
     } else {
         return false;
