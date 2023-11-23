@@ -1,16 +1,16 @@
-// const socket = io.connect();
+const socket = io.connect();
 let map;
 let center;
 let selected = {};
 let referencePointID;
+let referenceMarker;
 let directionsService;
 let infoWindow;
-
+let markers = {};
 
 function initMap() {
+    markers = {};
     directionsService = new google.maps.DirectionsService;
-    // directionsDisplay = new google.maps.DirectionsRenderer;
-
     navigator.geolocation.getCurrentPosition(function (position) {
         center = {
             lat: position.coords.latitude, lng: position.coords.longitude,
@@ -19,15 +19,11 @@ function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 12, center: center, mapId: "HAZARD_MAP",
         });
-
-        // directionsDisplay.setMap(map);
-
         var hazards = window.hazardsData || [];
-        console.log(hazards);
+        // console.log(hazards);
         initAutocomplete();
         autoUpdate();
         addMarkers(hazards);
-
     });
 
 }
@@ -43,21 +39,25 @@ function createMarker(hazard) {
     const marker = new google.maps.Marker({
         position: myLatLng, map, title: hazard.details,
     });
-
     setHazardName(hazard);
     marker.addListener('click', function () {
         // Create an info window
         referencePointID = hazard._id;
+        referenceMarker = marker;
         const localTime = new Date(hazard.createdAt).toLocaleString()
         infoWindow = new google.maps.InfoWindow({
-            content: '<strong>' + hazard.name + '</strong><br>' + 'Reported At: ' + localTime + '<br>' + 'Details: ' + hazard.details + '<br>' + '<br><button id="calculate" onclick="calculateDistance()">Calculate Distance</button>' + '<br><button id="mark-as-safe" onclick="removeHazard()">Mark As Safe</button>'
+            content: '<strong>' + hazard.name + '</strong><br>' + 'Reported At: ' + localTime + '<br>' + 'Details: ' + hazard.details + '<br>'
+                + '<br><button id="calculate" onclick="calculateDistance()">Calculate Distance</button>'
+                + '<br><button id="mark-as-safe" onclick="removeHazard()">Mark As Safe</button>'
         });
 
         // Open the info window on marker click
         infoWindow.open(map, marker);
     });
+    markers[hazard._id] = marker;
 
 }
+
 
 function setHazardName(hazard) {
     const reverseGeocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${hazard.latitude},${hazard.longitude}&key=AIzaSyCtSslTFr3ROI5tMdZl1HlnHCPHd_QEjX8`;
@@ -194,6 +194,7 @@ function addHazard(lng, lat) {
     }).done(function (response) {
         response.latitude = parseFloat(response.latitude);
         response.longitude = parseFloat(response.longitude);
+        response._id = response.id;
         createMarker(response);
         $('#pac-input').val('');
         $('#details').val('');
@@ -207,15 +208,19 @@ function removeHazard() {
     $.ajax({
         url: `/hazards/delete/${referencePointID}`, type: 'DELETE', success: function (data) {
             console.log('Hazard deleted successfully:', data);
-            //TODO:
-            // remove that marker
-            //send to the io
+            deleteMarker(data);
+
         }, error: function (jqXHR, textStatus, errorThrown) {
             console.error('Error:', errorThrown);
         }
     });
 }
 
+function deleteMarker(hazard) {
+    const id = hazard._id ||  hazard.deletedHazard._id;
+    markers[id].setMap(null);
+    delete markers[id];
+}
 
 function addElementsBehavior() {
     $('#reportHazard').click(reportHazard);
@@ -257,6 +262,9 @@ function autoUpdate() {
 }
 
 $(document).ready(function () {
-    initMap();
+    // initMap();
     addElementsBehavior();
 });
+
+socket.on('newHazard', createMarker);
+socket.on('removeHazard', deleteMarker);

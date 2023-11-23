@@ -1,6 +1,6 @@
 import {Hazard} from '../models/Hazard.js';
-// import { io } from '../app.js';
-//
+import { io } from '../app.js';
+
 export const display_hazards = async (req, res) => {
     try {
         const allHazards = await Hazard.findAllHazards();
@@ -16,12 +16,12 @@ export const display_hazards = async (req, res) => {
 export const add_hazard = async (req, res) => {
     try {
         const {latitude, longitude, details} = req.body;
-        if (!isValidLatLng(latitude, longitude)) {
-            res.status(500).send('Invalid latitute or longtitude number');
-            return;
+        if (isValidLatLng(latitude, longitude) == false) {
+            console.log(latitude);
+            console.log(longitude);
         }
         const newHazard = await Hazard.addHazard(latitude, longitude, details);
-
+        io.emit('newHazard', newHazard);
         // Include the hazard ID in the response
         res.status(201).send({
             id: newHazard._id,
@@ -61,6 +61,7 @@ export const delete_hazard = async (req, res) => {
         if (!deletedHazard || deletedHazard.deletedCount == 0) {
             return res.status(404).send('Hazard not found');
         }
+        io.emit('removeHazard', deletedHazard);
         res.status(200).json({message: 'Hazard deleted successfully', deletedHazard: deletedHazard});
     } catch (error) {
         console.error(error);
