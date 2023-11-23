@@ -11,6 +11,8 @@ mixin navbar
             i.first.aid.icon
         a.item(href='/groups')
             i.comments.icon
+        a.item(href='/events')
+            i.calendar.icon
         .right.menu
             if context !== contextModule.CONTEXT.OTHER
                 .item#navbarSearchButton
