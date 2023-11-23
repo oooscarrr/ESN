@@ -12,6 +12,14 @@ export const createVolunteerEvent = async (req, res) => {
         title,
         description
     } = req.body;
+    if(
+        !startDateTime ||
+        !endDateTime ||
+        !title ||
+        !description
+    ) {
+        return res.status(400).json({ message: 'Please fill out all fields.' });
+    }
     const organizer = req.userId;
     const participants = [req.userId];
     const pendingInvitations = [];

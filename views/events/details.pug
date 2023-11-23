@@ -26,9 +26,10 @@ block content
                     .description
                         .ui.segment
                             p #{event.description}
-                a.ui.grey.button(href=`/events/${event._id}/edit`)
-                    i.edit.icon
-                    | Edit
+                if event.organizer.equals(user._id)
+                    a.ui.grey.button(href=`/events/${event._id}/edit`)
+                        i.edit.icon
+                        | Edit
                 a.ui.teal.button(href=`/events/${event._id}/participants`)
                     i.users.icon
                     | See Participants

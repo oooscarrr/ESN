@@ -1,7 +1,9 @@
 import express from 'express';
 import * as EventController from '../controllers/eventController.js';
+import authorization from '../middlewares/authorization.js';
 
 const router = express.Router();
+router.use(authorization);
 
 router.get('/create', EventController.showCreationPage);
 router.post('/', EventController.createVolunteerEvent);
