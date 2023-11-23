@@ -7,6 +7,7 @@ let referenceMarker;
 let directionsService;
 let infoWindow;
 let markers = {};
+let markersSearch = [];
 
 function initMap() {
     markers = {};
@@ -20,7 +21,6 @@ function initMap() {
             zoom: 12, center: center, mapId: "HAZARD_MAP",
         });
         var hazards = window.hazardsData || [];
-        // console.log(hazards);
         initAutocomplete();
         autoUpdate();
         addMarkers(hazards);
@@ -35,11 +35,13 @@ function addMarkers(hazards) {
 }
 
 function createMarker(hazard) {
+    console.log("Crfeate mARKER");
     const myLatLng = {lat: hazard.latitude, lng: hazard.longitude};
     const marker = new google.maps.Marker({
         position: myLatLng, map, title: hazard.details,
     });
     setHazardName(hazard);
+    markers[hazard._id] = marker;
     marker.addListener('click', function () {
         // Create an info window
         referencePointID = hazard._id;
@@ -48,20 +50,19 @@ function createMarker(hazard) {
         infoWindow = new google.maps.InfoWindow({
             content: '<strong>' + hazard.name + '</strong><br>' + 'Reported At: ' + localTime + '<br>' + 'Details: ' + hazard.details + '<br>'
                 + '<br><button id="calculate" onclick="calculateDistance()">Calculate Distance</button>'
-                + '<br><button id="mark-as-safe" onclick="removeHazard()">Mark As Safe</button>'
+                + '<br><button id="mark-as-safe" onclick="askConfirmationToSafe()">Mark As Safe</button>'
         });
 
         // Open the info window on marker click
         infoWindow.open(map, marker);
     });
-    markers[hazard._id] = marker;
+
 
 }
 
 
 function setHazardName(hazard) {
     const reverseGeocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${hazard.latitude},${hazard.longitude}&key=AIzaSyCtSslTFr3ROI5tMdZl1HlnHCPHd_QEjX8`;
-
     fetch(reverseGeocodeUrl)
         .then(response => response.json())
         .then(data => {
@@ -74,6 +75,7 @@ function setHazardName(hazard) {
 }
 
 function calculateDistance() {
+    console.log(referencePointID);
     const apiUrl = `/hazards/${referencePointID}/`;
     $.ajax({
         url: apiUrl, type: 'GET', dataType: 'json', success: function (data) {
@@ -100,7 +102,12 @@ function calculateWalkingRoute(origin, destination, hazard) {
             var route = response.routes[0];
             var distance = route.legs[0].distance.text;
             const localTime = new Date(hazard.createdAt).toLocaleString()
-            var updatedContent = '<strong>' + hazard.name + '</strong><br>' + 'Reported At: ' + localTime + '<br>' + 'Details: ' + hazard.details + '<br>' + '<strong>Walking distance: ' + distance + '</strong>' + '<br><button id="mark-as-safe" onclick="removeHazard()">Mark As Safe</>';
+            var updatedContent =
+                '<strong>' + hazard.name + '</strong><br>'
+                + 'Reported At: ' + localTime + '<br>'
+                + 'Details: ' + hazard.details + '<br>' +
+                '<strong>Walking distance: </strong><br>' + distance + '' +
+                '<br><button id="mark-as-safe" onclick="askConfirmationToSafe()">Mark As Safe</>';
             infoWindow.setContent(updatedContent);
         } else {
             window.alert('Directions request failed due to ' + status);
@@ -108,17 +115,27 @@ function calculateWalkingRoute(origin, destination, hazard) {
     });
 }
 
+
+function askConfirmationToSafe() {
+    $('#confirmSafeModal').modal('show');
+}
+
+function markAsSafe() {
+    closeConfirmation();
+    removeHazard();
+}
+
 function initAutocomplete() {
     // Create the search box and link it to the UI element.
     const input = document.getElementById("pac-input");
     const searchBox = new google.maps.places.SearchBox(input);
-
+    selected = null;
     // Bias the SearchBox results towards current map's viewport.
     map.addListener("bounds_changed", () => {
         searchBox.setBounds(map.getBounds());
     });
 
-    let markers = [];
+    markersSearch = [];
 
     // Listen for the event fired when the user selects a prediction and retrieve
     // more details for that place.
@@ -126,14 +143,18 @@ function initAutocomplete() {
         const places = searchBox.getPlaces();
 
         if (places.length == 0) {
+            // TODO:
             return;
+        }
+        if (places.length > 1) {
+            places.splice(1);
         }
 
         // Clear out the old markers.
-        markers.forEach((marker) => {
+        markersSearch.forEach((marker) => {
             marker.setMap(null);
         });
-        markers = [];
+        markersSearch = [];
 
         // For each place, get the icon, name and location.
         const bounds = new google.maps.LatLngBounds();
@@ -143,6 +164,7 @@ function initAutocomplete() {
                 console.log("Returned place contains no geometry");
                 return;
             }
+            selected = {};
             selected.lat = place.geometry.location.lat();
             selected.lng = place.geometry.location.lng();
             const icon = {
@@ -154,7 +176,7 @@ function initAutocomplete() {
             };
 
             // Create a marker for each place.
-            markers.push(new google.maps.Marker({
+            markersSearch.push(new google.maps.Marker({
                 map, icon, title: place.name, position: place.geometry.location,
             }),);
             if (place.geometry.viewport) {
@@ -175,6 +197,7 @@ function askConfirmation() {
 function cancelReporting() {
     $('#addrANDDetails').hide();
     $('#confirmReportModal').modal('hide');
+    clearSearchMarkers();
 }
 
 function reportHazard() {
@@ -184,8 +207,14 @@ function reportHazard() {
 
 
 function addHazard(lng, lat) {
+    if (!selected) {
+        alert("Address not valid, please try again");
+        cancelReporting();
+        return;
+    }
     $('#addrANDDetails').hide();
     $('#confirmReportModal').modal('hide');
+    clearSearchMarkers();
     let details = $('#details').val();
     $.ajax({
         method: 'POST', url: '/hazards/report', data: {
@@ -195,7 +224,6 @@ function addHazard(lng, lat) {
         response.latitude = parseFloat(response.latitude);
         response.longitude = parseFloat(response.longitude);
         response._id = response.id;
-        createMarker(response);
         $('#pac-input').val('');
         $('#details').val('');
     }).fail(function (error) {
@@ -203,13 +231,20 @@ function addHazard(lng, lat) {
     });
 }
 
+function clearSearchMarkers() {
+    markersSearch.forEach((searchMarker) => {
+        searchMarker.setMap(null);
+    });
+    markersSearch = [];
+}
 
 function removeHazard() {
+    // console.log(markers);
+    // console.log("remove marker");
+    console.log(referencePointID);
     $.ajax({
         url: `/hazards/delete/${referencePointID}`, type: 'DELETE', success: function (data) {
             console.log('Hazard deleted successfully:', data);
-            deleteMarker(data);
-
         }, error: function (jqXHR, textStatus, errorThrown) {
             console.error('Error:', errorThrown);
         }
@@ -217,21 +252,29 @@ function removeHazard() {
 }
 
 function deleteMarker(hazard) {
-    const id = hazard._id ||  hazard.deletedHazard._id;
+    // console.log(hazard);
+    // console.log(markers);
+    const id = hazard._id || hazard.deletedHazard._id;
     markers[id].setMap(null);
     delete markers[id];
 }
 
 function addElementsBehavior() {
     $('#reportHazard').click(reportHazard);
-    $('#addrANDDetails').hide();
+    // $('#addrANDDetails').hide();
     $('#confirmAddress').click(askConfirmation);
     $('.cancelButton').click(cancelReporting);
     $('#confirmReportFinal').click(addHazard);
     $('#calculate').click(calculateDistance);
     $('#mark-as-safe').click(removeHazard);
+    $('#confirmSafe').click(markAsSafe);
+    $('#cancelSafe').click(closeConfirmation);
 }
 
+
+function closeConfirmation() {
+    $('#confirmSafeModal').modal('hide');
+}
 
 function autoUpdate() {
     let marker;
