@@ -69,10 +69,7 @@ export const updateVolunteerEvent = async (req, res) => {
         title,
         description
     } = req.body;
-    const organizer = req.userId;
-    const participants = [req.userId];
-    const pendingInvitations = [];
-    const updatedEvent = { _id: eventId, startDateTime, endDateTime, title, description, organizer, participants, pendingInvitations };
+    const updatedEvent = { _id: eventId, startDateTime, endDateTime, title, description };
     try {
         await EventModel.findByIdAndUpdate(eventId, updatedEvent, { new: true });
         res.sendStatus(200);

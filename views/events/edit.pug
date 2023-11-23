@@ -13,6 +13,9 @@ block append stylesheets
 block content
     +navbar
     .horizontal.centered.box
+        a.ui.button(href="/events")
+            i.left.arrow.icon
+            | Events
         h1 Create/Edit Event
         .ui.container
             - var context = event ? 'edit' : 'create'
