@@ -5,7 +5,7 @@ block title
   title Volunteer Events
 
 block append scripts
-//-   script(src='/javascripts/event/details.js')
+  script(src='/javascripts/event/details.js')
 
 block append stylesheets
   link(rel='stylesheet', href='/stylesheets/event.css')
@@ -33,15 +33,15 @@ block content
                     i.users.icon
                     | See Participants
                 if event.organizer.equals(user._id)
-                    a.ui.red.button(href=`/events/${event._id}/cancel`)
+                    .ui.red.button#cancelButton
                         i.cancel.icon
                         | Cancel Event
                 else if event.participants.includes(user._id)
-                    a.ui.red.button(href=`/events/${event._id}/leave`)
+                    .ui.red.button(href=`/events/${event._id}/participants/${user._id}`)#leaveButton
                         i.cancel.icon
                         | Leave Event
                 else
-                    a.ui.green.button(href=`/events/${event._id}/join`)
+                    .ui.green.button(href=`/events/${event._id}/participants`)#joinButton
                         i.check.icon
                         | Join Event
                 

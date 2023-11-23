@@ -19,8 +19,19 @@ block content
                 .title.active
                     i.dropdown.icon
                     span Pending Invitations
-                    //- span.ui.label #{online_users.length}
-                .content.active
+                .content.active#pendingInvitations
+                    for event in myPendingInvitations
+                        //- a.ui.card(href=`/events/${event._id}`)
+                        .ui.card
+                            .content
+                                a.header(href=`/events/${event._id}`) #{event.title}
+                                .meta Start Time: #{event.startDateTime.toLocaleString()}
+                                .meta End Time: #{event.endDateTime.toLocaleString()}
+                                .description
+                                    .ui.segment
+                                        p #{event.description}
+                                button.ui.fluid.green.button.accept(href=`/events/${event._id}/accept-invitation`) Accept
+                                button.ui.fluid.red.button.decline(href=`/events/${event._id}/decline-invitation`) Decline
                 .title
                     i.dropdown.icon
                     span My Events
@@ -39,7 +50,7 @@ block content
                                     - const role = event.organizer.equals(user._id) ? 'Organizer' : 'Participant'
                                     .description Role: #{role}
                     .ui.bottom.attached.tab.segment.active(data-tab='upcoming')
-                        for event in myEvents
+                        for event in myUpcomingEvents
                             a.ui.card(href=`/events/${event._id}`)
                                 .content
                                     .header #{event.title}

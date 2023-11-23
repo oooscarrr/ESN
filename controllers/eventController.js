@@ -1,4 +1,5 @@
 import EventModel, * as Event from '../models/Event.js';
+import {User} from '../models/User.js';
 
 export const showCreationPage = (req, res) => {
     res.render('events/edit');
@@ -85,9 +86,19 @@ export const cancelVolunteerEvent = async (req, res) => {
 export const listEventParticipants = async (req, res) => {
     const { eventId } = req.params;
     try {
-        const event = await EventModel.findById(eventId);
+        const event = 
+            await EventModel.findById(eventId)
+            .populate({ path: 'participants', options: { sort: { 'username': 1 } } })
+            .populate({ path: 'pendingInvitations', options: { sort: { 'username': 1 } } });
         const participants = event.participants;
-        res.render('events/participants', { participants: participants });
+        const pendingInvitations = event.pendingInvitations;
+        const availableUsers = await User.find({ _id: { $nin: [...participants, ...pendingInvitations] } }).sort({ 'username': 1 });
+        res.render('events/participants', { 
+            event: event,
+            participants: participants,
+            availableUsers: availableUsers,
+            pendingInvitations: pendingInvitations
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -95,10 +106,14 @@ export const listEventParticipants = async (req, res) => {
 
 export const inviteUsersToEvent = async (req, res) => {
     const { eventId } = req.params;
-    const { inviteeIds } = req.body;
+    let inviteeIds = req.body['inviteeIds[]'];
+    if (!Array.isArray(inviteeIds)) {
+        inviteeIds = [inviteeIds];
+    }
     try {
+        console.log('inviteeIds: ', inviteeIds);
         await Event.addPendingInvitations(eventId, inviteeIds);
-        res.status(200).redirect(`/events/${eventId}`);
+        res.sendStatus(200);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -132,26 +147,30 @@ export const listVolunteerEvents = async (req, res) => {
             const isParticipant = event.participants.includes(req.userId);
             return isOrganizer || isParticipant;
         });
-        const myPastEvents = myEvents.filter((event) => {
-            const isPast = event.endDateTime < Date.now();
-            return isPast;
-        });
-        const myUpcomingEvents = myEvents.filter((event) => {
-            const isUpcoming = event.endDateTime > Date.now();
-            return isUpcoming;
-        });
         const myCanceledEvents = myEvents.filter((event) => {
             const isCanceled = event.canceled;
             return isCanceled;
         });
-        const myInvitedEvents = events.filter((event) => {
+        const myActiveEvents = myEvents.filter((event) => {
+            const isActive = !event.canceled;
+            return isActive;
+        });
+        const myPastEvents = myActiveEvents.filter((event) => {
+            const isPast = event.endDateTime < Date.now();
+            return isPast;
+        });
+        const myUpcomingEvents = myActiveEvents.filter((event) => {
+            const isUpcoming = event.endDateTime > Date.now();
+            return isUpcoming;
+        });
+        const myPendingInvitations = events.filter((event) => {
             const isInvited = event.pendingInvitations.includes(req.userId);
-            return isInvited;
+            const notCanceled = !event.canceled;
+            return isInvited && notCanceled;
         });
 
         res.render('events/list', {
-            myEvents,
-            myInvitedEvents,
+            myPendingInvitations,
             myPastEvents,
             myUpcomingEvents,
             myCanceledEvents,
@@ -178,14 +197,14 @@ export const leaveVolunteerEvent = async (req, res) => {
     const { eventId, participantId } = req.params;
     const userId = req.userId;
     if (userId !== participantId) {
-        res.status(403).json({ message: 'You can only leave events that you are a participant of.' });
+        return res.status(403).json({ message: 'You can only leave events that you are a participant of.' });
     }
     try {
         await Event.removeParticipant(eventId, userId);
-        res.status(200).redirect(`/events/${eventId}`);
+        return res.sendStatus(200)
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 }
 

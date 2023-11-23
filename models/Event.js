@@ -15,7 +15,8 @@ const EventSchema = new mongoose.Schema(
 );
 
 // Model
-export default mongoose.model('Event', EventSchema);
+const Event = mongoose.model('Event', EventSchema);
+export default Event;
 
 // DB Functions
 export const addPendingInvitations = async (eventId, inviteeIds) => {
