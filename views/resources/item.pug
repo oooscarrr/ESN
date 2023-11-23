@@ -50,7 +50,7 @@ block content
                                     else
                                         .ui.container #{request.status}
                                 .content
-                                    .large.header #{request.requesterName}
+                                    a.large.header(href=`/messages/private/${myId}/${request.requester}`) #{request.requesterName}
                                     .description #{request.timeSinceRequest}
         
         .ui.mini.modal#confirmDeleteModal

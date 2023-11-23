@@ -33,7 +33,7 @@ export const list_new_resource = async (req, res) => {
             imageURL: imageURL,
         });
         await newResource.save();
-        res.status(201).json({ 'resourceId': newResource._id });
+        res.status(201).json({ resource: newResource });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.message });
@@ -55,9 +55,6 @@ export const update_resource = async (req, res) => {
     const file = req.file;
     try {
         const resource = await Resource.findById(req.params.resourceId);
-        if (!resource) {
-            return res.status(404).json({ message: 'Resource not found' });
-        }
         if (resource.owner.toString() !== req.userId) {
             return res.status(403).json({ message: 'Forbidden' });
         }
@@ -72,7 +69,7 @@ export const update_resource = async (req, res) => {
         resource.quantity = req.body.quantity;
         resource.updatedAt = Date.now();
         await resource.save();
-        res.status(200).json({ message: 'Resource updated' });
+        res.status(200).json({ resource: resource });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -88,9 +85,6 @@ This function deletes a resource
 export const delete_resource = async (req, res) => {
     try {
         const resource = await Resource.findById(req.params.resourceId);
-        if (!resource) {
-            return res.status(404).json({ message: 'Resource not found' });
-        }
         if (resource.owner.toString() !== req.userId) {
             return res.status(403).json({ message: 'Forbidden' });
         }
@@ -231,7 +225,7 @@ export const display_item_detail = async (req, res) => {
                 }
             }
         }
-        res.render('resources/item', { item: resource, isOwner: isOwner, requests: isOwner ? requests : null, requested: requested });
+        res.render('resources/item', { item: resource, isOwner: isOwner, requests: isOwner ? requests : null, requested: requested, myId: req.userId });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -313,7 +307,6 @@ export const send_request = async (req, res) => {
         console.log(req.body);
         const requester = await User.findById(req.userId);
         const resource = await Resource.findById(req.body.resourceId);
-        console.log('im here');
         if (!resource) {
             return res.status(404).json({ message: 'Resource not found' });
         }
