@@ -16,6 +16,10 @@ export const display_hazards = async (req, res) => {
 export const add_hazard = async (req, res) => {
     try {
         const {latitude, longitude, details} = req.body;
+        if (!isValidLatLng(latitude, longitude)) {
+            res.status(500).send('Invalid latitute or longtitude number');
+            return;
+        }
         const newHazard = await Hazard.addHazard(latitude, longitude, details);
 
         // Include the hazard ID in the response
@@ -30,11 +34,33 @@ export const add_hazard = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 }
+
+export const isValidLatLng = (latitude, longitude) => {
+    // Check if latitude is within the valid range (-90 to +90 degrees)
+    const isLatitudeValid = typeof latitude === 'number' && !isNaN(latitude) && latitude >= -90 && latitude <= 90;
+    // Check if longitude is within the valid range (-180 to +180 degrees)
+    const isLongitudeValid = typeof longitude === 'number' && !isNaN(longitude) && longitude >= -180 && longitude <= 180;
+    // Return true if both latitude and longitude are valid, otherwise false
+    return isLatitudeValid && isLongitudeValid;
+}
+
+
+export const hazardExists = async (hazardId) => {
+    const hazardFound = await Hazard.findHazard(hazardId);
+    if (
+        hazardFound &&
+        hazardFound._id == hazardID
+    ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 export const delete_hazard = async (req, res) => {
     try {
         const hazardId = req.params.id;
         const deletedHazard = await Hazard.deleteHazard(hazardId);
-        // const deletedHazard = await Hazard.deleteAllHazards();
         if (!deletedHazard || deletedHazard.deletedCount == 0) {
             return res.status(404).send('Hazard not found');
         }

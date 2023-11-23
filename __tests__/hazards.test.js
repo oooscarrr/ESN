@@ -5,6 +5,7 @@ import {Hazard} from '../models/Hazard.js';
 import {setupTestDatabase, closeTestDatabase} from '../test-setup';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import {isValidLatLng, hazardExists} from '../controllers/editHazardController.js';
 
 describe('Hazard functionality', () => {
     let user, token;
@@ -134,3 +135,98 @@ describe('Hazard functionality', () => {
     });
 
 });
+
+////////////////// Unit Test //////////////////
+describe('isValidLatLng', () => {
+
+    test('isValidLatLng returns true for valid coordinates', () => {
+        // Valid coordinates (San Francisco, CA)
+        const validLatitude = 37.7749;
+        const validLongitude = -122.4194;
+        const isValid = isValidLatLng(validLatitude, validLongitude);
+        expect(isValid).toBe(true);
+    });
+
+    test('isValidLatLng returns false for latitude > 90', () => {
+        // Invalid latitude
+        const invalidLatitude = 100;
+        const validLongitude = -122.4194;
+        const isValid = isValidLatLng(invalidLatitude, validLongitude);
+
+        expect(isValid).toBe(false);
+    });
+
+    test('isValidLatLng returns false for latitude < -90', () => {
+        // Invalid latitude
+        const invalidLatitude = -100;
+        const validLongitude = -122.4194;
+        const isValid = isValidLatLng(invalidLatitude, validLongitude);
+
+        expect(isValid).toBe(false);
+    });
+
+    test('isValidLatLng returns false for longitude < -180', () => {
+        // Invalid longitude
+        const validLatitude = 37.7749;
+        const invalidLongitude = -200;
+        const isValid = isValidLatLng(validLatitude, invalidLongitude);
+
+        expect(isValid).toBe(false);
+    });
+
+    test('isValidLatLng returns false for longitude > 180', () => {
+        // Invalid longitude
+        const validLatitude = 37.7749;
+        const invalidLongitude = -200;
+        const isValid = isValidLatLng(validLatitude, invalidLongitude);
+
+        expect(isValid).toBe(false);
+    });
+
+    test('isValidLatLng returns false for both invalid latitude and longitude', () => {
+        // Both invalid latitude and longitude
+        const invalidLatitude = 100;
+        const invalidLongitude = -200;
+        const isValid = isValidLatLng(invalidLatitude, invalidLongitude);
+
+        expect(isValid).toBe(false);
+    });
+
+    test('isValidLatLng returns false for another pair of invalid latitude and longitude', () => {
+        // Both invalid latitude and longitude
+        const invalidLatitude = -100;
+        const invalidLongitude = 200;
+        const isValid = isValidLatLng(invalidLatitude, invalidLongitude);
+
+        expect(isValid).toBe(false);
+    });
+});
+
+
+describe('hazardExists function', () => {
+    beforeAll(async () => {
+        await setupTestDatabase();
+    });
+
+    test('should return true if hazard exists', async () => {
+        var hazard1 = await Hazard.addHazard(40.7128, -74.0060, 'This is a test hazard');
+        expect(hazardExists(hazard1._id));
+    });
+
+    test('should return true if hazard exists', async () => {
+        var hazard2 = await Hazard.addHazard(39.7128, -70.0060, 'This is the 2nd test hazard');
+        expect(hazardExists(hazard2._id));
+    });
+
+    test('should return false if hazard does not exist', async () => {
+        var hazard1 = await Hazard.addHazard(40.7128, -74.0060, 'This is a test hazard');
+        await Hazard.deleteHazard(hazard1._id);
+        expect(!hazardExists(hazard1._id));
+    });
+
+    afterAll(async () => {
+        await Hazard.deleteAllHazards();
+        await closeTestDatabase();
+    });
+});
+

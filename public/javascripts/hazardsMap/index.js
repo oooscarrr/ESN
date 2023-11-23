@@ -1,5 +1,4 @@
 // const socket = io.connect();
-
 let map;
 let center;
 let selected = {};
@@ -78,9 +77,6 @@ function calculateDistance() {
     const apiUrl = `/hazards/${referencePointID}/`;
     $.ajax({
         url: apiUrl, type: 'GET', dataType: 'json', success: function (data) {
-            // Handle the successful response
-            console.log('Received data:', data);
-
             navigator.geolocation.getCurrentPosition(function (position) {
                 var origin = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
                 var destination = new google.maps.LatLng(data.latitude, data.longitude);
@@ -97,7 +93,6 @@ function calculateDistance() {
 
 function calculateWalkingRoute(origin, destination, hazard) {
     setHazardName(hazard);
-    console.log(hazard);
     directionsService.route({
         origin: origin, destination: destination, travelMode: 'WALKING'  // Specify the travel mode as walking
     }, function (response, status) {
@@ -107,7 +102,6 @@ function calculateWalkingRoute(origin, destination, hazard) {
             const localTime = new Date(hazard.createdAt).toLocaleString()
             var updatedContent = '<strong>' + hazard.name + '</strong><br>' + 'Reported At: ' + localTime + '<br>' + 'Details: ' + hazard.details + '<br>' + '<strong>Walking distance: ' + distance + '</strong>' + '<br><button id="mark-as-safe" onclick="removeHazard()">Mark As Safe</>';
             infoWindow.setContent(updatedContent);
-            console.log('Walking distance:', distance);
         } else {
             window.alert('Directions request failed due to ' + status);
         }
@@ -175,7 +169,6 @@ function initAutocomplete() {
 }
 
 function askConfirmation() {
-    // console.log("vbfdjvd");
     $('#confirmReportModal').modal('show');
 }
 
@@ -201,9 +194,7 @@ function addHazard(lng, lat) {
     }).done(function (response) {
         response.latitude = parseFloat(response.latitude);
         response.longitude = parseFloat(response.longitude);
-        // console.log(response);
         createMarker(response);
-        // Clear the input
         $('#pac-input').val('');
         $('#details').val('');
     }).fail(function (error) {
@@ -213,7 +204,6 @@ function addHazard(lng, lat) {
 
 
 function removeHazard() {
-    // console.log("grdzarggag");
     $.ajax({
         url: `/hazards/delete/${referencePointID}`, type: 'DELETE', success: function (data) {
             console.log('Hazard deleted successfully:', data);
@@ -221,7 +211,6 @@ function removeHazard() {
             // remove that marker
             //send to the io
         }, error: function (jqXHR, textStatus, errorThrown) {
-            // Handle errors
             console.error('Error:', errorThrown);
         }
     });
