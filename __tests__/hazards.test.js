@@ -229,4 +229,3 @@ describe('hazardExists function', () => {
         await closeTestDatabase();
     });
 });
-

@@ -35,7 +35,6 @@ function addMarkers(hazards) {
 }
 
 function createMarker(hazard) {
-    console.log("Crfeate mARKER");
     const myLatLng = {lat: hazard.latitude, lng: hazard.longitude};
     const marker = new google.maps.Marker({
         position: myLatLng, map, title: hazard.details,
@@ -229,6 +228,7 @@ function addHazard(lng, lat) {
     }).fail(function (error) {
         console.error('Error adding the hazard:', error);
     });
+    selected = null;
 }
 
 function clearSearchMarkers() {
