@@ -14,6 +14,24 @@ const userSchema = new mongoose.Schema(
         lastStatus: { type: String, enum: ['undefined', 'ok', 'help', 'emergency'], default: 'undefined' },
         lastStatusAt: { type: Date, default: Date.now },
         isActive: { type: Boolean, default: true },
+        latitude: { type: Number, default: null},
+        longitude: { type: Number, default: null},
+        groups: { type: [String], default: [] },
+        nearbyUsers: {
+            type: [
+              {
+                username: {
+                  type: String,
+                  required: true,
+                },
+                userId: {
+                  type: String,
+                  required: true,
+                },
+              },
+            ],
+            default: [],
+          },
     },
     {
         statics: {
@@ -22,6 +40,10 @@ const userSchema = new mongoose.Schema(
             },
             registerNewUser(username, hashedPassword) {
                 const user = new User({ username: username, password: hashedPassword });
+                return user.save();
+            },
+            async registerNewUserWithLocation(username, hashedPassword, lat, lon) {
+                const user = new User({ username: username, password: hashedPassword, latitude: lat, longitude: lon });
                 return user.save();
             },
             async changeUserOnlineStatus(userId, onlineStatus) {
@@ -33,6 +55,12 @@ const userSchema = new mongoose.Schema(
                 const user = await this.findById(userId);
                 user.lastStatus = statusList[statusCode];
                 user.lastStatusAt = Date.now();
+                return user.save();
+            },
+            async changeGeolocation(userId, latitude, longitude) {
+                const user = await this.findById(userId);
+                user.latitude = latitude;
+                user.longitude = longitude;
                 return user.save();
             }
         }

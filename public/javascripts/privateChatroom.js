@@ -58,7 +58,6 @@ const renderNewMessage = function (message) {
 };
 
 function postMessage(messageContent) {
-    console.log("post message ${messageContent}");
     $.ajax({
         method: 'POST',
         url: '/messages/private',

@@ -1,0 +1,29 @@
+.dist {
+    color: gray;
+}
+
+.ui.custom-scrolling-container {
+    max-height: 360px;
+    width: 97%;
+    overflow-y: auto;
+}
+
+.ui.card.custom-width {
+    width: 95%;
+    margin: 2.5%;
+}
+
+.ui.button.custom {
+    margin-top: 5%;
+    margin-bottom: 3%;
+}
+
+#newGroupFormLabel {
+    margin-bottom: 5px;
+}
+
+.field.ui.input {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}

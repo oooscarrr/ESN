@@ -1,0 +1,37 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title Group Chat List
+
+block append scripts
+    script(src='/socket.io/socket.io.js')
+    script(src='/javascripts/groupChatList.js')
+
+block content
+    +navbar
+    
+    .horizontal.centered.box#contentBox
+        h1 Group Chats
+        if groups.length === 0
+            span You are not in any gourps
+        else
+            for group in groups
+                    .ui.card(style="width: 90%;")
+                        .content
+                            .header #{group.groupName}
+                            i.icon.user.friends.horizontal(style="float: right; cursor: pointer;", onclick=`showUserListModal(${JSON.stringify(group.users)})`)
+                            if group.description
+                                .description <i>Description: #{group.description}</i>
+                            else
+                                .description <i>Description: N/A</i>
+                        .extra.content
+                            .ui.two.buttons
+                                .ui.basic.green.button(onclick=`enterGroup(${JSON.stringify(group._id.valueOf())})`) Enter
+                            
+    .ui.modal#userListModal
+        .header Citizens in the group
+        .content
+            // Will append a list of usernames in showUserListModal()
+        .actions
+            .ui.button(onclick=`closeUserListModal()`) Close
