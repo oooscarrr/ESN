@@ -9,6 +9,8 @@ mixin navbar
             i.bullhorn.icon
         a.item(href='/resources' data-tooltip='Resource Bulletin Board' data-position='bottom center' data-variation='tiny basic')
             i.first.aid.icon
+        a.item(href='/groups')
+            i.comments.icon
         .right.menu
             if context !== contextModule.CONTEXT.OTHER
                 .item#navbarSearchButton
@@ -18,6 +20,7 @@ mixin navbar
                     i.hamburger.icon
                     .menu
                         .item#changeStatusButton Change Status
+                        a.item#findNearbyPeople Find Nearby People
                         a.item(href='/speedtest') Speed Test
                         .item#logoutButton Logout
     +searchBox
