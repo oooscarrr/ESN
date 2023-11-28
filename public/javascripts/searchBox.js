@@ -13,9 +13,7 @@ export const determineContext = () => {
 
 
 export const initializeSearchBox = () => {
-    console.log('Initializing search box');
     const context = determineContext();
-    console.log(context);
     displayAndHideSearchElements(context);
     addSearchElementBehavior(context);
     pageIndex = 0;

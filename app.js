@@ -15,6 +15,7 @@ import privateMessageRouter from './routes/privateMessageRoutes.js';
 import announcementRouter from './routes/announcementRoutes.js';
 import speedTestRouter from './routes/speedTestRoutes.js';
 import searchRouter from './routes/searchRoutes.js';
+import resourceRouter from './routes/resourceRoutes.js';
 import nearbyPeopleRouter from './routes/nearbyPeopleRoutes.js';
 import groupChatRouter from './routes/groupChatRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
@@ -97,6 +98,7 @@ app.use('/messages/private', privateMessageRouter);
 app.use('/announcements', announcementRouter);
 app.use('/speedtest', speedTestRouter);
 app.use('/search', searchRouter);
+app.use('/resources', resourceRouter);
 app.use('/nearbypeople', nearbyPeopleRouter);
 app.use('/groups', groupChatRouter);
 

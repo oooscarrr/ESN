@@ -1,0 +1,38 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title Resource Bulletin Board
+
+block append scripts
+    script(src='/javascripts/resources/listItem.js')
+
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/board.css')
+
+block content
+    +navbar
+    .box
+        .ui.container
+            .returnButton(onClick='window.history.back()')
+                i.angle.left.icon.large
+            .ui.header
+                h2 List Resource
+            .ui.form#listForm
+                .fields
+                    .field#nameField
+                        label Name
+                            input#name(type='text', name='name')
+                    .field#quantityField
+                        label Quantity
+                            input#quantity(type='number', name='quantity')
+                    .field
+                        label Description
+                            textarea#description(type='text', name='description')
+                    .field
+                        label Upload Image
+                            input#image(type='file', accept='image/*', name='image')
+                .ui.buttons
+                    .ui.green.button#submitButton(type='submit') Submit
+                    .or
+                    .ui.button#cancelButton(type='button') Cancel
