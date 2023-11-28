@@ -1,0 +1,41 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title Hazards Map
+
+block append scripts
+    script(src='/javascripts/hazardsMap/index.js')
+    script(async='' src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCtSslTFr3ROI5tMdZl1HlnHCPHd_QEjX8&callback=initMap&libraries=places,marker&v=beta' defer='')
+    script(src='https://polyfill.io/v3/polyfill.min.js?features=default')
+    script.
+        var hazardsData = !{JSON.stringify(hazards)}; // Embed the hazards data as a JavaScript variable
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/hazardsMap.css')
+
+block content
+    +navbar
+    .hazards-page-container
+        h1.header-title Hazards Map
+        .ui.button#reportHazard Report Hazard
+        div#addrANDDetails
+            input#pac-input.controls(type='text' placeholder='Search Box')
+            textarea#details(placeholder="Enter the details of this place")
+            .actions
+            .ui.button.red.cancelButton Cancel
+            .ui.button.green.confirmButton#confirmAddress Confirm
+        .ui.modal#confirmReportModal
+            .header Confirm Reporting
+            .content Are you sure you want to report this place as DANGEROUS?
+            .actions
+                .ui.button.red.cancelButton No
+                .ui.button.green.confirmButton#confirmReportFinal Yes
+        .ui.modal#confirmSafeModal
+            .header Confirm This Place is Safe
+            .content Are you sure you want to mark this place as Safe?
+            .actions
+                .ui.button.red.cancelButton#cancelSafe No
+                .ui.button.green.confirmButton#confirmSafe Yes
+        div#map
+
+
