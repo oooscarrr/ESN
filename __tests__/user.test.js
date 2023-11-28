@@ -35,35 +35,35 @@ describe('search functionality test cases', () => {
         const response1 = await request(app)
             .get('/users/littlealice/validation')
             .query({ password: 'alice123' });
-        console.log("TESTSSS: ", response1.body);
+        // console.log("TESTSSS: ", response1.body);
         expect(response1.body.status).toBe('success');
         expect(response1.body.code).toBe(1);
 
         const response2 = await request(app)
             .get('/users/littlealice/validation')
             .query({ password: 'wrong' });
-        console.log("TESTSSS2: ", response2.body);
+        // console.log("TESTSSS2: ", response2.body);
         expect(response2.body.status).toBe('error');
         expect(response2.body.code).toBe(2);
 
         const response3 = await request(app)
             .get('/users/ye/validation')
             .query({ password: '12345' });
-        console.log("TESTSSS3: ", response3.body);
+        // console.log("TESTSSS3: ", response3.body);
         expect(response3.body.status).toBe('error');
         expect(response3.body.code).toBe(3);
 
         const response4 = await request(app)
             .get('/users/videos/validation')
             .query({ password: '12345' });
-        console.log("TESTSSS4: ", response4.body);
+        // console.log("TESTSSS4: ", response4.body);
         expect(response4.body.status).toBe('error');
         expect(response4.body.code).toBe(3);
 
         const response5 = await request(app)
             .get('/users/daniel/validation')
             .query({ password: '123' });
-        console.log("TESTSSS5: ", response5.body);
+        // console.log("TESTSSS5: ", response5.body);
         expect(response5.body.status).toBe('error');
         expect(response5.body.code).toBe(4);
 
@@ -75,10 +75,9 @@ describe('search functionality test cases', () => {
         expect(response6.body.code).toBe(5);
 
         ////////////////// Test cases for log_out //////////////////
-        const logout1 = await request(app)
+        await request(app)
             .post('/users/logout')
             .set('Cookie', [`token=${userOneToken}`]) // Send JWT as a cookie
-        console.log("LOGOUT: ", logout1);
         expect(response2.status).toBe(200);
 
         const status1 = await request(app)

@@ -1,0 +1,102 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title Nearby People
+block append scripts
+    script(src='/socket.io/socket.io.js')
+    script(src='/javascripts/nearbyPeople.js')
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/nearbyPeople.css')
+block content
+    - const statusIconDict = {'undefined': 'question circle', 'ok': 'smile icon', 'help': 'frown icon', 'emergency': 'exclamation triangle'}
+    - const statusColorDict = {'undefined': 'grey', 'ok': 'rgb(50, 178, 50)', 'help': 'rgb(248, 167, 37)', 'emergency': 'red'}
+    +navbar
+    .horizontal.centered.box#contentBox
+        h2 Nearby People and Groups
+        .ui.container#DirectoryBox
+            .ui.fluid.accordion#DirectoryContent
+                - online_users = users.filter(user => user.user.isOnline)
+                - offline_users = users.filter(user => !user.user.isOnline)
+                .title.active
+                    i.dropdown.icon
+                    span Online Users
+                    span.ui.label #{online_users.length}
+                .content.active
+                    .ui.relaxed.divided.list
+                        for user in online_users
+                            .item.user-row
+                                i.big.icon(class=statusIconDict[user.user.lastStatus] style='color: '+statusColorDict[user.user.lastStatus])
+                                .content
+                                    a.username(href='/messages/private/' + currentUserId + '/' + user.user._id) #{user.user.username}
+                                - const roundedDistance = Math.ceil(user.distance);
+                                if roundedDistance == 1
+                                    span.dist= roundedDistance + ' meter away'
+                                else
+                                    span.dist= roundedDistance + ' meters away'
+                .title
+                    i.dropdown.icon
+                    span Offline Users
+                    span.ui.label #{offline_users.length}
+                .content
+                    .ui.relaxed.divided.list
+                        for user in offline_users
+                            .item.user-row
+                                i.big.icon(class=statusIconDict[user.user.lastStatus] style='color: '+statusColorDict[user.user.lastStatus])
+                                .content
+                                    a.username(href='/messages/private/' + currentUserId + '/' + user.user._id) #{user.user.username}
+                                - const roundedDistance = Math.ceil(user.distance);
+                                if roundedDistance == 1
+                                    span.dist= roundedDistance + ' meter away'
+                                else
+                                    span.dist= roundedDistance + ' meters away'
+                // disable the button for creating new group when there are no nearby people
+                if users.length == 0
+                    .ui.primary.button.custom.disabled#newGroupButton Create a new group chat with nearby people
+                else
+                    .ui.primary.button.custom#newGroupButton Create a new group chat with nearby people
+        
+        if groups.length === 0
+            span There are no nearby groups
+        else
+            .ui.custom-scrolling-container
+                for group in groups
+                    .ui.card.custom-width
+                        .content
+                            .header #{group.groupName}
+                            i.icon.user.friends.horizontal(style="float: right; cursor: pointer;", onclick=`showUserListModal(${JSON.stringify(group.users)})`)
+                            if group.description
+                                .description <i>Description: #{group.description}</i>
+                            else
+                                .description <i>Description: N/A</i>
+                        .extra.content
+                            .ui.two.buttons
+                                if group.users.some(user => user.userId === currentUserId)
+                                    .ui.basic.button.disabled  You are already in this group
+                                else 
+                                    .ui.basic.green.button(onclick=`joinGroup(${JSON.stringify(group._id.valueOf())})`)  Join
+    
+    .ui.modal#newGroupModal
+        .header Enter Group Information
+        .content
+            form.ui.form#newGroupForm
+            // Group Name input
+            .field.ui.input
+                label#newGroupFormLabel Group Name
+                input#nameInput(type='text', name='groupName', placeholder='Enter group name...')
+            // Brief Description input
+            .field.ui.input
+                label#newGroupFormLabel <i>(Optional)</i> Brief Description
+                input#descriptionInput(type='text', name='description', placeholder='Enter brief description...')
+        // Modal actions
+        .actions
+            .ui.button#confirmCreateGroupButton Confirm
+            .ui.button#cancelCreateGroupButton Cancel
+
+    .ui.modal#userListModal
+        .header Citizens in the group
+        .content
+            // Will append a list of usernames in showUserListModal()
+        .actions
+            .ui.button(onclick=`closeUserListModal()`) Close
+        
