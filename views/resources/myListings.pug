@@ -1,0 +1,36 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title My Listings
+
+block append scripts
+
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/board.css')
+
+block content
+    +navbar
+    .box
+        .ui.container#myListingsContainer
+            .returnButton(onClick='window.history.back()')
+                i.angle.left.icon.large
+            .ui.header.centered
+                h2 My Listings
+            if myListings.length == 0
+                .ui.segment
+                    p You have no listings.
+            else
+                .ui.segment
+                    .ui.divided.list
+                        each item in myListings
+                            .item
+                                .right.floated.content
+                                    if item.requests.length <= 1
+                                        .item #{item.requests.length} request
+                                    else
+                                        .item #{item.requests.length} requests
+                                    a.ui.small.button(href=`/resources/item/${item._id}`) View
+                                .content
+                                    .large.header #{item.name}
+                                    .description Updated #{item.timeSinceLastUpdate}

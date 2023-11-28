@@ -16,6 +16,9 @@ import announcementRouter from './routes/announcementRoutes.js';
 import speedTestRouter from './routes/speedTestRoutes.js';
 import searchRouter from './routes/searchRoutes.js';
 import hazardRouter from './routes/hazardRoutes.js';
+import resourceRouter from './routes/resourceRoutes.js';
+import nearbyPeopleRouter from './routes/nearbyPeopleRoutes.js';
+import groupChatRouter from './routes/groupChatRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
 import checkSuspended from './middlewares/checkSuspended.js';
@@ -97,6 +100,9 @@ app.use('/announcements', announcementRouter);
 app.use('/speedtest', speedTestRouter);
 app.use('/search', searchRouter);
 app.use('/hazards', hazardRouter);
+app.use('/resources', resourceRouter);
+app.use('/nearbypeople', nearbyPeopleRouter);
+app.use('/groups', groupChatRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

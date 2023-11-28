@@ -1,0 +1,94 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title Group Chat
+
+block append scripts
+    script(src='/socket.io/socket.io.js')
+    script(src='/javascripts/groupChatRoom.js')
+
+//- We use the SAME css file here as the public chatroom
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/chatroom.css')
+
+block content
+    - const statusIconDict = {'undefined': 'question circle', 'ok': 'smile icon', 'help': 'frown icon', 'emergency': 'exclamation triangle'}
+    - const statusColorDict = {'undefined': 'grey', 'ok': 'rgb(50, 178, 50)', 'help': 'rgb(248, 167, 37)', 'emergency': 'red'}
+    +navbar
+    
+    .horizontal.centered.box#contentBox
+        - const groupName = groupInfo.groupName;
+        // Group name
+        h1(style='margin-bottom: 5px') 
+            | #{groupName.length > 20 ? groupName.substring(0, 20) + '...' : groupName}
+            // People icon
+            i.icon.user.friends.small(style="margin-left: 30px", onclick=`showUserListModal(${JSON.stringify(groupInfo.users)})`)
+            // Gear button
+            div.ui.icon.top.left.pointing.dropdown.button.mini(style='margin-left: 10px')
+                i.wrench.icon
+                .menu
+                    .item(onclick="handleChangeGroupName()")
+                        | Change Group Name
+                    .item(onclick="handleChangeGroupDescription()")
+                        | Change Group Description
+                    .item(onclick="handleLeaveGroup()")
+                        | Leave Group
+        .chatroom-container(style='height: 87vh;') 
+            // All chat messages
+            ul#messageList(style='margin-top: 5px')
+                for message in groupMessages
+                    .message-box
+                        .sender-info
+                            if message.senderId === currentUserId
+                                span.sender-name.self #{message.senderName} (Me)
+                            else
+                                span.sender-name #{message.senderName}
+                            i.large.icon(class=statusIconDict[message.senderStatus] style='color: '+statusColorDict[message.senderStatus])
+                        .message-content
+                            p #{message.content}
+                            span.timestamp #{message.createdAt.toLocaleString()}
+            // Input field and send button
+            .input-area
+                input#messageInput(type='text', placeholder='Type your message...')
+                button#sendMessageBtn Send
+
+    .ui.modal#userListModal
+        .header Citizens in the group
+        .content
+            // Will append a list of usernames in showUserListModal()
+        .actions
+            .ui.button(onclick=`closeUserListModal()`) Close
+    
+    .ui.modal#newGroupNameModal
+        .header Change Group Name
+        .content
+            form.ui.form#newGroupNameForm
+            // Group Name input
+            .field.ui.input(style="display: flex; flex-direction: column;")
+                label#newGroupNameLabel(style="margin-bottom: 10px") New Group Name
+                input#groupNameInput(type='text', name='groupName', placeholder='Enter a new group name...')
+        // Modal actions
+        .actions
+            .ui.button#confirmChangeGroupNameButton(onclick=`confirmGroupNameChange(${JSON.stringify(groupInfo._id.valueOf())})`) Confirm
+            .ui.button#cancelGroupNameChange(onclick=`cancelGroupNameChange()`) Cancel
+
+    .ui.modal#newDescriptionModal
+        .header Change Group Description
+        .content
+            form.ui.form#newDescriptionForm
+            // Group Description input
+            .field.ui.input(style="display: flex; flex-direction: column;")
+                label#newDescriptionLabel(style="margin-bottom: 10px") New Group Description
+                input#descriptionInput(type='text', name='description', placeholder='Enter a new group description...')
+        // Modal actions
+        .actions
+            .ui.button#confirmChangeDescriptionButton(onclick=`confirmDescriptionChange(${JSON.stringify(groupInfo._id.valueOf())})`) Confirm
+            .ui.button#cancelDescriptionChange(onclick=`cancelDescriptionChange()`) Cancel
+
+    .ui.modal#leaveGroupModal
+        .header Leave Group Chat #{groupInfo.groupName}?
+        // Modal actions
+        .actions
+            .ui.button.red#confirmLeaveButton(onclick=`confirmLeaveGroup(${JSON.stringify(groupInfo._id.valueOf())})`) Confirm
+            .ui.button#cancelLeaveButton(onclick=`cancelLeaveGroup()`) Cancel

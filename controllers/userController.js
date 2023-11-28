@@ -159,3 +159,18 @@ async function markUserOnline(user, res) {
         .cookie('token', token)
         .send({ 'status': 'success', 'code': 1, 'userId': user._id.valueOf() });
 }
+
+export const change_geolocation = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const latitude = req.body.latitude;
+        const longitude = req.body.longitude;
+        await User.changeGeolocation(userId, latitude, longitude);
+        res.sendStatus(200);
+    } catch (error) {
+        res.sendStatus(500);
+        return console.log('changeGeolocation Error:', error);
+    }
+
+    io.emit('newNearbyPeople');
+}
