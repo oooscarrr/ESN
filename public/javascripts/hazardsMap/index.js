@@ -239,8 +239,6 @@ function clearSearchMarkers() {
 }
 
 function removeHazard() {
-    // console.log(markers);
-    // console.log("remove marker");
     console.log(referencePointID);
     $.ajax({
         url: `/hazards/delete/${referencePointID}`, type: 'DELETE', success: function (data) {
@@ -252,8 +250,6 @@ function removeHazard() {
 }
 
 function deleteMarker(hazard) {
-    // console.log(hazard);
-    // console.log(markers);
     const id = hazard._id || hazard.deletedHazard._id;
     markers[id].setMap(null);
     delete markers[id];
@@ -261,7 +257,6 @@ function deleteMarker(hazard) {
 
 function addElementsBehavior() {
     $('#reportHazard').click(reportHazard);
-    // $('#addrANDDetails').hide();
     $('#confirmAddress').click(askConfirmation);
     $('.cancelButton').click(cancelReporting);
     $('#confirmReportFinal').click(addHazard);
@@ -297,7 +292,6 @@ function autoUpdate() {
             });
         }
         // Center the map on the new position
-        // map.setCenter(newPoint);
     });
 
     // Call the autoUpdate() function every 5 seconds
@@ -305,7 +299,6 @@ function autoUpdate() {
 }
 
 $(document).ready(function () {
-    // initMap();
     addElementsBehavior();
 });
 

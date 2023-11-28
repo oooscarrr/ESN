@@ -58,7 +58,6 @@ export const delete_hazard = async (req, res) => {
     try {
         const hazardId = req.params.id;
         const deletedHazard = await Hazard.deleteHazard(hazardId);
-        // await Hazard.deleteAllHazards();
         if (!deletedHazard || deletedHazard.deletedCount == 0) {
             return res.status(404).send('Hazard not found');
         }
@@ -77,5 +76,4 @@ export const get_hazard_byID = async (req, res) => {
     } else {
         res.status(404).send("No such hazard");
     }
-
 }
