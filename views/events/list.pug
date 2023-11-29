@@ -1,0 +1,81 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title Volunteer Events
+
+block append scripts
+  script(src='/javascripts/event/list.js')
+
+block append stylesheets
+  link(rel='stylesheet', href='/stylesheets/event.css')
+
+block content
+    +navbar
+    .horizontal.centered.box#contentBox
+        h1 Volunteer Events
+        .ui.container
+            .ui.styled.fluid.accordion
+                .title.active
+                    i.dropdown.icon
+                    span Pending Invitations
+                .content.active#pendingInvitations
+                    for event in myPendingInvitations
+                        //- a.ui.card(href=`/events/${event._id}`)
+                        .ui.card
+                            .content
+                                a.header(href=`/events/${event._id}`) #{event.title}
+                                .meta Start Time: #{event.startDateTime.toLocaleString()}
+                                .meta End Time: #{event.endDateTime.toLocaleString()}
+                                .description
+                                    .ui.segment
+                                        p #{event.description}
+                                button.ui.fluid.green.button.accept(href=`/events/${event._id}/accept-invitation`) Accept
+                                button.ui.fluid.red.button.decline(href=`/events/${event._id}/decline-invitation`) Decline
+                .title
+                    i.dropdown.icon
+                    span My Events
+                .content
+                    .ui.top.attached.tabular.menu
+                        .item(data-tab='past') Past
+                        .item.active(data-tab='upcoming') Upcoming
+                        .item(data-tab='canceled') Canceled
+                    .ui.bottom.attached.tab.segment(data-tab='past')
+                        for event in myPastEvents
+                            a.ui.card(href=`/events/${event._id}`)
+                                .content
+                                    .header #{event.title}
+                                    .meta Start Time: #{event.startDateTime.toLocaleString()}
+                                    .meta End Time: #{event.endDateTime.toLocaleString()}
+                                    - const role = event.organizer.equals(user._id) ? 'Organizer' : 'Participant'
+                                    .description Role: #{role}
+                    .ui.bottom.attached.tab.segment.active(data-tab='upcoming')
+                        for event in myUpcomingEvents
+                            a.ui.card(href=`/events/${event._id}`)
+                                .content
+                                    .header #{event.title}
+                                    .meta Start Time: #{event.startDateTime.toLocaleString()}
+                                    .meta End Time: #{event.endDateTime.toLocaleString()}
+                                    - const role = event.organizer.equals(user._id) ? 'Organizer' : 'Participant'
+                                    .description Role: #{role}
+                    .ui.bottom.attached.tab.segment(data-tab='canceled')
+                        for event in myCanceledEvents
+                            a.ui.card(href=`/events/${event._id}`)
+                                .content
+                                    .header #{event.title}
+                                    .meta Start Time: #{event.startDateTime.toLocaleString()}
+                                    .meta End Time: #{event.endDateTime.toLocaleString()}
+                                    - const role = event.organizer.equals(user._id) ? 'Organizer' : 'Participant'
+                                    .description Role: #{role}
+                .title
+                    i.dropdown.icon
+                    span Available Events
+                .content
+                    for event in availableEvents
+                        a.ui.fluid.card(href=`/events/${event._id}`)
+                            .content
+                                .header #{event.title}
+                                .meta Start Time: #{event.startDateTime.toLocaleString()}
+                                .meta End Time: #{event.endDateTime.toLocaleString()}
+
+            a.ui.fluid.basic.green.button(href='/events/create') Create Event           
