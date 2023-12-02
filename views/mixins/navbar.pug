@@ -1,17 +1,25 @@
 include /views/mixins/searchBox
 mixin navbar
     .ui.inverted.secondary.menu#navbar
-        a.item(href='/users')
-            i.home.icon
-        a.item(href='/messages/public')
+        a.item(href='/users' data-tooltip='Directory' data-position='bottom center' data-variation='tiny basic')
+            i.address.book.icon
+        a.item(href='/messages/public' data-tooltip='Public Chat' data-position='bottom center' data-variation='tiny basic')
             i.users.icon
-        a.item(href='/announcements')
+        a.item(href='/announcements' data-tooltip='Announcements' data-position='bottom center' data-variation='tiny basic')
             i.bullhorn.icon
         a.item(href='/users/sos') 
             i.life-ring.icon
         // Add SOS button here
         a.item#sosButton
             i.exclamation.triangle.icon
+        a.item(href='/hazards')
+            i.map.marked.icon
+        a.item(href='/resources' data-tooltip='Resource Bulletin Board' data-position='bottom center' data-variation='tiny basic')
+            i.first.aid.icon
+        a.item(href='/groups')
+            i.comments.icon
+        a.item(href='/events')
+            i.calendar.icon
         .right.menu
             if context !== contextModule.CONTEXT.OTHER
                 .item#navbarSearchButton
@@ -21,6 +29,7 @@ mixin navbar
                     i.hamburger.icon
                     .menu
                         .item#changeStatusButton Change Status
+                        a.item#findNearbyPeople Find Nearby People
                         a.item(href='/speedtest') Speed Test
                         a.item(href='/users/sos') SOS
                         .item#logoutButton Logout

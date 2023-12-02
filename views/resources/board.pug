@@ -1,0 +1,39 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title Resource Bulletin Board
+
+block append scripts
+    script(src='/javascripts/resources/board.js')
+
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/board.css')
+
+block content
+    +navbar
+    .horizontal.centered.box
+        h1 Resource Bulletin Board
+        .ui.container
+            .ui.segment.center.aligned
+                .ui.small.buttons
+                    a.button.ui.button(href='resources/newitem') List Item
+                    a.button.ui.button(href='resources/mylistings') My Listings
+                    a.button.ui.button(href='resources/myrequests') My Requests
+            .ui.input.fluid
+                input#searchResourceInput(type='text', placeholder='Search...')
+                button.ui.blue.button#searchResourceButton Search
+            .ui.horizontal.centered.box
+                .ui.stackable.grid
+                    each item in resources
+                        .column.four.wide
+                            .ui.card.centered
+                                a.image(href=`/resources/item/${item._id}`)
+                                    img(src=item.imageURL || '/images/defaultImage.png')
+                                a.content(href=`/resources/item/${item._id}`)
+                                    .header #{item.name}
+                                    .meta
+                                        span #{item.timeSinceLastUpdate}
+                                    .description #{item.description}
+                                .extra.content
+                                    a #{item.quantity} available

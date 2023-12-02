@@ -19,6 +19,24 @@ const userSchema = new mongoose.Schema(
         sosContacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         sosMessage: { type: String, default: '' },
         socketId: { type: String }
+        latitude: { type: Number, default: null},
+        longitude: { type: Number, default: null},
+        groups: { type: [String], default: [] },
+        nearbyUsers: {
+            type: [
+              {
+                username: {
+                  type: String,
+                  required: true,
+                },
+                userId: {
+                  type: String,
+                  required: true,
+                },
+              },
+            ],
+            default: [],
+          },
     },
     {
         statics: {
@@ -43,6 +61,9 @@ const userSchema = new mongoose.Schema(
                     console.error('Error fetching user:', error.message);
                     // Handle or throw the error as needed
                 }
+            async registerNewUserWithLocation(username, hashedPassword, lat, lon) {
+                const user = new User({ username: username, password: hashedPassword, latitude: lat, longitude: lon });
+                return user.save();
             },
             async changeUserOnlineStatus(userId, onlineStatus) {
                 const user = await this.findById(userId);
@@ -53,6 +74,12 @@ const userSchema = new mongoose.Schema(
                 const user = await this.findById(userId);
                 user.lastStatus = statusList[statusCode];
                 user.lastStatusAt = Date.now();
+                return user.save();
+            },
+            async changeGeolocation(userId, latitude, longitude) {
+                const user = await this.findById(userId);
+                user.latitude = latitude;
+                user.longitude = longitude;
                 return user.save();
             }
         }

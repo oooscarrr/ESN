@@ -1,0 +1,119 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title Resource Item
+
+block append scripts
+    script(src='/javascripts/resources/item.js')
+
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/board.css')
+    
+block content
+    +navbar 
+    .box
+        .ui.container#itemDetailContainer
+            .returnButton(onClick='window.history.back()')
+                i.angle.left.icon.large
+            .ui.header.centered
+                h2#itemName #{item.name}
+                .sub.header#ownerAndQuantity #{item.ownerName}, #{item.quantity} available
+            .ui.centered.medium.image#itemImage
+                img(src=item.imageURL || '/images/defaultImage.png')
+            .ui.segment
+                p#descriptionDetail #{item.description}
+            .ui.right.floated.buttons
+                if isOwner
+                    .ui.button#editButton Edit
+                    .ui.red.button#deleteButton Delete
+                else if requested
+                    .ui.red.button#cancelRequestButton Cancel Request
+                else
+                    .ui.green.button#requestButton Request
+            if isOwner && requests.length > 0
+                .ui.segment#requestsSegment
+                    .ui.header.centered
+                        h3 Requests
+                    .ui.middle.aligned.divided.list
+                        each request in requests
+                            .item
+                                .right.floated.content
+                                    if request.status == 'pending'
+                                        a.ui.small.button.viewRequestButton(
+                                            data-requester-id=request.requester,
+                                            data-requester-name=request.requesterName,
+                                            data-request-id=request._id,
+                                            data-quantity=request.quantity,
+                                            data-message=request.message
+                                        ) View
+                                    else
+                                        .ui.container #{request.status}
+                                .content
+                                    a.large.header(href=`/messages/private/${myId}/${request.requester}`) #{request.requesterName}
+                                    .description #{request.timeSinceRequest}
+        
+        .ui.mini.modal#confirmDeleteModal
+            .header Confirm Delete
+            .content Are you sure you want to delete this item?
+            .actions
+                .ui.buttons 
+                    .ui.button#cancelDeleteButton No
+                    .or
+                    .ui.button.red#confirmDeleteButton Yes
+        
+        .ui.modal#editModal
+            .header Edit Item
+            .content
+                form.ui.form#editForm
+                    .field#nameField
+                        label Name
+                            input#editName(type='text', name='name', value=item.name)
+                    .field#quantityField
+                        label Quantity
+                            input#editQuantity(type='number', name='quantity', value=item.quantity)
+                    .field
+                        label Description
+                            textarea#editDescription(type='text', name='description') #{item.description}
+                    .field
+                        label Upload Image
+                            input#editImage(type='file', accept='image/*', name='image')
+            .actions
+                .ui.button#cancelEditButton Cancel
+                .ui.button.green#confirmEditButton Save
+            
+        .ui.modal#requestModal
+            .header Send Request
+            .content
+                form.ui.form#requestForm
+                    .field#requestQuantityField
+                        label Quantity
+                            input#requestQuantity(type='number', name='quantity', value=1)
+                    .field
+                        label Message
+                            textarea#requestMessage(type='text', name='message')
+            .actions
+                .ui.button#cancelSendRequestButton Cancel
+                .ui.button.green#sendRequestButton Send Request
+            
+        .ui.mini.modal#cancelRequestModal
+            .header Confirm Cancel Request
+            .content Are you sure you want to cancel this request?
+            .actions
+                .ui.buttons 
+                    .ui.button#cancelCancelRequestButton No
+                    .or
+                    .ui.button.red#confirmCancelRequestButton Yes
+        
+        .ui.modal#handleRequestModal
+            .header#requesterNameHeader
+            .content
+                p#reqQuantity
+                .ui.segment
+                    p#reqMessage
+            .actions
+                .ui.button#cancelHandleRequestButton Cancel
+                .ui.buttons
+                    .ui.red.button#rejectRequestButton Reject
+                    .or
+                    .ui.green.button#acceptRequestButton Accept

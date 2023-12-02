@@ -14,6 +14,8 @@ socket.on('connect', function () {
 });
 
 
+const socket = io.connect();
+
 const sendLogoutRequest = function () {
     $.ajax({
         method: 'POST',
@@ -113,6 +115,50 @@ const sendSosAlert = (latitude, longitude) => {
     }
 };
 
+function ableToGetLocation(position) {
+    // Update user geolocation
+    $.ajax({
+        method: 'POST',
+        url: '/users/geolocation',
+        data: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+        }
+    }).done(function () {
+        // Remove the loading message
+        hideLoadingIndicator();
+        // Redirect to nearbypeople page
+        window.location.href = '/nearbypeople';
+    }).fail(function (response) {
+        console.error('Failed to update geolocation', response);
+    });
+}
+
+function unableToGetLocation() {
+    alert("Please enable your location sharing.");
+    // Remove the loading message
+    hideLoadingIndicator();
+}
+
+function hideLoadingIndicator() {
+    // Hide the loading indicator using Fomantic UI classes
+    $("#loading-message").remove();
+}
+
+function getGeolocation() {
+    if ("geolocation" in navigator) {
+        // Display the loading message
+        var loadingMessage = document.createElement("div");
+        loadingMessage.id = "loading-message";
+        loadingMessage.className = "ui active dimmer";
+        loadingMessage.innerHTML = `<div class="ui text loader">Loading...</div>`;
+        document.body.appendChild(loadingMessage);
+        
+        navigator.geolocation.getCurrentPosition(ableToGetLocation, unableToGetLocation, {timeout:10000});
+    } else {
+        alert("Geolocation data not available")
+    }
+}
 
 $(document).ready(() => {
     $('#logoutButton').click(sendLogoutRequest);
@@ -171,58 +217,8 @@ $(document).ready(() => {
 //     $('.ui.action.input input').val('');
 // }
 
+    $('.ui.radio.checkbox').checkbox();
 
-// function search() {
-//     let inputVal = $('.ui.action.input input').val();
-//     var currentPathname = window.location.pathname;
-//     let context = findContext(currentPathname);
-//     console.log(context);
-
-//     let criteria;
-//     if (context == 'citizens') {
-//         var selectedCategory = $('#categorySelect').val();
-//         if (selectedCategory == 'status') {
-//             criteria = {
-//                 status: inputVal,
-//             }
-//         } else {
-//             criteria = {
-//                 usernameFragment: inputVal,
-//             }
-//         }
-//     } else {
-//         criteria = inputVal;
-//     }
-//     console.log(criteria);
-
-//     sendSearchRequest(context, criteria);
-//     // const {context, criteria} = req.body;
-// }
-
-// function sendSearchRequest(inputContext, inputCriteria){
-//     $.ajax({
-//         method: 'GET',
-//         url: '/search',
-//         data:{
-//             context: inputContext,
-//             criteria: inputCriteria,
-//         },
-//         success: function(response) {
-//             console.log(response);
-//             $('#searchResults').html(response);
-//         },
-//         error: function(xhr, status, error) {
-//             console.error('AJAX error:', status, error);
-//         }
-//     });
-// }
-
-
-// function findContext(currentPathname) {
-//     for (const key in contextDict) {
-//         if (currentPathname.startsWith(key)) {
-//             return contextDict[key];
-//         }
-//     }
-//     return 'unknownContext';
-// }
+    // Find nearby people button
+    $('#findNearbyPeople').click(getGeolocation);
+});
