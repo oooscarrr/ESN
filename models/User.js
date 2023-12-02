@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
         sosRequestsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         sosContacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         sosMessage: { type: String, default: '' },
-        socketId: { type: String }
+        socketId: { type: String },
         latitude: { type: Number, default: null},
         longitude: { type: Number, default: null},
         groups: { type: [String], default: [] },
@@ -61,6 +61,7 @@ const userSchema = new mongoose.Schema(
                     console.error('Error fetching user:', error.message);
                     // Handle or throw the error as needed
                 }
+            },
             async registerNewUserWithLocation(username, hashedPassword, lat, lon) {
                 const user = new User({ username: username, password: hashedPassword, latitude: lat, longitude: lon });
                 return user.save();

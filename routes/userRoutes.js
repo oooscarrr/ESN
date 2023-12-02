@@ -5,7 +5,7 @@ import {
     list_users,
     logout,
     change_last_status,
-    getUserSosMessage
+    getUserSosMessage,
     change_geolocation
 } from '../controllers/userController.js';
 import authorization from '../middlewares/authorization.js';
