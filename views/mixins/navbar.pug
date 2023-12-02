@@ -30,7 +30,8 @@ mixin navbar
                     .menu
                         .item#changeStatusButton Change Status
                         a.item#findNearbyPeople Find Nearby People
-                        a.item(href='/speedtest') Speed Test
+                        if user.privilege >= PrivilegeLevel.ADMINISTRATOR
+                            a.item(href='/speedtest') Speed Test
                         a.item(href='/users/sos') SOS
                         .item#logoutButton Logout
     +searchBox
