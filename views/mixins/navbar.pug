@@ -7,6 +7,11 @@ mixin navbar
             i.users.icon
         a.item(href='/announcements' data-tooltip='Announcements' data-position='bottom center' data-variation='tiny basic')
             i.bullhorn.icon
+        a.item(href='/users/sos') 
+            i.life-ring.icon
+        // Add SOS button here
+        a.item#sosButton
+            i.exclamation.triangle.icon
         a.item(href='/hazards')
             i.map.marked.icon
         a.item(href='/resources' data-tooltip='Resource Bulletin Board' data-position='bottom center' data-variation='tiny basic')
@@ -26,6 +31,7 @@ mixin navbar
                         .item#changeStatusButton Change Status
                         a.item#findNearbyPeople Find Nearby People
                         a.item(href='/speedtest') Speed Test
+                        a.item(href='/users/sos') SOS
                         .item#logoutButton Logout
     +searchBox
     .ui.modal#changeStatusModal

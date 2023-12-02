@@ -1,0 +1,58 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+    title SOS Directory
+
+block append scripts
+    script(src='/javascripts/sos.js')
+
+block append stylesheets
+    link(rel='stylesheet', href='/stylesheets/sos.css')
+
+block content
+    +navbar
+    .horizontal.centered.box#contentBox
+        h1 SOS Directory
+        .ui.container
+            p#sosMessageDisplay Please define your SOS message when using the feature for the first time :)
+            form.ui.form#sosMessageForm
+                .field
+                    label SOS Message
+                    textarea(name="sosMessage" placeholder="Enter your SOS message here...")
+                button.ui.button(type="submit") Confirm
+
+        // Incoming Requests Section
+        .ui.container#IncomingRequests
+            h2 Incoming Requests
+            .ui.relaxed.divided.list
+            //-     each user in sosRequestsReceived
+            //-         .item.user-row
+            //-             i.big.icon(class='user icon')
+            //-             div.content
+            //-                 div.username #{user.username}
+            //-                 button.ui.button.acceptSOS(onclick='acceptSosRequest("' + user._id.valueOf() + '")') Accept
+            //-                 button.ui.button.rejectSOS(onclick='rejectSosRequest("' + user._id.valueOf() + '")') Reject
+
+        // Connected SOS Contacts Section
+        .ui.container#ConnectedContacts
+            h2 Connected Contacts
+            .ui.relaxed.divided.list
+                each user in sosContactsNames
+                    .item.user-row
+                        i.big.icon(class='user icon')
+                        div.content
+                            div.username #{user} 
+                            span.sosContact SOS Contact
+
+        // User Lists Section
+        .ui.container#UserLists
+            h2 User Lists
+            .ui.relaxed.divided.list
+                each user in users
+                    if !sosRequestsReceived.includes(user._id.valueOf()) && !sosContacts.includes(user._id.valueOf())
+                        .item.user-row
+                            i.big.icon(class='user icon')
+                            div.content
+                                div.username #{user.username}
+                                button.ui.button.sendSOS(onclick='sendSosRequest("' + user._id.valueOf() + '")') Send Request

@@ -128,3 +128,5 @@ typings/
 
 ## intellij
 .idea
+
+*.bc

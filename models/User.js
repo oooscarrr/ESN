@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema(
         lastStatus: { type: String, enum: ['undefined', 'ok', 'help', 'emergency'], default: 'undefined' },
         lastStatusAt: { type: Date, default: Date.now },
         isActive: { type: Boolean, default: true },
+        sosRequestsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        sosRequestsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        sosContacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        sosMessage: { type: String, default: '' },
+        socketId: { type: String },
         latitude: { type: Number, default: null},
         longitude: { type: Number, default: null},
         groups: { type: [String], default: [] },
@@ -41,6 +46,21 @@ const userSchema = new mongoose.Schema(
             registerNewUser(username, hashedPassword) {
                 const user = new User({ username: username, password: hashedPassword });
                 return user.save();
+            },
+            async getSOSMessage(userId) {
+                try {
+                    console.log('calling getSOSMessage');
+                    const user = await this.findById(userId);
+                    if (user) {
+                        return user.sosMessage;
+                    } else {
+                        // Handle the case where no user is found
+                        throw new Error('User not found');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user:', error.message);
+                    // Handle or throw the error as needed
+                }
             },
             async registerNewUserWithLocation(username, hashedPassword, lat, lon) {
                 const user = new User({ username: username, password: hashedPassword, latitude: lat, longitude: lon });

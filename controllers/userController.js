@@ -4,6 +4,27 @@ import {Alert} from '../models/Alert.js';
 import { io } from '../app.js';
 import jwt from 'jsonwebtoken';
 
+export const getUserSosMessage = async (req, res) => {
+    try {
+        // Assuming the user's ID is sent in the request params
+        const userId = req.params.userId;
+        console.log('here', userId);
+        // Fetching the SOS message using the User model
+        const sosMessage = await User.getSOSMessage(userId);
+        const user = await User.findById(userId);
+        
+        // Check if the sosMessage was successfully retrieved
+        if (sosMessage !== undefined) {
+            res.status(200).json({ sosMessage: sosMessage, username: user.username});
+        } else {
+            // If the SOS message is not found or undefined
+            res.status(404).json({ message: "SOS message not found for the user." });
+        }
+    } catch (error) {
+        // Handle any errors that might occur
+        res.status(500).json({ error: error.message });
+    }
+};
 /*
 This function validates user login info and returns status code accordingly
 - Input:

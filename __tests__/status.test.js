@@ -65,4 +65,3 @@ describe('User Status functionality', () => {
         expect(response.status).toBe(500); // Not found
     });
 });
-
