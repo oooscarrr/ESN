@@ -26,6 +26,7 @@ import attachUserInfo from './middlewares/attachUserInfo.js';
 import checkSuspended from './middlewares/checkSuspended.js';
 import attachReqUrl from './middlewares/attachReqUrl.js';
 import attachContext from './middlewares/attachContext.js';
+import attachPrivilegeLevel from './middlewares/attachPrivilegeLevels.js';
 import { User } from './models/User.js';
 
 const app = express();
@@ -50,6 +51,7 @@ app.use(attachUserInfo);
 app.use(checkSuspended);
 app.use(attachReqUrl);
 app.use(attachContext);
+app.use(attachPrivilegeLevel);
 
 // Set up view engine
 app.set('views', path.join(__dirname, 'views'));

@@ -16,9 +16,10 @@ block content
   .announcements-container
     h1.header-title Announcements
     
-    .input-area
-      input#announcementInput(type='text', placeholder='Type here')
-      button#postAnnouncementBtn Post
+    if user && user.privilege >= PrivilegeLevel.COORDINATOR
+      .input-area
+        input#announcementInput(type='text', placeholder='Type here')
+        button#postAnnouncementBtn Post
     
     ul#announcementsList
       each announcement in announcements
