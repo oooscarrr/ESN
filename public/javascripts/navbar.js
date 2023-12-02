@@ -13,9 +13,6 @@ socket.on('connect', function () {
     });
 });
 
-
-const socket = io.connect();
-
 const sendLogoutRequest = function () {
     $.ajax({
         method: 'POST',
@@ -174,10 +171,6 @@ $(document).ready(() => {
     $('#changeStatusForm').submit(sendStatusChangeRequest);
 
     $('#sosButton').click(getSosLocationAndSendMessage);
-
-
-
-});
 
 // function searchDropdown() {
 //     if (isUserSearch()) {
