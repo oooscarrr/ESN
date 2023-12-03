@@ -35,7 +35,8 @@ export const validateUserProfileEdit = async (req, res) => {
  * @param req.body - The request body. Will be in the form of { username, privilege, isActive, plain_password }. Some fields may be undefined, representing no change made to that field.   
  */
 export const updateUserProfile = async (req, res) => {
-    const { userId } = req;
+    const { userId } = req.params;
     // TODO: perform validation again before saving
     await User.updateUserProfile({userId, ...req.body});
+    return res.sendStatus(200);
 }

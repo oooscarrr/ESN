@@ -98,9 +98,8 @@ const userSchema = new mongoose.Schema(
                 privilege !== undefined && (user.privilege = privilege);
                 username !== undefined && (user.username = username);
                 plain_password !== undefined && (user.password = await bcrypt.hash(plain_password, 10));
-                console.log(userId, isActive, privilege, username, plain_password);
-                console.log(user);
-                return user.save();
+                return await user.save();
+
             },
         }
     }

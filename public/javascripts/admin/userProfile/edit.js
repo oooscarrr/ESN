@@ -1,7 +1,8 @@
 let initialFormValues;
 const addComponentsActions = () => {
     $('.ui.radio.checkbox').checkbox();
-    $('#profileEditForm').form();
+    $('#profileEditForm').form().on('change', showValidationButton);
+
     initialFormValues = collectFormData();
     $('#profileEditForm .validate.button').click(onValidateButtonClick);
     $('#profileEditForm .confirm.button').click(onConfirmButtonClick);
@@ -72,7 +73,7 @@ const validateChangedValues = (changedValues) => {
             if (validationErrors.length > 0) {
                 showValidationErrors(validationErrors);
             } else {
-                showConfirmButton({timeout: 5000});
+                showConfirmButton();
             }
         }
     });
@@ -86,14 +87,9 @@ const showValidationButton = () => {
     $('#profileEditForm .confirm.button').hide();
     $('#profileEditForm .validate.button').show();
 }
-const showConfirmButton = ({timeout}) => {
+const showConfirmButton = () => {
     $('#profileEditForm .validate.button').hide();
     $('#profileEditForm .confirm.button').show();
-    if (timeout) {
-        setTimeout(() => {
-            showValidationButton();
-        }, timeout);
-    }
 }
 
 const updateUserProfile = (changedValues) => {
