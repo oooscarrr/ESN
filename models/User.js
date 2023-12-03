@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 // A list of all possible status codes, 0 for undefined, 1 for ok, 2 for help, 3 for emergency
 let statusList = ['undefined', 'ok', 'help', 'emergency'];
@@ -89,7 +90,17 @@ const userSchema = new mongoose.Schema(
                 user.latitude = latitude;
                 user.longitude = longitude;
                 return user.save();
-            }
+            },
+
+            async updateUserProfile({userId, status, privilege, username, plain_password}) {
+                const user = await this.findById(userId);
+                user.status = status;
+                user.privilege = privilege;
+                user.username = username;
+                user.password = await bcrypt.hash(plain_password, 10);
+                console.log(user);
+                // return user.save();
+            },
         }
     }
 );

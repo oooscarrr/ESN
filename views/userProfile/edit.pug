@@ -1,0 +1,43 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title Administer User Profiles
+
+block append scripts
+  script(src='/javascripts/admin/userProfile/edit.js')
+
+block append stylesheets
+//-   link(rel='stylesheet', href='/stylesheets/event.css')
+
+block content
+    +navbar
+    .horizontal.centered.box
+        h1 Edit User Profile
+        .ui.container
+            .ui.form
+                .ui.segment
+                    .field
+                        label Username
+                        input(type='text', name='username', placeholder='Username', value=userUnderEdit.username)
+                    .grouped.fields
+                        label(for='isActive') Account Status
+                        .field
+                            .ui.radio.checkbox
+                                input(type='radio', name='isActive', value=true, tabindex='0', checked=(userUnderEdit && userUnderEdit.isActive))
+                                label Active
+                        .field
+                            .ui.radio.checkbox
+                                input(type='radio', name='isActive', value=false, tabindex='0', checked=(userUnderEdit && !userUnderEdit.isActive))
+                                label Inactive
+                    .grouped.fields
+                        label(for = "privilege") Privilege Level
+                        for privilegeLevel in Object.keys(PrivilegeLevel)
+                            .field
+                                .ui.radio.checkbox
+                                    input(type='radio', name='privilege', value=PrivilegeLevel[privilegeLevel], tabindex='0', checked=(userUnderEdit && userUnderEdit.privilege === PrivilegeLevel[privilegeLevel]))
+                                    label #{privilegeLevel.toLowerCase()}
+                    .field
+                        label Password
+                        .ui.orange.button Set New Password
+                .ui.fluid.yellow.button Validate Changes
