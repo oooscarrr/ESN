@@ -21,6 +21,7 @@ import resourceRouter from './routes/resourceRoutes.js';
 import nearbyPeopleRouter from './routes/nearbyPeopleRoutes.js';
 import groupChatRouter from './routes/groupChatRoutes.js';
 import eventRouter from './routes/eventRoutes.js';
+import adminRouter from './routes/adminRoutes.js';
 import { change_user_online_status } from './controllers/userController.js';
 import attachUserInfo from './middlewares/attachUserInfo.js';
 import checkSuspended from './middlewares/checkSuspended.js';
@@ -126,6 +127,7 @@ app.use('/resources', resourceRouter);
 app.use('/nearbypeople', nearbyPeopleRouter);
 app.use('/groups', groupChatRouter);
 app.use('/events', eventRouter);
+app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
