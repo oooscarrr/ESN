@@ -11,10 +11,6 @@ const resourceSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now },
     imageURL: String,
     requests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ResourceRequest' }]
-}, {
-    statics: {
-
-    }
 });
 
 const Resource = mongoose.model('Resource', resourceSchema);
