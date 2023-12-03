@@ -16,12 +16,26 @@ export const displayUserProfileEditPage = async (req, res) => {
     return res.render('userProfile/edit', { userUnderEdit });
 }
 
+/**
+ * Validates the changes made to the user profile.
+ * @param req.params.userId - The id of the user whose profile is being edited.
+ * @param req.body - The request body. Will be in the form of { username, privilege, isActive, plain_password }. Some fields may be undefined, representing no change made to that field.
+ * @returns {Array} - An array of strings each representing an error message.
+ */
 export const validateUserProfileEdit = async (req, res) => {
-    // TODO: maybe send html here instead of json?
-    return res.status(200).json({ message: 'Success!' });
+    const { userId } = req.params;
+    const { username, privilege, isActive, plain_password } = req.body;
+    // TODO: perform actual validation (maybe in the model?)
+    const validationErrors = [];
+    return res.status(200).json(validationErrors);
 }
 
+/**
+ * @param req.params.userId - The id of the user whose profile is being edited.
+ * @param req.body - The request body. Will be in the form of { username, privilege, isActive, plain_password }. Some fields may be undefined, representing no change made to that field.   
+ */
 export const updateUserProfile = async (req, res) => {
     const { userId } = req;
+    // TODO: perform validation again before saving
     await User.updateUserProfile({userId, ...req.body});
 }

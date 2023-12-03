@@ -8,14 +8,14 @@ block append scripts
   script(src='/javascripts/admin/userProfile/edit.js')
 
 block append stylesheets
-//-   link(rel='stylesheet', href='/stylesheets/event.css')
+//-   link(rel='stylesheet', ref='/stylesheets/event.css')
 
 block content
     +navbar
     .horizontal.centered.box
         h1 Edit User Profile
         .ui.container
-            .ui.form
+            form.ui.form#profileEditForm
                 .ui.segment
                     .field
                         label Username
@@ -39,5 +39,10 @@ block content
                                     label #{privilegeLevel.toLowerCase()}
                     .field
                         label Password
-                        .ui.orange.button Set New Password
-                .ui.fluid.yellow.button Validate Changes
+                        .ui.button.setPassword Set New Password
+                        input.password(type='password', name='password', placeholder='Password')#passwordInput
+                        .ui.fluid.button.cancelPassword Cancel
+                    .ui.error.message
+
+                .ui.fluid.yellow.validate.button Validate Edit
+                .ui.fluid.green.confirm.button Confirm Edit
