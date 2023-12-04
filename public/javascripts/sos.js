@@ -77,26 +77,21 @@ function reqAcceptedSender(socket) {
 function reqRej(socket) {
     socket.on('sosRequestRejectedRecipient', function (data) {
         console.log("SOS request rejected by:", data.byUsername);
-
         // Find the button associated with the user who rejected the request
         var button = $("button.pendingSOS").filter(function () {
             return $(this).data('userId') === data.userId;
         });
-
         // Check if the button is correctly identified
         console.log("Button found for user ID:", data.userId, "; Button exists:", button.length > 0);
-
         // Update the button to revert it to its original state
         if (button.length > 0) {
             button.text('Send Request')
                 .removeClass('pendingSOS')
                 .attr('disabled', false)
                 .attr('onclick', 'sendSosRequest("' + data.userId + '")');
-
             // Create and insert the rejection message
             var rejectionMsg = $('<span class="rejection-message" style="color: red;">Rejected!</span>');
             button.after(rejectionMsg);
-
             // Fade out the message after a few seconds
             setTimeout(function () {
                 rejectionMsg.fadeOut(1000, function () {
@@ -111,15 +106,13 @@ $(document).ready(function () {
     const socket = window.socket;
     getPresetMessage();
     addMsgFormBehavior();
-
     socketConnect(socket);
     socketMsgReceived(socket);
     socketReqFinished(socket);
     socketReqAcceptedRe(socket);
     reqAcceptedSender(socket);
     reqRej(socket);
-})
-;
+});
 
 
 function addMsgFormBehavior() {
@@ -199,7 +192,6 @@ function acceptSosRequest(userId) {
     });
 }
 
-
 function rejectSosRequest(userId) {
     $.ajax({
         url: '/users/sos/reject',
@@ -216,7 +208,3 @@ function rejectSosRequest(userId) {
         }
     });
 }
-
-
-
-

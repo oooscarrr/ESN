@@ -16,7 +16,6 @@ function initMap() {
         center = {
             lat: position.coords.latitude, lng: position.coords.longitude,
         };
-
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 12, center: center, mapId: "HAZARD_MAP",
         });
@@ -25,7 +24,6 @@ function initMap() {
         autoUpdate();
         addMarkers(hazards);
     });
-
 }
 
 function addMarkers(hazards) {
@@ -142,13 +140,11 @@ function initAutocomplete() {
         const places = searchBox.getPlaces();
 
         if (places.length == 0) {
-            // TODO:
             return;
         }
         if (places.length > 1) {
             places.splice(1);
         }
-
         // Clear out the old markers.
         markersSearch.forEach((marker) => {
             marker.setMap(null);
@@ -157,36 +153,36 @@ function initAutocomplete() {
 
         // For each place, get the icon, name and location.
         const bounds = new google.maps.LatLngBounds();
-
-        places.forEach((place) => {
-            if (!place.geometry || !place.geometry.location) {
-                console.log("Returned place contains no geometry");
-                return;
-            }
-            selected = {};
-            selected.lat = place.geometry.location.lat();
-            selected.lng = place.geometry.location.lng();
-            const icon = {
-                url: place.icon,
-                size: new google.maps.Size(71, 71),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(17, 34),
-                scaledSize: new google.maps.Size(25, 25),
-            };
-
-            // Create a marker for each place.
-            markersSearch.push(new google.maps.Marker({
-                map, icon, title: place.name, position: place.geometry.location,
-            }),);
-            if (place.geometry.viewport) {
-                // Only geocodes have viewport.
-                bounds.union(place.geometry.viewport);
-            } else {
-                bounds.extend(place.geometry.location);
-            }
-        });
+        showSearchRes(places[0], markersSearch, bounds);
         map.fitBounds(bounds);
     });
+}
+
+function showSearchRes(place, markersSearch, bounds) {
+    if (!place.geometry || !place.geometry.location) {
+        console.log("Returned place contains no geometry");
+        return;
+    }
+    selected = {};
+    selected.lat = place.geometry.location.lat();
+    selected.lng = place.geometry.location.lng();
+    const icon = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25),
+    };
+
+    // Create a marker for each place.
+    markersSearch.push(new google.maps.Marker({
+        map, icon, title: place.name, position: place.geometry.location,
+    }),);
+    if (place.geometry.viewport) {
+        bounds.union(place.geometry.viewport);
+    } else {
+        bounds.extend(place.geometry.location);
+    }
 }
 
 function askConfirmation() {
@@ -291,9 +287,7 @@ function autoUpdate() {
                 },
             });
         }
-        // Center the map on the new position
     });
-
     // Call the autoUpdate() function every 5 seconds
     setTimeout(autoUpdate, 5000);
 }

@@ -2,36 +2,8 @@
 const path = window.location.pathname;
 const pathSegments = path.split('/');
 const currentGroupId = pathSegments[pathSegments.length - 1];
-
 const currentUserId = localStorage.getItem("currentUserId");
-
 const socket = io.connect();
-
-socket.on('newGroupMessage', renderNewGroupMessage);
-
-socket.on('newJoiner', async (groupId) => {
-    if (currentGroupId === groupId) {
-        location.reload(true);
-    }
-});
-
-socket.on('newGroupName', async (groupId) => {
-    if (currentGroupId === groupId) {
-        location.reload(true);
-    }
-});
-
-socket.on('deleteGroup', async (groupId) => {
-    if (currentGroupId === groupId) {
-        window.location.href = '/groups';
-    }
-});
-
-socket.on('leaveGroup', async (groupId) => {
-    if (currentGroupId === groupId) {
-        location.reload(true);
-    }
-});
 
 const statusIconDict = {
     'undefined': 'question circle',
@@ -40,10 +12,38 @@ const statusIconDict = {
     'emergency': 'exclamation triangle'
 }
 const statusColorDict = {
-    'undefined': 'grey', 
-    'ok': 'rgb(50, 178, 50)', 
-    'help': 'rgb(248, 167, 37)', 
+    'undefined': 'grey',
+    'ok': 'rgb(50, 178, 50)',
+    'help': 'rgb(248, 167, 37)',
     'emergency': 'red'
+}
+
+function setupSocketListeners() {
+    socket.on('newGroupMessage', renderNewGroupMessage);
+
+    socket.on('newJoiner', async (groupId) => {
+        if (currentGroupId === groupId) {
+            location.reload(true);
+        }
+    });
+
+    socket.on('newGroupName', async (groupId) => {
+        if (currentGroupId === groupId) {
+            location.reload(true);
+        }
+    });
+
+    socket.on('deleteGroup', async (groupId) => {
+        if (currentGroupId === groupId) {
+            window.location.href = '/groups';
+        }
+    });
+
+    socket.on('leaveGroup', async (groupId) => {
+        if (currentGroupId === groupId) {
+            location.reload(true);
+        }
+    });
 }
 
 function scrollToBottom() {
@@ -106,9 +106,9 @@ function showUserListModal(userList) {
     const modal = $('#userListModal');
     modal.find('.content').empty();
     userList.forEach(user => {
-      modal.find('.content').append(`<div>${user.username}</div>`);
+        modal.find('.content').append(`<div>${user.username}</div>`);
     });
-  
+
     modal.modal('show');
 }
 
@@ -225,4 +225,5 @@ $(document).ready(function () {
             messageSendHandler();
         }
     });
+    setupSocketListeners();
 });
