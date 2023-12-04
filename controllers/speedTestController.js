@@ -1,6 +1,6 @@
-import {app, io} from '../app.js';
+import { app, io } from '../app.js';
 import mongoose from 'mongoose';
-import {testSetup, testTeardown, getTestStatistics} from './speedTestPublicMessageController.js';
+import { testSetup, testTeardown, getTestStatistics } from './speedTestPublicMessageController.js';
 import { publicMessageSchema } from '../models/publicMessage.js';
 
 let speedTest = null;
