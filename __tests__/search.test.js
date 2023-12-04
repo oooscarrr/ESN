@@ -29,11 +29,15 @@ describe('search functionality test cases', () => {
 
     beforeEach(async () => {
         Alice = await User.registerNewUser('Alice', 'Alice123');
+        Alice.privilege = 1;
+        await Alice.save();
         AliceToken = jwt.sign({ id: Alice._id }, process.env.JWT_SECRET_KEY, {
             expiresIn: '5m'
         });
 
         Daniel = await User.registerNewUser('Daniel', 'Alice123');
+        Daniel.privilege = 1;
+        await Daniel.save();
         DanielToken = jwt.sign({ id: Daniel._id }, process.env.JWT_SECRET_KEY, {
             expiresIn: '5m'
         });
@@ -44,6 +48,8 @@ describe('search functionality test cases', () => {
         });
 
         littleDaniel = await User.registerNewUser('littleDaniel', 'Alice123');
+        littleDaniel.privilege = 1;
+        await littleDaniel.save();
         littleDanielToken = jwt.sign({ id: littleDaniel._id }, process.env.JWT_SECRET_KEY, {
             expiresIn: '5m'
         });

@@ -4,7 +4,6 @@ import { User } from '../models/User';
 import { Announcement } from '../models/Announcement';
 import { setupTestDatabase, closeTestDatabase } from '../test-setup';
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
 
 describe('Announcement functionality', () => {
     let user, token;
@@ -12,6 +11,8 @@ describe('Announcement functionality', () => {
     beforeAll(async () => {
         await setupTestDatabase();
         user = await User.registerNewUser('testUser', 'testPassword123');
+        user.privilege = 1;
+        await user.save();
         token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
             expiresIn: '5m'
         });
@@ -39,9 +40,9 @@ describe('Announcement functionality', () => {
         expect(announcement.content).toBe('This is a test announcement.');
     });
 
-    it('Should return error when non-existent user posts an announcement', async () => {
-        const nonExistentUserId = new mongoose.Types.ObjectId('000000000000000000000000');
-        const fakeToken = jwt.sign({ id: nonExistentUserId }, process.env.JWT_SECRET_KEY, {
+    it('Should return error when unauthorized user posts an announcement', async () => {
+        const citizen = await User.registerNewUser('citizen', 'citizenPassword123');
+        const fakeToken = jwt.sign({ id: citizen._id }, process.env.JWT_SECRET_KEY, {
             expiresIn: '1m'
         });
         const response = await request(app)
@@ -49,7 +50,7 @@ describe('Announcement functionality', () => {
             .set('Cookie', [`token=${fakeToken}`])
             .send({ content: 'This is a test announcement.' });
 
-        expect(response.status).toBe(500);
+        expect(response.status).toBe(302);
     });
 
     it('Should fetch all announcements', async () => {

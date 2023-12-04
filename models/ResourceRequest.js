@@ -9,10 +9,6 @@ const resourceRequestSchema = new mongoose.Schema({
     status: { type: String, enum: ['pending', 'accepted', 'rejected', 'unavailable'], default: 'pending' },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-}, {
-    statics: {
-
-    }
 });
 
 const ResourceRequest = mongoose.model('ResourceRequest', resourceRequestSchema);

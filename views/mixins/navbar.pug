@@ -27,8 +27,9 @@ mixin navbar
                         .item#changeStatusButton Change Status
                         a.item#findNearbyPeople Find Nearby People
                         a.item(href='/hazards') Hazards Map
-                        a.item(href='/speedtest') Speed Test
-                        a.item(href='/users/sos') SOS∂
+                        if user.privilege >= PrivilegeLevel.ADMINISTRATOR
+                            a.item(href='/speedtest') Speed Test
+                        a.item(href='/users/sos') SOS
                         .item#logoutButton Logout
     +searchBox
     .ui.modal#changeStatusModal
