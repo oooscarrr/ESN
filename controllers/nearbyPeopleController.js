@@ -1,7 +1,5 @@
 import { User } from '../models/User.js';
 import { Group } from '../models/Group.js';
-import { app } from '../app.js';
-import { io } from '../app.js';
 
 /**
  * A helper function for calculate_distance
