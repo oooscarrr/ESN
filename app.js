@@ -1,4 +1,3 @@
-import createError from 'http-errors';
 import express from 'express';
 import logger from 'morgan';
 import { createServer } from 'http';
@@ -12,6 +11,7 @@ import checkSuspended from './middlewares/checkSuspended.js';
 import attachReqUrl from './middlewares/attachReqUrl.js';
 import attachContext from './middlewares/attachContext.js';
 import attachPrivilegeLevel from './middlewares/attachPrivilegeLevels.js';
+import { catchError, handleError } from './middlewares/error.js';
 
 const app = express();
 const __dirname = path.resolve();
@@ -44,19 +44,7 @@ app.set('view engine', 'pug');
 // Register routes
 registerRoutes(app);
 
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  next(createError(404));
-});
-
-// error handler
-app.use((err, req, res) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+app.use(catchError);
+app.use(handleError);
 
 export { server, io, app };

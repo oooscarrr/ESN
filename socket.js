@@ -27,16 +27,14 @@ function authenticateToken(token) {
 
 function handleDisconnection(userId, onlineUsers, socket) {
     console.log('IO Disconnected by', socket.id);
-    if (userId && onlineUsers[userId]) {
-        onlineUsers[userId]--;
-        if (onlineUsers[userId] === 0) {
-            setTimeout(() => {
-                if (userId && onlineUsers[userId] === 0) {
-                    change_user_online_status(userId, false);
-                    delete onlineUsers[userId];
-                }
-            }, 1000);
-        }
+    onlineUsers[userId]--;
+    if (onlineUsers[userId] === 0) {
+        setTimeout(() => {
+            if (onlineUsers[userId] === 0) {
+                change_user_online_status(userId, false);
+                delete onlineUsers[userId];
+            }
+        }, 1000);
     }
 }
 
@@ -62,7 +60,7 @@ export default function setUpSocketIO(server) {
         } else {
             onlineUsers[userId]++;
         }
-        
+
         updateUserSocketId(userId, socket.id);
 
         socket.on('disconnect', () => handleDisconnection(userId, onlineUsers, socket));
