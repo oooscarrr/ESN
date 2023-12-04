@@ -51,18 +51,7 @@ export const create_new_group = async (req, res) => {
             console.log('Group Saved Successfully')
         }
 
-        // Add groupId to all nearbyUsers
-        for (let i = 0; i < nearbyUsers.length; ++i) {
-            const id = nearbyUsers[i].userId;
-            const user = await User.findById(id);
-            if (!user) {
-                console.warn(`User with ID ${id} not found`);
-                continue; // Skip to the next iteration
-            }
-            user.groups.push(groupId);
-            await user.save();
-        }
-
+        await add_group_id(nearbyUsers, groupId);
         io.emit('newGroup');
         return res.status(201).send({ 'groupId': groupId });
     } else {
@@ -70,6 +59,19 @@ export const create_new_group = async (req, res) => {
     }
 }
 
+async function add_group_id(nearbyUsers, groupId){
+    // Add groupId to all nearbyUsers
+    for (let i = 0; i < nearbyUsers.length; ++i) {
+        const id = nearbyUsers[i].userId;
+        const user = await User.findById(id);
+        if (!user) {
+            console.warn(`User with ID ${id} not found`);
+            continue; // Skip to the next iteration
+        }
+        user.groups.push(groupId);
+        await user.save();
+    }
+}
 /**
  * 
  */
@@ -254,6 +256,30 @@ export const remove_group_from_user = async (userId, groupId) => {
     }
 }
 
+async function remove_user_from_group(userId, group){
+    // Remove user from the group
+    let userFoundInGroup = false;
+    for (let i = 0; i < group.users.length; ++i) {
+        if (userId === group.users[i].userId) {
+            userFoundInGroup = true;
+            // If there is only 1 person left after the user leaves the group,
+            // delete the group and remove group from all users currently in that group
+            if (group.users.length === 2) {
+                for (let j = 0; j < group.users.length; ++j) {
+                    const userToRemove = group.users[j].userId;
+                    await remove_group_from_user(userToRemove, groupId);
+                }
+                await Group.deleteOne({ _id: groupId });
+                io.emit('deleteGroup', groupId);
+            } else {
+                group.users.splice(i, 1);
+                await group.save();
+                io.emit('leaveGroup', groupId);
+            }
+            break;
+        }
+    }
+}
 /**
  * @param {*} groupId
  */
@@ -268,28 +294,7 @@ export const leave_group = async (req, res) => {
         }
 
         // Remove user from the group
-        let userFoundInGroup = false;
-        for (let i = 0; i < group.users.length; ++i) {
-            if (userId === group.users[i].userId) {
-                userFoundInGroup = true;
-                // If there is only 1 person left after the user leaves the group,
-                // delete the group and remove group from all users currently in that group
-                if (group.users.length === 2) {
-                    for (let j = 0; j < group.users.length; ++j) {
-                        const userToRemove = group.users[j].userId;
-                        await remove_group_from_user(userToRemove, groupId);
-                    }
-                    await Group.deleteOne({ _id: groupId });
-                    io.emit('deleteGroup', groupId);
-                } else {
-                    group.users.splice(i, 1);
-                    await group.save();
-                    io.emit('leaveGroup', groupId);
-                }
-                break;
-            }
-        }
-
+        await remove_user_from_group(userId, group);
         // Remove group from user
         await remove_group_from_user(userId, groupId);
 

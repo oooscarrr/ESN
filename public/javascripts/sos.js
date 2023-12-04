@@ -11,18 +11,22 @@ function socketMsgReceived(socket) {
         console.log("Received 'sosRequestReceived' event:", data);
         if (data.action === 'received') {
             // Dynamically add the new request to the incoming requests list
-            $('#IncomingRequests .ui.relaxed.divided.list').append(
-                '<div class="item user-row">' +
-                '<i class="big user icon"></i>' +
-                '<div class="content">' +
-                '<div class="username">' + data.fromUsername + '</div>' +
-                '<button class="ui button acceptSOS" onclick="acceptSosRequest(\'' + data.from + '\')">Accept</button>' +
-                '<button class="ui button rejectSOS" onclick="rejectSosRequest(\'' + data.from + '\')">Reject</button>' +
-                '</div>' +
-                '</div>'
-            );
+           appendReq(data);
         }
     });
+}
+
+function appendReq(data){
+    $('#IncomingRequests .ui.relaxed.divided.list').append(
+        '<div class="item user-row">' +
+        '<i class="big user icon"></i>' +
+        '<div class="content">' +
+        '<div class="username">' + data.fromUsername + '</div>' +
+        '<button class="ui button acceptSOS" onclick="acceptSosRequest(\'' + data.from + '\')">Accept</button>' +
+        '<button class="ui button rejectSOS" onclick="rejectSosRequest(\'' + data.from + '\')">Reject</button>' +
+        '</div>' +
+        '</div>'
+    );
 }
 
 function socketReqFinished(socket) {
