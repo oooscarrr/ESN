@@ -12,7 +12,7 @@ let citizenIndex = 0;
 const createdUsers = [];
 
 const getDefaultAdmin = async () => {
-    const admin = await User.findByUsername('ESNAdmin');
+    const admin = await User.findByUsername('esnadmin');
     const adminToken = jwt.sign({ id: admin._id }, process.env.JWT_SECRET_KEY, {
         expiresIn: '5m'
     });
@@ -73,7 +73,7 @@ describe('Administer User Profile', () => {
                 .send({
                     privilege: PrivilegeLevel.CITIZEN
                 });
-            const adminAfterUpdate = await User.findByUsername('ESNAdmin');
+            const adminAfterUpdate = await User.findByUsername('esnadmin');
             expect(adminAfterUpdate.privilege).toBe(PrivilegeLevel.ADMINISTRATOR);
         });
         it('should let an administrator change their own privilege if there is another administrator', async () => {
@@ -91,7 +91,7 @@ describe('Administer User Profile', () => {
 
     describe('Initial Administrator Rule', () => {
         it('should have the default initial administrator in the database', async () => {
-            const admin = await User.findByUsername('ESNAdmin');
+            const admin = await User.findByUsername('esnadmin');
             expect(admin).toBeTruthy();
         });
     });
@@ -147,7 +147,7 @@ describe('Administer User Profile', () => {
                     username: 'newUsername'
                 });
             let citizenAfterUpdate = await User.findById(citizen._id);
-            expect(citizenAfterUpdate.username).toBe('newUsername');
+            expect(citizenAfterUpdate.username).toBe('newusername');
         });
         it('should let administrator change the password of a user', async () => {
             const { admin: additionalAdmin, adminToken: additionalAdminToken } = await createRandomAdmin();
@@ -327,12 +327,14 @@ describe('Administer User Profile', () => {
                 .patch('/admin/users/' + citizen._id)
                 .set('Cookie', [`token=${additionalAdminToken}`])
                 .send({
-                    username: 'newUsername'
+                    username: 'newTESTusername'
                 });
             const res = await request(app)
                 .get('/admin/users/' + citizen._id)
                 .set('Cookie', [`token=${additionalAdminToken}`]);
-            expect(res.text).toContain('newUsername');
+            const user = await User.findById(citizen._id);
+            expect(user.username).toBe('newtestusername');
+            expect(res.text).toContain('newtestusername');
         });
         it('should not update the username if the new username is invalid', async () => {
             const {admin: additionalAdmin, adminToken: additionalAdminToken} = await createRandomAdmin();
