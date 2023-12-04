@@ -34,6 +34,29 @@ This function retrieves all announcements in descending order ranked by time pos
     An array of announcements
 */
 export const list_announcements = async (req, res) => {
-    const all_announcements = await Announcement.find({}).sort({ createdAt: -1 }).limit(100).exec();
+    const all_announcements = await Announcement.aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'posterName',
+            foreignField: 'username',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: '$user'
+        },
+        {
+          $match: {
+            'user.isActive': true
+          }
+        },
+        {
+          $sort: { createdAt: -1 }
+        },
+        {
+          $limit: 100
+        }
+      ]).exec();
     res.render('announcements/list', { announcements: all_announcements });
 }

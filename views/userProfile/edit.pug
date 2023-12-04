@@ -1,0 +1,48 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title Administer User Profiles
+
+block append scripts
+  script(src='/javascripts/admin/userProfile/edit.js')
+
+block append stylesheets
+//-   link(rel='stylesheet', ref='/stylesheets/event.css')
+
+block content
+    +navbar
+    .horizontal.centered.box
+        h1 Edit User Profile
+        .ui.container
+            form.ui.form#profileEditForm
+                .ui.segment
+                    .field
+                        label Username
+                        input(type='text', name='username', placeholder='Username', value=userUnderEdit.username)
+                    .grouped.fields
+                        label(for='isActive') Account Status
+                        .field
+                            .ui.radio.checkbox
+                                input(type='radio', name='isActive', value=true, tabindex='0', checked=(userUnderEdit && userUnderEdit.isActive))
+                                label Active
+                        .field
+                            .ui.radio.checkbox
+                                input(type='radio', name='isActive', value=false, tabindex='0', checked=(userUnderEdit && !userUnderEdit.isActive))
+                                label Inactive
+                    .grouped.fields
+                        label(for = "privilege") Privilege Level
+                        for privilegeLevel in Object.keys(PrivilegeLevel)
+                            .field
+                                .ui.radio.checkbox
+                                    input(type='radio', name='privilege', value=PrivilegeLevel[privilegeLevel], tabindex='0', checked=(userUnderEdit && userUnderEdit.privilege === PrivilegeLevel[privilegeLevel]))
+                                    label #{privilegeLevel.toLowerCase()}
+                    .field
+                        label Password
+                        .ui.button.setPassword Set New Password
+                        input.password(type='password', name='password', placeholder='Password')#passwordInput
+                        .ui.fluid.button.cancelPassword Cancel
+                    .ui.error.message
+
+                .ui.fluid.yellow.validate.button Validate Edit
+                .ui.fluid.green.confirm.button Confirm Edit

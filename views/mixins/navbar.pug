@@ -12,6 +12,9 @@ mixin navbar
                 a.item(href='/messages/public') Public Chats
         a.item(href='/resources' data-tooltip='Resource Bulletin Board' data-position='bottom center' data-variation='tiny basic')
             i.first.aid.icon
+
+        a.item(href='/groups' data-tooltip='Group Chat' data-position='bottom center' data-variation='tiny basic')
+            i.comments.icon
         a.item(href='/events' data-tooltip='Events' data-position='bottom center' data-variation='tiny basic')
             i.calendar.icon
         .right.menu
@@ -29,6 +32,7 @@ mixin navbar
                         a.item(href='/hazards') Hazards Map
                         if user.privilege >= PrivilegeLevel.ADMINISTRATOR
                             a.item(href='/speedtest') Speed Test
+                            a.item(href='/admin/users') Administer User Profile
                         a.item(href='/users/sos') SOS
                         .item#logoutButton Logout
     +searchBox
