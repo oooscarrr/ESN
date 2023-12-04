@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { ensureDefaultAdminExists } from './db.js';
 
 async function setupTestDatabase() {
   // Use the TEST_DB_URI from the .env file
@@ -10,6 +11,7 @@ async function setupTestDatabase() {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
+  await ensureDefaultAdminExists();
 }
 
 async function closeTestDatabase() {

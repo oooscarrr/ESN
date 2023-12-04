@@ -4,11 +4,11 @@ import bcrypt from 'bcrypt';
 // A list of all possible status codes, 0 for undefined, 1 for ok, 2 for help, 3 for emergency
 let statusList = ['undefined', 'ok', 'help', 'emergency'];
 
-export const PrivilegeLevel = {
+export const PrivilegeLevel = Object.freeze({
     CITIZEN : 0,
     COORDINATOR : 1,
     ADMINISTRATOR : 2
-}
+});
 
 // DB Schema
 const userSchema = new mongoose.Schema(

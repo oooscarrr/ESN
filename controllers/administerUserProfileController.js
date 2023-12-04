@@ -1,4 +1,4 @@
-import { User, bannedUsernamesSet } from '../models/User.js';
+import { User, bannedUsernamesSet, PrivilegeLevel } from '../models/User.js';
 import { io } from '../app.js';
 
 export const displayUserSelectionPage = async (req, res) => {
@@ -48,6 +48,14 @@ function password_len_invalid(password) {
     return false;
 }
 
+async function isTheOnlyAdmin(userId) {
+    const admins = await User.find({ privilege: PrivilegeLevel.ADMINISTRATOR });
+    if (admins.length === 1 && admins[0]._id.toString() === userId) {
+        return true;
+    }
+    return false;
+}
+
 /**
  * Validates the changes made to the user profile.
  * @param req.params.userId - The id of the user whose profile is being edited.
@@ -55,6 +63,7 @@ function password_len_invalid(password) {
  * @returns {Array} - An array of strings each representing an error message.
  */
 export const validateUserProfileEdit = async (req, res) => {
+    const { userId } = req.params;
     const { username, privilege, isActive, password } = req.body;
     const validationErrors = [];
     console.log("VALIDATION DATA: ", username, "  ", privilege, "  ", isActive, "  ", password);
@@ -77,7 +86,16 @@ export const validateUserProfileEdit = async (req, res) => {
             validationErrors.push("Length of password should be at least 4");
         }
     }
-    // No validation needed for privilege and isActive
+    // Perform validation for privilege
+    if (privilege !== undefined) {
+        if (privilege < PrivilegeLevel.CITIZEN || privilege > PrivilegeLevel.ADMINISTRATOR) {
+            validationErrors.push("Invalid privilege level");
+        }
+        if (privilege < PrivilegeLevel.ADMINISTRATOR && await isTheOnlyAdmin(userId)) {
+            validationErrors.push("Cannot remove the only administrator");
+        }
+    }
+    // No validation needed for isActive
     return res.status(200).json(validationErrors);
 }
 
@@ -98,6 +116,14 @@ export const updateUserProfile = async (req, res) => {
     if (password) {
         if (password_len_invalid(password)) {
             return res.status(400).send('Invalid password');
+        }
+    }
+    if (privilege !== undefined) {
+        if (privilege < PrivilegeLevel.CITIZEN || privilege > PrivilegeLevel.ADMINISTRATOR) {
+            return res.status(400).send('Invalid privilege level');
+        }
+        if (privilege < PrivilegeLevel.ADMINISTRATOR && await isTheOnlyAdmin(userId)) {
+            return res.status(400).send('Cannot remove the only administrator');
         }
     }
     // Update DB
