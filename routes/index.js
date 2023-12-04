@@ -11,6 +11,7 @@ import resourceRouter from './resourceRoutes.js';
 import nearbyPeopleRouter from './nearbyPeopleRoutes.js';
 import groupChatRouter from './groupChatRoutes.js';
 import eventRouter from './eventRoutes.js';
+import adminRouter from './adminRoutes.js';
 
 export default function registerRoutes(app) {
     app.use('/', homeRouter);
@@ -26,4 +27,5 @@ export default function registerRoutes(app) {
     app.use('/nearbypeople', nearbyPeopleRouter);
     app.use('/groups', groupChatRouter);
     app.use('/events', eventRouter);
+    app.use('/admin', adminRouter);
 }
