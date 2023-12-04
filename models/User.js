@@ -117,7 +117,7 @@ userSchema.statics = {
         const user = await this.findById(userId);
         isActive !== undefined && (user.isActive = isActive);
         privilege !== undefined && (user.privilege = privilege);
-        username !== undefined && (user.username = username);
+        username !== undefined && (user.username = username.toLowerCase());
         password !== undefined && (user.password = await bcrypt.hash(password, 10));
         return await user.save();
 
