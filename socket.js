@@ -13,6 +13,9 @@ async function updateUserSocketId(userId, socketId) {
 }
 
 function parseToken(socket) {
+    if (!socket.handshake.headers.cookie) {
+        return null;
+    }
     const cookies = cookie.parse(socket.handshake.headers.cookie);
     return cookies.token;
 }
