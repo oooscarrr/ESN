@@ -102,5 +102,8 @@ export const updateUserProfile = async (req, res) => {
     }
     // Update DB
     await User.updateUserProfile({userId, ...req.body});
+    if (isActive === 'false') {
+        io.emit("inactive", userId);
+    }
     return res.sendStatus(200);
 }

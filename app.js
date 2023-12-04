@@ -72,45 +72,47 @@ async function updateUserSocketId(userId, socketId) {
 // Set up socket.io
 io.on('connection', socket => {
   console.log('IO Connected by', socket.id);
-  const cookies = cookie.parse(socket.handshake.headers.cookie);
-  const token = cookies.token;
-  let userId;
-  
-  if (token) {
-    try {
-      const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      userId = data.id;
-      if (!onlineUsers[userId]) {
-        onlineUsers[userId] = 1;
-        change_user_online_status(userId, true);
-      } else {
-        onlineUsers[userId]++;
+  if (socket.handshake.headers.cookie) {  // An additional check to avoid runtime errors, double check if this is correct
+    const cookies = cookie.parse(socket.handshake.headers.cookie);
+    const token = cookies.token;
+    let userId;
+    
+    if (token) {
+      try {
+        const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        userId = data.id;
+        if (!onlineUsers[userId]) {
+          onlineUsers[userId] = 1;
+          change_user_online_status(userId, true);
+        } else {
+          onlineUsers[userId]++;
+        }
+      } catch {
+        console.log('Invalid token');
+        socket.disconnect();
       }
-    } catch {
-      console.log('Invalid token');
-      socket.disconnect();
     }
-  }
-  console.log('momomo', userId, socket.id);
-  if (userId) {
-    console.log('momomo', userId, socket.id)
-    updateUserSocketId(userId, socket.id);
-  }
-
-  socket.on('disconnect', () => {
-    console.log('IO Disconnected by', socket.id);
+    console.log('momomo', userId, socket.id);
     if (userId) {
-      onlineUsers[userId]--;
-      if (onlineUsers[userId] === 0) {
-        setTimeout(() => {
-          if (userId && onlineUsers[userId] === 0) {
-            change_user_online_status(userId, false);
-            delete onlineUsers[userId];
-          }
-        }, 1000);
-      }
+      console.log('momomo', userId, socket.id)
+      updateUserSocketId(userId, socket.id);
     }
-  });
+
+    socket.on('disconnect', () => {
+      console.log('IO Disconnected by', socket.id);
+      if (userId) {
+        onlineUsers[userId]--;
+        if (onlineUsers[userId] === 0) {
+          setTimeout(() => {
+            if (userId && onlineUsers[userId] === 0) {
+              change_user_online_status(userId, false);
+              delete onlineUsers[userId];
+            }
+          }, 1000);
+        }
+      }
+    });
+  }
 });
 
 // Register routes

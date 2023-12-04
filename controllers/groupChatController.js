@@ -103,7 +103,32 @@ export const list_group_chat_room = async (req, res) => {
 
     try {
         const groupInfo = await Group.findById(groupId);
-        const groupMessages = await GroupMessage.find({groupId: groupId}).sort({createdAt: 1});
+        const groupMessages = await GroupMessage.aggregate([
+            {
+                $match: {
+                    groupId: groupId,
+                },
+            },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'senderName',
+                foreignField: 'username',
+                as: 'user'
+              }
+            },
+            {
+              $unwind: '$user'
+            },
+            {
+              $match: {
+                'user.isActive': true
+              }
+            },
+            {
+              $sort: { createdAt: 1 }
+            }
+          ]).exec();
 
         // console.log("GROUP INFO: ", groupInfo);
         // console.log("GROUP MESSAGES: ", groupMessages);

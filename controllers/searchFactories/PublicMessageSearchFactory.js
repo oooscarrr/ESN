@@ -26,12 +26,39 @@ export default class PublicMessageSearchFactory extends AbstractSearchFactory {
             return [];
         }
 
-        return await PublicMessage.find({
-            $and: queryWordsArray.map(word => ({ content: { $regex: new RegExp(word, 'i') } }))
-        })
-        .sort({createdAt: -1 })
-        .skip(numberOfResultsToSkip)
-        .limit(10);
+        // return await PublicMessage.find({
+        //     $and: queryWordsArray.map(word => ({ content: { $regex: new RegExp(word, 'i') } }))
+        // })
+        // .sort({createdAt: -1 })
+        // .skip(numberOfResultsToSkip)
+        // .limit(10);
+
+        return await PublicMessage.aggregate([
+            {
+                $match: {
+                    $and: queryWordsArray.map(word => ({ content: { $regex: new RegExp(word, 'i') } }))
+                },
+            },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'senderName',
+                foreignField: 'username',
+                as: 'user'
+              }
+            },
+            {
+              $unwind: '$user'
+            },
+            {
+              $match: {
+                'user.isActive': true
+              }
+            },
+            {
+              $sort: { createdAt: -1 }
+            }
+          ]).skip(numberOfResultsToSkip).limit(10).exec();
     }
 
     /**

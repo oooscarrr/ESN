@@ -32,6 +32,7 @@ mixin navbar
                         a.item#findNearbyPeople Find Nearby People
                         if user.privilege >= PrivilegeLevel.ADMINISTRATOR
                             a.item(href='/speedtest') Speed Test
+                            a.item(href='/admin/users') Administer User Profile
                         a.item(href='/users/sos') SOS
                         .item#logoutButton Logout
     +searchBox
