@@ -25,18 +25,29 @@ function authenticateToken(token) {
     }
 }
 
+function addOnlineUser(userId, onlineUsers) {
+    if (!onlineUsers[userId]) {
+        onlineUsers[userId] = 1;
+        change_user_online_status(userId, true);
+    } else {
+        onlineUsers[userId]++;
+    }
+}
+
+function removeOnlineUser(userId, onlineUsers) {
+    setTimeout(() => {
+        if (onlineUsers[userId] === 0) {
+            change_user_online_status(userId, false);
+            delete onlineUsers[userId];
+        }
+    }, 1000);
+}
+
 function handleDisconnection(userId, onlineUsers, socket) {
     console.log('IO Disconnected by', socket.id);
-    if (userId && onlineUsers[userId]) {
-        onlineUsers[userId]--;
-        if (onlineUsers[userId] === 0) {
-            setTimeout(() => {
-                if (userId && onlineUsers[userId] === 0) {
-                    change_user_online_status(userId, false);
-                    delete onlineUsers[userId];
-                }
-            }, 1000);
-        }
+    onlineUsers[userId]--;
+    if (onlineUsers[userId] === 0) {
+        removeOnlineUser(userId, onlineUsers);
     }
 }
 
@@ -56,13 +67,7 @@ export default function setUpSocketIO(server) {
             return;
         }
 
-        if (!onlineUsers[userId]) {
-            onlineUsers[userId] = 1;
-            change_user_online_status(userId, true);
-        } else {
-            onlineUsers[userId]++;
-        }
-        
+        addOnlineUser(userId, onlineUsers);
         updateUserSocketId(userId, socket.id);
 
         socket.on('disconnect', () => handleDisconnection(userId, onlineUsers, socket));

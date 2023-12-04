@@ -47,7 +47,8 @@ export async function get_nearby_people(userId) {
     const usersWithLocation = await User.find({
         username: { $ne: user.username }, // Exclude the current user by username
         latitude: { $exists: true, $ne: null },
-        longitude: { $exists: true, $ne: null }
+        longitude: { $exists: true, $ne: null },
+        isActive: true
     });
 
     // Calculate distances for each user and filter by maxDistance

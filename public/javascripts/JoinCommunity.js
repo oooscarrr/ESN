@@ -4,7 +4,8 @@ const messageList = {
     3: 'Username does not meet the rule',
     4: 'Password does not meet the rule',
     5: 'Registered successfully',
-    6: 'Internal server error'
+    6: 'Internal server error',
+    7: 'User is inactive'
 }
 
 $(document).ready(function () {

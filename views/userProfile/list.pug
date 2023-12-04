@@ -1,0 +1,46 @@
+extends /views/layout
+include /views/mixins/navbar
+
+block title
+  title Administer User Profiles
+
+block append scripts
+  script(src='/javascripts/admin/userProfile/list.js')
+
+block append stylesheets
+//-   link(rel='stylesheet', href='/stylesheets/event.css')
+
+block content
+    +navbar
+    .horizontal.centered.box
+        h1 Administer User Profiles
+        .ui.centered.container
+            .ui.styled.fluid.accordion
+                .title.active
+                    i.dropdown.icon
+                    span Online Users
+                    span.ui.label #{onlineUsers.length}
+                .content.active
+                    .ui.relaxed.divided.list
+                        for user in onlineUsers
+                            .item.user-row
+                                a(href=`/admin/users/${user._id}`) #{user.username}
+                .title
+                    i.dropdown.icon
+                    span Offline Users
+                    span.ui.label #{offlineUsers.length}
+                .content
+                    .ui.relaxed.divided.list
+                        for user in offlineUsers
+                            .item.user-row
+                                a(href=`/admin/users/${user._id}`) #{user.username}
+                .title
+                    i.dropdown.icon
+                    span Inactive Users
+                    span.ui.label #{inactiveUsers.length}
+                .content
+                    .ui.relaxed.divided.list
+                        for user in inactiveUsers
+                            .item.user-row
+                                a(href=`/admin/users/${user._id}`) #{user.username}
+    

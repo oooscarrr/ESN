@@ -54,7 +54,30 @@ export const get_all_public_messages = async (req, res) => {
 }
 
 export const list_public_messages = async (req, res) => {
-    const all_messages = await PublicMessage.find({}).sort({ createdAt: -1 }).limit(100).exec();
+    const all_messages = await PublicMessage.aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'senderName',
+            foreignField: 'username',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: '$user'
+        },
+        {
+          $match: {
+            'user.isActive': true
+          }
+        },
+        {
+          $sort: { createdAt: -1 }
+        },
+        {
+          $limit: 100
+        }
+      ]).exec();
     all_messages.sort(function (a, b) {
         return a.createdAt - b.createdAt;
     });
