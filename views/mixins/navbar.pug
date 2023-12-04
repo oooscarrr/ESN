@@ -3,24 +3,20 @@ mixin navbar
     .ui.inverted.secondary.menu#navbar
         a.item(href='/users' data-tooltip='Directory' data-position='bottom center' data-variation='tiny basic')
             i.address.book.icon
-        a.item(href='/messages/public' data-tooltip='Public Chat' data-position='bottom center' data-variation='tiny basic')
-            i.users.icon
         a.item(href='/announcements' data-tooltip='Announcements' data-position='bottom center' data-variation='tiny basic')
             i.bullhorn.icon
-        a.item(href='/users/sos') 
-            i.life.ring.icon
-        // Add SOS button here
-        a.item#sosButton
-            i.exclamation.triangle.icon
-        a.item(href='/hazards')
-            i.map.marked.icon
+        .item.ui.dropdown#chatDropdown
+            i.comments.icon
+            .menu
+                a.item(href='/groups') Group Chats
+                a.item(href='/messages/public') Public Chats
         a.item(href='/resources' data-tooltip='Resource Bulletin Board' data-position='bottom center' data-variation='tiny basic')
             i.first.aid.icon
-        a.item(href='/groups')
-            i.comments.icon
-        a.item(href='/events')
+        a.item(href='/events' data-tooltip='Events' data-position='bottom center' data-variation='tiny basic')
             i.calendar.icon
         .right.menu
+            a.item#sosButton
+                i.exclamation.triangle.icon
             if context !== contextModule.CONTEXT.OTHER
                 .item#navbarSearchButton
                     i.search.icon
@@ -30,6 +26,7 @@ mixin navbar
                     .menu
                         .item#changeStatusButton Change Status
                         a.item#findNearbyPeople Find Nearby People
+                        a.item(href='/hazards') Hazards Map
                         if user.privilege >= PrivilegeLevel.ADMINISTRATOR
                             a.item(href='/speedtest') Speed Test
                         a.item(href='/users/sos') SOS
