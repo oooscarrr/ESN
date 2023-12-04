@@ -49,7 +49,15 @@ const getChangedValues = () => {
     const changedValues = {};
     for (const key in formValues) {
         if (formValues[key] !== initialFormValues[key]) {
-            changedValues[key] = formValues[key];
+            if (key === "isActive") {
+                if (initialFormValues[key] === true) {
+                    changedValues[key] = false;
+                } else {
+                    changedValues[key] = true;
+                }
+            } else {
+                changedValues[key] = formValues[key];
+            }
         }
     }
     return changedValues;

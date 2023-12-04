@@ -92,12 +92,12 @@ const userSchema = new mongoose.Schema(
                 return user.save();
             },
 
-            async updateUserProfile({userId, isActive, privilege, username, plain_password}) {
+            async updateUserProfile({userId, isActive, privilege, username, password}) {
                 const user = await this.findById(userId);
                 isActive !== undefined && (user.isActive = isActive);
                 privilege !== undefined && (user.privilege = privilege);
                 username !== undefined && (user.username = username);
-                plain_password !== undefined && (user.password = await bcrypt.hash(plain_password, 10));
+                password !== undefined && (user.password = await bcrypt.hash(password, 10));
                 return await user.save();
 
             },

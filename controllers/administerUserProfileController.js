@@ -17,34 +17,63 @@ export const displayUserProfileEditPage = async (req, res) => {
 }
 
 /**
+ * A list of functions checking user input validity
+ */
+function username_len_invalid(username) {
+    if (username.length < 3) {
+        return true;
+    }
+    return false;
+}
+
+function username_banned(username) {
+    if (bannedUsernamesSet.has(username)) {
+        return true;
+    }
+    return false;
+}
+
+async function username_exists(username) {
+    const user = await User.findByUsername(username);
+    if (user) {
+        return true;
+    }
+    return false;
+}
+
+function password_len_invalid(password) {
+    if (password.length < 4) {
+        return true;
+    }
+    return false;
+}
+
+/**
  * Validates the changes made to the user profile.
  * @param req.params.userId - The id of the user whose profile is being edited.
- * @param req.body - The request body. Will be in the form of { username, privilege, isActive, plain_password }. Some fields may be undefined, representing no change made to that field.
+ * @param req.body - The request body. Will be in the form of { username, privilege, isActive, password }. Some fields may be undefined, representing no change made to that field.
  * @returns {Array} - An array of strings each representing an error message.
  */
 export const validateUserProfileEdit = async (req, res) => {
-    const { userId } = req.params;
-    const { username, privilege, isActive, plain_password } = req.body;
+    const { username, privilege, isActive, password } = req.body;
     const validationErrors = [];
-    // TODO: This seems wrong (plain_password is always undefined and isActive is 'on' when choosing 'Inactive')
-    console.log("VALIDATION DATA: ", username, "  ", privilege, "  ", isActive, "  ", plain_password);
+    console.log("VALIDATION DATA: ", username, "  ", privilege, "  ", isActive, "  ", password);
     // Perform validation for username
     if (username) {
         const lower_case_username = username.toLowerCase();
-        if (lower_case_username.length < 3) {
+        if (username_len_invalid(lower_case_username)) {
             validationErrors.push("Length of username should be at least 3");
         }
-        if (bannedUsernamesSet.has(lower_case_username)) {
+        if (username_banned(lower_case_username)) {
             validationErrors.push("Username is banned, try another one");
         }
-        const user = await User.findByUsername(lower_case_username);
-        if (user) {
+        if (await username_exists(lower_case_username)) {
             validationErrors.push("Username is already taken, try another one");
         }
     }
     // Perform validation for password
-    if (plain_password) {
-        if (plain_password.length < 4) {
+    if (password) {
+        if (password_len_invalid(password)) {
             validationErrors.push("Length of password should be at least 4");
         }
     }
@@ -54,11 +83,24 @@ export const validateUserProfileEdit = async (req, res) => {
 
 /**
  * @param req.params.userId - The id of the user whose profile is being edited.
- * @param req.body - The request body. Will be in the form of { username, privilege, isActive, plain_password }. Some fields may be undefined, representing no change made to that field.   
+ * @param req.body - The request body. Will be in the form of { username, privilege, isActive, password }. Some fields may be undefined, representing no change made to that field.   
  */
 export const updateUserProfile = async (req, res) => {
     const { userId } = req.params;
-    // TODO: perform validation again before saving
+    const { username, privilege, isActive, password } = req.body;
+    // Perform validation again before saving
+    if (username) {
+        const lower_case_username = username.toLowerCase();
+        if (username_len_invalid(lower_case_username) || username_banned(lower_case_username) || await username_exists(lower_case_username)) {
+            return res.status(400).send('Invalid username');
+        }
+    }
+    if (password) {
+        if (password_len_invalid(password)) {
+            return res.status(400).send('Invalid password');
+        }
+    }
+    // Update DB
     await User.updateUserProfile({userId, ...req.body});
     return res.sendStatus(200);
 }
