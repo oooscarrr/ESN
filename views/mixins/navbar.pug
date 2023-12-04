@@ -5,23 +5,19 @@ mixin navbar
             i.address.book.icon
         a.item(href='/announcements' data-tooltip='Announcements' data-position='bottom center' data-variation='tiny basic')
             i.bullhorn.icon
-        .item.ui.dropdown#chatDropdown
+        a.item(href='/messages/public' data-tooltip='Public Chatroom' data-position='bottom center' data-variation='tiny basic')
             i.comments.icon
-            .menu
-                a.item(href='/groups') Group Chats
-                a.item(href='/messages/public') Public Chats
         a.item(href='/resources' data-tooltip='Resource Bulletin Board' data-position='bottom center' data-variation='tiny basic')
             i.first.aid.icon
-
         a.item(href='/groups' data-tooltip='Group Chat' data-position='bottom center' data-variation='tiny basic')
-            i.comments.icon
+            i.users.icon
         a.item(href='/events' data-tooltip='Events' data-position='bottom center' data-variation='tiny basic')
             i.calendar.icon
         .right.menu
-            a.item#sosButton
+            a.item#sosButton(data-tooltip='Send SOS Message' data-position='bottom center' data-variation='tiny basic')
                 i.exclamation.triangle.icon
             if context !== contextModule.CONTEXT.OTHER
-                .item#navbarSearchButton
+                .item#navbarSearchButton(data-tooltip='Search' data-position='bottom center' data-variation='tiny basic')
                     i.search.icon
             if user
                 .item.ui.dropdown
