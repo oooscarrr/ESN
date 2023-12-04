@@ -37,6 +37,7 @@ This function validates user login info and returns status code accordingly
     4. If username does not exist and password does not meet the password rule, return error code 4
     5. If username does not exist and both username and password meet the rule, return success code 5
     6. If server error, return error code 6
+    7. If username exists and password matches the user data in DB, but user is inactive, return error code 7
 */
 export const validate_login_info = async (req, res) => {
     try {
@@ -48,6 +49,10 @@ export const validate_login_info = async (req, res) => {
         if (user) {
             // User exists and password is correct
             if (await bcrypt.compare(password, user.password)) {
+                // User inactive
+                if (!user.isActive) {
+                    return res.send({'status': 'error', 'code': 7});
+                }
                 return await markUserOnline(user, res);
             } else {
                 return res.send({'status': 'error', 'code': 2});
