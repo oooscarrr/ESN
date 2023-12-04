@@ -6,32 +6,15 @@ export const showCreationPage = (req, res) => {
 }
 
 export const createVolunteerEvent = async (req, res) => {
-    const {
-        startDateTime,
-        endDateTime,
-        title,
-        description
-    } = req.body;
-    if(
-        !startDateTime ||
-        !endDateTime ||
-        !title ||
-        !description
-    ) {
+    const {startDateTime, endDateTime, title, description} = req.body;
+    if(!startDateTime || !endDateTime || !title || !description) {
         return res.status(400).json({ message: 'Please fill out all fields.' });
     }
     const organizer = req.userId;
     const participants = [req.userId];
     const pendingInvitations = [];
-    const newEvent = new EventModel({
-        startDateTime,
-        endDateTime,
-        title,
-        description,
-        organizer,
-        participants,
-        pendingInvitations
-    });
+    const newEvent = new EventModel({startDateTime, endDateTime, title,
+        description, organizer, participants, pendingInvitations});
     try {
         await newEvent.save();
         res.status(201).json({ redirect: `/events/${newEvent._id}` });

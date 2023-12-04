@@ -3,6 +3,7 @@ import { Group } from '../models/Group.js';
 import { GroupMessage } from '../models/GroupMessage.js';
 import { io } from '../app.js';
 
+
 /**
  * @param {*} groupName
  * @param {*} description 
@@ -35,10 +36,7 @@ export const create_new_group = async (req, res) => {
 
         // Add current user into nearbyUsers
         const currentUsername = currentUser.username;
-        const currentUserObj = {
-            username: currentUsername,
-            userId: currentUserId,
-        };
+        const currentUserObj = {username: currentUsername, userId: currentUserId,};
         nearbyUsers.push(currentUserObj);
 
         // Create a new group
@@ -47,8 +45,6 @@ export const create_new_group = async (req, res) => {
             groupId = group._id.valueOf();
         } catch (error) {
             return res.status(500).send(error);
-        } finally {
-            console.log('Group Saved Successfully')
         }
 
         await add_group_id(nearbyUsers, groupId);
@@ -102,39 +98,20 @@ export const list_group_chat_list = async (req, res) => {
 export const list_group_chat_room = async (req, res) => {
     const userId = req.userId;
     const groupId = req.params.groupId;
-
     try {
         const groupInfo = await Group.findById(groupId);
         const groupMessages = await GroupMessage.aggregate([
-            {
-                $match: {
-                    groupId: groupId,
-                },
-            },
-            {
-              $lookup: {
+            {$match: {groupId: groupId,},},
+            {$lookup: {
                 from: 'users',
                 localField: 'senderName',
                 foreignField: 'username',
                 as: 'user'
-              }
-            },
-            {
-              $unwind: '$user'
-            },
-            {
-              $match: {
-                'user.isActive': true
-              }
-            },
-            {
-              $sort: { createdAt: 1 }
-            }
+              }},
+            {$unwind: '$user'},
+            {$match: {'user.isActive': true}},
+            {$sort: { createdAt: 1 }}
           ]).exec();
-
-        // console.log("GROUP INFO: ", groupInfo);
-        // console.log("GROUP MESSAGES: ", groupMessages);
-
         res.render('groupChat/groupChatroom', {currentUserId: userId, groupInfo: groupInfo, groupMessages: groupMessages});
     } catch (error) {
         return res.status(500).send(error);
