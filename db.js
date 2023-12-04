@@ -3,7 +3,7 @@ import { User, PrivilegeLevel } from './models/User.js';
 import bcrypt from 'bcrypt';
 
 export const ensureDefaultAdminExists = async () => {
-    const defaultAdminUsername = 'ESNAdmin'
+    const defaultAdminUsername = 'esnadmin'
     const defaultAdminPassword = 'admin'
     let defaultAdmin;
     try {
