@@ -256,37 +256,9 @@ export const remove_group_from_user = async (userId, groupId) => {
     }
 }
 
-async function remove_user_from_group(userId, group){
-    // Remove user from the group
-    let userFoundInGroup = false;
-    for (let i = 0; i < group.users.length; ++i) {
-        if (userId === group.users[i].userId) {
-            userFoundInGroup = true;
-            // If there is only 1 person left after the user leaves the group,
-            // delete the group and remove group from all users currently in that group
-            if (group.users.length === 2) {
-                for (let j = 0; j < group.users.length; ++j) {
-                    const userToRemove = group.users[j].userId;
-                    await remove_group_from_user(userToRemove, groupId);
-                }
-                await Group.deleteOne({ _id: groupId });
-                io.emit('deleteGroup', groupId);
-            } else {
-                group.users.splice(i, 1);
-                await group.save();
-                io.emit('leaveGroup', groupId);
-            }
-            break;
-        }
-    }
-}
-/**
- * @param {*} groupId
- */
 export const leave_group = async (req, res) => {
     const userId = req.userId;
     const groupId = req.body.groupId;
-
     try {
         const group = await Group.findById(groupId);
         if (!group) {
@@ -294,7 +266,28 @@ export const leave_group = async (req, res) => {
         }
 
         // Remove user from the group
-        await remove_user_from_group(userId, group);
+        let userFoundInGroup = false;
+        for (let i = 0; i < group.users.length; ++i) {
+            if (userId === group.users[i].userId) {
+                userFoundInGroup = true;
+                // If there is only 1 person left after the user leaves the group,
+                // delete the group and remove group from all users currently in that group
+                if (group.users.length === 2) {
+                    for (let j = 0; j < group.users.length; ++j) {
+                        const userToRemove = group.users[j].userId;
+                        await remove_group_from_user(userToRemove, groupId);
+                    }
+                    await Group.deleteOne({ _id: groupId });
+                    io.emit('deleteGroup', groupId);
+                } else {
+                    group.users.splice(i, 1);
+                    await group.save();
+                    io.emit('leaveGroup', groupId);
+                }
+                break;
+            }
+        }
+
         // Remove group from user
         await remove_group_from_user(userId, groupId);
 
