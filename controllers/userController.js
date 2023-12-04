@@ -85,7 +85,10 @@ This function logs the user out and clears the cookie
 */
 export const logout = async (req, res) => {
     try {
+        const userId = req.userId;
         res.clearCookie('token');
+        await User.changeUserOnlineStatus(userId, false);
+        io.emit('onlineStatusUpdate');
         res.redirect('/');
     } catch (error) {
         res.sendStatus(500);
@@ -127,7 +130,7 @@ This function returns ??
     ??
 */
 export const list_users = async (req, res) => {
-    const all_users = await User.find().sort({isOnline: -1, username: 1});
+    const all_users = await User.find({ isActive: true }).sort({isOnline: -1, username: 1});
     const all_alert_senders = await Alert.find({receiverId: req.userId, alerted: true}).select({senderId: 1, _id: 0});
 
     let senderId_array = []

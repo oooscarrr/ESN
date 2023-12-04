@@ -3,6 +3,7 @@ import { Group } from '../models/Group.js';
 import { GroupMessage } from '../models/GroupMessage.js';
 import { io } from '../app.js';
 
+
 /**
  * @param {*} groupName
  * @param {*} description 
@@ -35,10 +36,7 @@ export const create_new_group = async (req, res) => {
 
         // Add current user into nearbyUsers
         const currentUsername = currentUser.username;
-        const currentUserObj = {
-            username: currentUsername,
-            userId: currentUserId,
-        };
+        const currentUserObj = {username: currentUsername, userId: currentUserId,};
         nearbyUsers.push(currentUserObj);
 
         // Create a new group
@@ -47,22 +45,9 @@ export const create_new_group = async (req, res) => {
             groupId = group._id.valueOf();
         } catch (error) {
             return res.status(500).send(error);
-        } finally {
-            console.log('Group Saved Successfully')
         }
 
-        // Add groupId to all nearbyUsers
-        for (let i = 0; i < nearbyUsers.length; ++i) {
-            const id = nearbyUsers[i].userId;
-            const user = await User.findById(id);
-            if (!user) {
-                console.warn(`User with ID ${id} not found`);
-                continue; // Skip to the next iteration
-            }
-            user.groups.push(groupId);
-            await user.save();
-        }
-
+        await add_group_id(nearbyUsers, groupId);
         io.emit('newGroup');
         return res.status(201).send({ 'groupId': groupId });
     } else {
@@ -70,6 +55,19 @@ export const create_new_group = async (req, res) => {
     }
 }
 
+async function add_group_id(nearbyUsers, groupId){
+    // Add groupId to all nearbyUsers
+    for (let i = 0; i < nearbyUsers.length; ++i) {
+        const id = nearbyUsers[i].userId;
+        const user = await User.findById(id);
+        if (!user) {
+            console.warn(`User with ID ${id} not found`);
+            continue; // Skip to the next iteration
+        }
+        user.groups.push(groupId);
+        await user.save();
+    }
+}
 /**
  * 
  */
@@ -100,14 +98,20 @@ export const list_group_chat_list = async (req, res) => {
 export const list_group_chat_room = async (req, res) => {
     const userId = req.userId;
     const groupId = req.params.groupId;
-
     try {
         const groupInfo = await Group.findById(groupId);
-        const groupMessages = await GroupMessage.find({groupId: groupId}).sort({createdAt: 1});
-
-        // console.log("GROUP INFO: ", groupInfo);
-        // console.log("GROUP MESSAGES: ", groupMessages);
-
+        const groupMessages = await GroupMessage.aggregate([
+            {$match: {groupId: groupId,},},
+            {$lookup: {
+                from: 'users',
+                localField: 'senderName',
+                foreignField: 'username',
+                as: 'user'
+              }},
+            {$unwind: '$user'},
+            {$match: {'user.isActive': true}},
+            {$sort: { createdAt: 1 }}
+          ]).exec();
         res.render('groupChat/groupChatroom', {currentUserId: userId, groupInfo: groupInfo, groupMessages: groupMessages});
     } catch (error) {
         return res.status(500).send(error);
@@ -254,13 +258,9 @@ export const remove_group_from_user = async (userId, groupId) => {
     }
 }
 
-/**
- * @param {*} groupId
- */
 export const leave_group = async (req, res) => {
     const userId = req.userId;
     const groupId = req.body.groupId;
-
     try {
         const group = await Group.findById(groupId);
         if (!group) {

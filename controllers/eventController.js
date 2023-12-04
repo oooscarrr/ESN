@@ -6,32 +6,15 @@ export const showCreationPage = (req, res) => {
 }
 
 export const createVolunteerEvent = async (req, res) => {
-    const {
-        startDateTime,
-        endDateTime,
-        title,
-        description
-    } = req.body;
-    if(
-        !startDateTime ||
-        !endDateTime ||
-        !title ||
-        !description
-    ) {
+    const {startDateTime, endDateTime, title, description} = req.body;
+    if(!startDateTime || !endDateTime || !title || !description) {
         return res.status(400).json({ message: 'Please fill out all fields.' });
     }
     const organizer = req.userId;
     const participants = [req.userId];
     const pendingInvitations = [];
-    const newEvent = new EventModel({
-        startDateTime,
-        endDateTime,
-        title,
-        description,
-        organizer,
-        participants,
-        pendingInvitations
-    });
+    const newEvent = new EventModel({startDateTime, endDateTime, title,
+        description, organizer, participants, pendingInvitations});
     try {
         await newEvent.save();
         res.status(201).json({ redirect: `/events/${newEvent._id}` });
@@ -135,45 +118,72 @@ export const listPendingInvitations = async (req, res) => {
     }
 }
 
+
+async function findAvailableEvents(events, req){
+    return events.filter((event) => {
+        const notCanceled = !event.canceled;
+        const notOrganizer = event.organizer !== req.userId;
+        const notParticipant = !event.participants.includes(req.userId);
+        const notInvited = !event.pendingInvitations.includes(req.userId);
+        const startInFuture = event.startDateTime > Date.now();
+        return notCanceled && notOrganizer && notParticipant && notInvited && startInFuture;
+    });
+}
+
+async function findMyEvents(events, req){
+    return events.filter((event) => {
+        const isOrganizer = event.organizer === req.userId;
+        const isParticipant = event.participants.includes(req.userId);
+        return isOrganizer || isParticipant;
+    });
+}
+
+async function findMyCanceledEvents(myEvents){
+    return myEvents.filter((event) => {
+        const isCanceled = event.canceled;
+        return isCanceled;
+    });
+}
+
+async function findMyActiveEvents(myEvents){
+    return myEvents.filter((event) => {
+        const isActive = !event.canceled;
+        return isActive;
+    });
+}
+
+async function filterPastEvents(myActiveEvents) {
+    return myActiveEvents.filter((event) => {
+        const isPast = event.endDateTime < Date.now();
+        return isPast;
+    });
+}
+
+async function filterUpcomingEvents(myActiveEvents) {
+    return myActiveEvents.filter((event) => {
+        const isUpcoming = event.endDateTime > Date.now();
+        return isUpcoming;
+    });
+}
+
+async function findMyPendingInvitations(events, userId) {
+    return events.filter((event) => {
+        const isInvited = event.pendingInvitations.includes(userId);
+        const notCanceled = !event.canceled;
+        return isInvited && notCanceled;
+    });
+}
+
 export const listVolunteerEvents = async (req, res) => {
-    // TODO: filter and format my events
     try {
         const events = await EventModel.find();
-        const availableEvents = events.filter((event) => {
-            const notCanceled = !event.canceled;
-            const notOrganizer = event.organizer !== req.userId;
-            const notParticipant = !event.participants.includes(req.userId);
-            const notInvited = !event.pendingInvitations.includes(req.userId);
-            const startInFuture = event.startDateTime > Date.now();
-            return notCanceled && notOrganizer && notParticipant && notInvited && startInFuture;
-        });
-        const myEvents = events.filter((event) => {
-            const isOrganizer = event.organizer === req.userId;
-            const isParticipant = event.participants.includes(req.userId);
-            return isOrganizer || isParticipant;
-        });
-        const myCanceledEvents = myEvents.filter((event) => {
-            const isCanceled = event.canceled;
-            return isCanceled;
-        });
-        const myActiveEvents = myEvents.filter((event) => {
-            const isActive = !event.canceled;
-            return isActive;
-        });
-        const myPastEvents = myActiveEvents.filter((event) => {
-            const isPast = event.endDateTime < Date.now();
-            return isPast;
-        });
-        const myUpcomingEvents = myActiveEvents.filter((event) => {
-            const isUpcoming = event.endDateTime > Date.now();
-            return isUpcoming;
-        });
-        const myPendingInvitations = events.filter((event) => {
-            const isInvited = event.pendingInvitations.includes(req.userId);
-            const notCanceled = !event.canceled;
-            return isInvited && notCanceled;
-        });
-
+        const availableEvents = await findAvailableEvents(events, req);
+        const myEvents = await findMyEvents(events, req);
+        const myCanceledEvents = await findMyCanceledEvents(myEvents);
+        const myActiveEvents = await findMyActiveEvents(myEvents);
+        const myPastEvents = await filterPastEvents(myActiveEvents);
+        const myUpcomingEvents = await filterUpcomingEvents(myActiveEvents);
+        const myPendingInvitations = await findMyPendingInvitations(events, req.userId);
         res.render('events/list', {
             myPendingInvitations,
             myPastEvents,

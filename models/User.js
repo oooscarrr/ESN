@@ -1,112 +1,15 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
+// Constants
 // A list of all possible status codes, 0 for undefined, 1 for ok, 2 for help, 3 for emergency
-let statusList = ['undefined', 'ok', 'help', 'emergency'];
+const statusList = ['undefined', 'ok', 'help', 'emergency'];
 
-export const PrivilegeLevel = Object.freeze({
+const PrivilegeLevel = Object.freeze({
     CITIZEN : 0,
     COORDINATOR : 1,
     ADMINISTRATOR : 2
 });
-
-// DB Schema
-const userSchema = new mongoose.Schema(
-    {
-        username: String,
-        password: String,
-        createdAt: { type: Date, default: Date.now },
-        isOnline: { type: Boolean, default: false },
-        lastLoginAt: { type: Date, default: Date.now },
-        lastStatus: { type: String, enum: ['undefined', 'ok', 'help', 'emergency'], default: 'undefined' },
-        lastStatusAt: { type: Date, default: Date.now },
-        isActive: { type: Boolean, default: true },
-        sosRequestsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        sosRequestsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        sosContacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        sosMessage: { type: String, default: '' },
-        socketId: { type: String },
-        latitude: { type: Number, default: null},
-        longitude: { type: Number, default: null},
-        groups: { type: [String], default: [] },
-        nearbyUsers: {
-            type: [
-              {
-                username: {
-                  type: String,
-                  required: true,
-                },
-                userId: {
-                  type: String,
-                  required: true,
-                },
-              },
-            ],
-            default: [],
-          },
-        privilege: { type: Number, default: PrivilegeLevel.CITIZEN, enum: Object.values(PrivilegeLevel) },
-    },
-    {
-        statics: {
-            findByUsername(username) {
-                return this.findOne({ username: username });
-            },
-            registerNewUser(username, hashedPassword) {
-                const user = new User({ username: username, password: hashedPassword });
-                return user.save();
-            },
-            async getSOSMessage(userId) {
-                try {
-                    console.log('calling getSOSMessage');
-                    const user = await this.findById(userId);
-                    if (user) {
-                        return user.sosMessage;
-                    } else {
-                        // Handle the case where no user is found
-                        throw new Error('User not found');
-                    }
-                } catch (error) {
-                    console.error('Error fetching user:', error.message);
-                    // Handle or throw the error as needed
-                }
-            },
-            async registerNewUserWithLocation(username, hashedPassword, lat, lon) {
-                const user = new User({ username: username, password: hashedPassword, latitude: lat, longitude: lon });
-                return user.save();
-            },
-            async changeUserOnlineStatus(userId, onlineStatus) {
-                const user = await this.findById(userId);
-                user.isOnline = onlineStatus;
-                return user.save();
-            },
-            async changeUserLastStatus(userId, statusCode) {
-                const user = await this.findById(userId);
-                user.lastStatus = statusList[statusCode];
-                user.lastStatusAt = Date.now();
-                return user.save();
-            },
-            async changeGeolocation(userId, latitude, longitude) {
-                const user = await this.findById(userId);
-                user.latitude = latitude;
-                user.longitude = longitude;
-                return user.save();
-            },
-
-            async updateUserProfile({userId, isActive, privilege, username, password}) {
-                const user = await this.findById(userId);
-                isActive !== undefined && (user.isActive = isActive);
-                privilege !== undefined && (user.privilege = privilege);
-                username !== undefined && (user.username = username);
-                password !== undefined && (user.password = await bcrypt.hash(password, 10));
-                return await user.save();
-
-            },
-        }
-    }
-);
-
-// Model
-const User = mongoose.model('User', userSchema);
 
 // A list of all banned usernames
 let bannedUsernamesList = "about access account accounts add address adm admin administration adult advertising affiliate \
@@ -129,4 +32,99 @@ bannedUsernamesList = bannedUsernamesList.toLowerCase().split(" ");
 // A set of all banned usernames
 const bannedUsernamesSet = new Set(bannedUsernamesList);
 
-export { User, bannedUsernamesSet };
+// DB Schema
+const userSchema = new mongoose.Schema({
+    username: String,
+    password: String,
+    createdAt: { type: Date, default: Date.now },
+    isOnline: { type: Boolean, default: false },
+    lastLoginAt: { type: Date, default: Date.now },
+    lastStatus: { type: String, enum: ['undefined', 'ok', 'help', 'emergency'], default: 'undefined' },
+    lastStatusAt: { type: Date, default: Date.now },
+    isActive: { type: Boolean, default: true },
+    sosRequestsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    sosRequestsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    sosContacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    sosMessage: { type: String, default: '' },
+    socketId: { type: String },
+    latitude: { type: Number, default: null },
+    longitude: { type: Number, default: null },
+    groups: { type: [String], default: [] },
+    nearbyUsers: {
+        type: [
+            {
+                username: {
+                    type: String,
+                    required: true,
+                },
+                userId: {
+                    type: String,
+                    required: true,
+                },
+            },
+        ],
+        default: [],
+    },
+    privilege: { type: Number, default: PrivilegeLevel.CITIZEN, enum: Object.values(PrivilegeLevel) },
+});
+
+userSchema.statics = {
+    findByUsername(username) {
+        return this.findOne({ username: username });
+    },
+    registerNewUser(username, hashedPassword) {
+        const user = new User({ username: username, password: hashedPassword });
+        return user.save();
+    },
+    async getSOSMessage(userId) {
+        try {
+            console.log('calling getSOSMessage');
+            const user = await this.findById(userId);
+            if (user) {
+                return user.sosMessage;
+            } else {
+                // Handle the case where no user is found
+                throw new Error('User not found');
+            }
+        } catch (error) {
+            console.error('Error fetching user:', error.message);
+            // Handle or throw the error as needed
+        }
+    },
+    async registerNewUserWithLocation(username, hashedPassword, lat, lon) {
+        const user = new User({ username: username, password: hashedPassword, latitude: lat, longitude: lon });
+        return user.save();
+    },
+    async changeUserOnlineStatus(userId, onlineStatus) {
+        const user = await this.findById(userId);
+        user.isOnline = onlineStatus;
+        return user.save();
+    },
+    async changeUserLastStatus(userId, statusCode) {
+        const user = await this.findById(userId);
+        user.lastStatus = statusList[statusCode];
+        user.lastStatusAt = Date.now();
+        return user.save();
+    },
+    async changeGeolocation(userId, latitude, longitude) {
+        const user = await this.findById(userId);
+        user.latitude = latitude;
+        user.longitude = longitude;
+        return user.save();
+    },
+
+    async updateUserProfile({ userId, isActive, privilege, username, password }) {
+        const user = await this.findById(userId);
+        isActive !== undefined && (user.isActive = isActive);
+        privilege !== undefined && (user.privilege = privilege);
+        username !== undefined && (user.username = username);
+        password !== undefined && (user.password = await bcrypt.hash(password, 10));
+        return await user.save();
+
+    },
+};
+
+// Model
+const User = mongoose.model('User', userSchema);
+
+export { User, bannedUsernamesSet, PrivilegeLevel };

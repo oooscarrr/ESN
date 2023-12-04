@@ -1,7 +1,5 @@
 import { User } from '../models/User.js';
 import { Group } from '../models/Group.js';
-import { app } from '../app.js';
-import { io } from '../app.js';
 
 /**
  * A helper function for calculate_distance
@@ -49,7 +47,8 @@ export async function get_nearby_people(userId) {
     const usersWithLocation = await User.find({
         username: { $ne: user.username }, // Exclude the current user by username
         latitude: { $exists: true, $ne: null },
-        longitude: { $exists: true, $ne: null }
+        longitude: { $exists: true, $ne: null },
+        isActive: true
     });
 
     // Calculate distances for each user and filter by maxDistance

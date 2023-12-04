@@ -24,12 +24,39 @@ export default class AnnouncementSearchFactory extends AbstractSearchFactory {
             return [];
         }
 
-        return await Announcement.find({
-            $and: queryWordsArray.map(word => ({ content: { $regex: new RegExp(word, 'i') } }))
-        })
-        .sort({createdAt: -1 })
-        .skip(numberOfResultsToSkip)
-        .limit(10);
+        // return await Announcement.find({
+        //     $and: queryWordsArray.map(word => ({ content: { $regex: new RegExp(word, 'i') } }))
+        // })
+        // .sort({createdAt: -1 })
+        // .skip(numberOfResultsToSkip)
+        // .limit(10);
+
+        return await Announcement.aggregate([
+            {
+                $match: {
+                    $and: queryWordsArray.map(word => ({ content: { $regex: new RegExp(word, 'i') } }))
+                },
+            },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'posterName',
+                foreignField: 'username',
+                as: 'user'
+              }
+            },
+            {
+              $unwind: '$user'
+            },
+            {
+              $match: {
+                'user.isActive': true
+              }
+            },
+            {
+              $sort: { createdAt: -1 }
+            }
+          ]).skip(numberOfResultsToSkip).limit(10).exec();
     }
 
     /**
