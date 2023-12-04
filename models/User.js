@@ -4,11 +4,13 @@ import bcrypt from 'bcrypt';
 // Constants
 // A list of all possible status codes, 0 for undefined, 1 for ok, 2 for help, 3 for emergency
 const statusList = ['undefined', 'ok', 'help', 'emergency'];
-const PrivilegeLevel = {
-    CITIZEN: 0,
-    COORDINATOR: 1,
-    ADMINISTRATOR: 2
-}
+
+const PrivilegeLevel = Object.freeze({
+    CITIZEN : 0,
+    COORDINATOR : 1,
+    ADMINISTRATOR : 2
+});
+
 // A list of all banned usernames
 let bannedUsernamesList = "about access account accounts add address adm admin administration adult advertising affiliate \
     affiliates ajax analytics android anon anonymous api app apps archive atom auth authentication avatar backup banner banners \

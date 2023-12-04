@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./bin/www.js fse-team-proj.6d7d7lo.mongodb.net",
     "debug": "nodemon ./bin/www.js fse-team-proj.6d7d7lo.mongodb.net",
-    "test": "NODE_ENV=test jest --coverage --maxWorkers=1"
+    "test": "NODE_ENV=test jest --coverage --maxWorkers=1 --forceExit"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.454.0",
